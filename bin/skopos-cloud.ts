@@ -1,21 +1,27 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
+import {EcsStack} from '../lib/ecs/ecs-stack'
+import {IamStack} from '../lib/iam/iam-stack'
+import {RdsStack} from '../lib/rds/rds-stack'
+import {S3Stack} from '../lib/s3/s3-stack'
+import {VpcStack} from '../lib/vpc/vpc-stack'
 import { SkoposCloudStack } from '../lib/skopos-cloud-stack';
 
 const app = new cdk.App();
-new SkoposCloudStack(app, 'SkoposCloudStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+new SkoposCloudStack(app, 'SkoposCloudStack');
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const iam = new IamStack(app, 'IamStack')
+const vpc = new VpcStack(app, 'VpcStack')
+const rds = new RdsStack(app, 'RdsStack', {
+  vpc: vpc.vpc
+})
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+new EcsStack(app, 'EcsStack', {
+  db: rds.postgresQLInstance,
+  vpc: vpc.vpc,
+  role: iam.fargateServiceRole,
+  dbCredentials: rds.credentials,
+})
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+new S3Stack(app, 'S3Stack')
