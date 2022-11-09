@@ -23,7 +23,6 @@ export class EcsStack extends cdk.Stack {
 
     const cluster = new Cluster(this, 'SkoposECSCluster', {vpc, containerInsights: true})
 
-
     const fargateServiceRole = new Role(this, 'FargateTaskExecutionServiceRole', {
       assumedBy: new ServicePrincipal('ecs-tasks.amazonaws.com'),
       managedPolicies: [
@@ -53,34 +52,34 @@ export class EcsStack extends cdk.Stack {
       ],
     }))
 
-    const collectionRunnerDefinition = new TaskDefinition(this, 'taskRunnerDef', {
-      cpu: '512',
-      memoryMiB: '1024',
-      compatibility: Compatibility.EC2_AND_FARGATE,
-      networkMode: NetworkMode.AWS_VPC,
-      taskRole: fargateServiceRole,
-      executionRole: fargateServiceRole,
-    })
+    // const collectionRunnerDefinition = new TaskDefinition(this, 'taskRunnerDef', {
+    //   cpu: '512',
+    //   memoryMiB: '1024',
+    //   compatibility: Compatibility.EC2_AND_FARGATE,
+    //   networkMode: NetworkMode.AWS_VPC,
+    //   taskRole: fargateServiceRole,
+    //   executionRole: fargateServiceRole,
+    // })
 
-    collectionRunnerDefinition.addContainer('collectionRunnerContainer', {
-      portMappings: [{containerPort: 3003}],
-      memoryLimitMiB: 1024,
-      image: ContainerImage.fromRegistry(
-        'eldehan/collection-runner:latest'
-      ),
-      containerName: 'runnerContainer',
-      essential: true,
-    })
+    // collectionRunnerDefinition.addContainer('collectionRunnerContainer', {
+    //   portMappings: [{containerPort: 3003}],
+    //   memoryLimitMiB: 1024,
+    //   image: ContainerImage.fromRegistry(
+    //     'nykaelad/collection-runner:latest'
+    //   ),
+    //   containerName: 'runnerContainer',
+    //   essential: true,
+    // })
 
-    const service = new FargateService(this, 'CollectionRunnerService', {
-      assignPublicIp: true,
-      cluster,
-      desiredCount: 1,
-      taskDefinition: collectionRunnerDefinition,
-    })
+    // const service = new FargateService(this, 'CollectionRunnerService', {
+    //   assignPublicIp: true,
+    //   cluster,
+    //   desiredCount: 1,
+    //   taskDefinition: collectionRunnerDefinition,
+    // })
 
-    service.connections.allowFromAnyIpv4(Port.allTcp())
-    service.connections.allowToAnyIpv4(Port.allTcp())
+    // service.connections.allowFromAnyIpv4(Port.allTcp())
+    // service.connections.allowToAnyIpv4(Port.allTcp())
 
     const backendDefinition = new TaskDefinition(this, 'backendDef', {
       cpu: '512',
@@ -94,7 +93,7 @@ export class EcsStack extends cdk.Stack {
     backendDefinition.addContainer('backendContainer', {
       portMappings: [{containerPort: 3001}],
       memoryLimitMiB: 1024,
-      image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.6"),
+      image: ContainerImage.fromRegistry("nykaelad/graphql-server:latest"),
       environment: {
         DATABASE_URL: 'postgresql://postgres:02xyTZoJD44p0P6JFeaX5LWJRv4KY0ry@rdsstack-skoposdb8d0389a4-wwyutxef2wps.cml9wgvriihj.us-east-1.rds.amazonaws.com:5432/prisma?schema=public',
         LAMBDA_ARN: 'arn:aws:lambda:us-east-1:385379134803:function:run-scheduled-collection',
