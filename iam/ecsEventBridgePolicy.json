@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "events:EnableRule",
+        "events:PutRule",
+        "sns:CreateTopic",
+        "sns:Unsubscribe",
+        "events:DeleteRule",
+        "events:PutTargets",
+        "lambda:AddPermission",
+        "sns:Publish",
+        "events:ListRuleNamesByTarget",
+        "events:ListRules",
+        "sns:Subscribe",
+        "events:RemoveTargets",
+        "lambda:RemovePermission",
+        "events:ListTargetsByRule",
+        "events:DisableRule"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
