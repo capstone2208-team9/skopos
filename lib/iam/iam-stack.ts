@@ -12,7 +12,7 @@ export class IamStack extends cdk.Stack {
     this.fargateServiceRole = new Role(this, 'FargateTaskExecutionServiceRole', {
       assumedBy: new ServicePrincipal('ecs-tasks.amazonaws.com'),
       managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName('AmazonECSTaskExecutionRolePolicy')
+        ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy')
       ]
     })
 

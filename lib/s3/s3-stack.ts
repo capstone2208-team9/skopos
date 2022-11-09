@@ -12,6 +12,7 @@ export class S3Stack extends cdk.Stack {
     const bucket = new s3.Bucket(this, 'SkoposUIApp', {
       publicReadAccess: true,
       removalPolicy: RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
     })
