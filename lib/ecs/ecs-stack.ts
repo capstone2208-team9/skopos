@@ -21,7 +21,8 @@ export class EcsStack extends cdk.Stack {
     super(scope, id, props)
     const {vpc, db} = props
 
-    const cluster = new Cluster(this, 'SkoposECSCluster', {vpc, containerInsights: true})
+    const graphqlCluster = new Cluster(this, 'graphqlCluster', {vpc, containerInsights: true})
+    const collectionRunnerCluster = new Cluster(this, 'collectionRunnerCluster', {vpc, containerInsights: true})
 
     const fargateServiceRole = new Role(this, 'FargateTaskExecutionServiceRole', {
       assumedBy: new ServicePrincipal('ecs-tasks.amazonaws.com'),
@@ -81,101 +82,98 @@ export class EcsStack extends cdk.Stack {
     // service.connections.allowFromAnyIpv4(Port.allTcp())
     // service.connections.allowToAnyIpv4(Port.allTcp())
 
-    const backendDefinition = new TaskDefinition(this, 'backendDef', {
-      cpu: '512',
-      memoryMiB: '1024',
-      compatibility: Compatibility.EC2_AND_FARGATE,
-      networkMode: NetworkMode.AWS_VPC,
-      taskRole: fargateServiceRole,
-      executionRole: fargateServiceRole,
-    })
-
-    backendDefinition.addContainer('backendContainer', {
-      portMappings: [{containerPort: 3001}],
-      memoryLimitMiB: 1024,
-      image: ContainerImage.fromRegistry("nykaelad/graphql-server:latest"),
-      environment: {
-        DATABASE_URL: 'postgresql://postgres:02xyTZoJD44p0P6JFeaX5LWJRv4KY0ry@rdsstack-skoposdb8d0389a4-wwyutxef2wps.cml9wgvriihj.us-east-1.rds.amazonaws.com:5432/prisma?schema=public',
-        LAMBDA_ARN: 'arn:aws:lambda:us-east-1:385379134803:function:run-scheduled-collection',
-        PORT: '3001',
-      },
-      containerName: 'backendContainer',
-      essential: true,
-    })
-
-
-    const backendService = new FargateService(this, 'BackendService', {
-      assignPublicIp: true,
-      cluster,
-      desiredCount: 1,
-      taskDefinition: backendDefinition,
-    })
-
-    backendService.connections.allowFromAnyIpv4(Port.allTcp())
-    backendService.connections.allowToAnyIpv4(Port.allTcp())
-
-    // this.graphqlService = new ApplicationLoadBalancedFargateService(this, 'GraphqlService', {
-    //   assignPublicIp: true,
-    //   cluster,
-    //   healthCheckGracePeriod: Duration.seconds(120),
-    //   desiredCount: 1,
-    //   openListener: true,
-    //   publicLoadBalancer: true,
-    //   protocol: ApplicationProtocol.HTTP,
-    //   serviceName: 'graphql-service',
-    //   targetProtocol: ApplicationProtocol.HTTP,
-    //   taskSubnets: { subnets: [...vpc.isolatedSubnets, ...vpc.publicSubnets]},
-    //   taskImageOptions: {
-    //     containerPort: 3001,
-    //     environment: {
-    //       DATABASE_URL: `postgres://${props.dbCredentials.username}:${props.dbCredentials.password}${db.instanceEndpoint.hostname}:${db.instanceEndpoint.port}`,
-    //       PORT: '3001',
-    //     },
-    //     // image: ContainerImage.fromEcrRepository(Repository.fromRepositoryName(this, 'skopos-collection-runner-repo', 'skopos-collection-runner')),
-    //     image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.6"),
-    //     taskRole: fargateServiceRole,
-    //     executionRole: fargateServiceRole,
-    //   },
+    // const backendDefinition = new TaskDefinition(this, 'backendDef', {
+    //   cpu: '512',
+    //   memoryMiB: '1024',
+    //   compatibility: Compatibility.EC2_AND_FARGATE,
+    //   networkMode: NetworkMode.AWS_VPC,
+    //   taskRole: fargateServiceRole,
+    //   executionRole: fargateServiceRole,
     // })
 
-
-    // allow graphql load balance out anywhere
-    // this.graphqlService.loadBalancer.connections.allowToAnyIpv4(Port.allTcp())
-
-    // allow graphql to connect to RDS
-    // this.graphqlService.loadBalancer.connections.allowTo(db, Port.tcp(5432))
-
-    // this.collectionRunnerService = new ApplicationLoadBalancedFargateService(this, 'CollectionRunnerService', {
-    //   assignPublicIp: true,
-    //   desiredCount: 1,
-    //   cluster,
-    //   publicLoadBalancer: true,
-    //   protocol: ApplicationProtocol.HTTP,
-    //   serviceName: 'collection-runner-service',
-    //   cpu: 512,
+    // backendDefinition.addContainer('backendContainer', {
+    //   portMappings: [{containerPort: 3001}],
     //   memoryLimitMiB: 1024,
-    //   taskImageOptions: {
-    //     containerPort: 3003,
-    //     environment: {
-    //       GRAPHQL_URL: `http://${this.graphqlService.loadBalancer.loadBalancerFullName}`,
-    //       AWS_REGION: 'us-east-1'
-    //     },
-    //     executionRole: fargateServiceRole,
-    //     taskRole: fargateServiceRole,
-    //     // image: ContainerImage.fromEcrRepository(Repository.fromRepositoryName(this, 'collection-runner-repo', 'skopos-collection-runner')),
-
-    // image: ContainerImage.fromEcrRepository(Repository.fromRepositoryName(this, 'collection-runner-repo', 'skopos-collection-runner')),
-    //     image: ContainerImage.fromRegistry(
-    //       "eldehan/collection-runner:latest"
-    //     ),
-    //
+    //   image: ContainerImage.fromRegistry("nykaelad/graphql-server:latest"),
+    //   environment: {
+    //     DATABASE_URL: 'postgresql://postgres:02xyTZoJD44p0P6JFeaX5LWJRv4KY0ry@rdsstack-skoposdb8d0389a4-wwyutxef2wps.cml9wgvriihj.us-east-1.rds.amazonaws.com:5432/prisma?schema=public',
+    //     LAMBDA_ARN: 'arn:aws:lambda:us-east-1:385379134803:function:run-scheduled-collection',
+    //     PORT: '3001',
     //   },
+    //   containerName: 'backendContainer',
+    //   essential: true,
     // })
-    //
-    // this.collectionRunnerService.targetGroup.configureHealthCheck({
-    //   port: '3003',
-    //   path: '/health',
+
+
+    // const backendService = new FargateService(this, 'BackendService', {
+    //   assignPublicIp: true,
+    //   cluster,
+    //   desiredCount: 1,
+    //   taskDefinition: backendDefinition,
     // })
+
+    // backendService.connections.allowFromAnyIpv4(Port.allTcp())
+    // backendService.connections.allowToAnyIpv4(Port.allTcp())
+
+    this.graphqlService = new ApplicationLoadBalancedFargateService(this, 'GraphqlService', {
+      assignPublicIp: true,
+      cluster: graphqlCluster,
+      //healthCheckGracePeriod: Duration.seconds(120),
+      desiredCount: 1,
+      openListener: true,
+      publicLoadBalancer: true,
+      //protocol: ApplicationProtocol.HTTP,
+      serviceName: 'graphql-service',
+      //targetProtocol: ApplicationProtocol.HTTP,
+      taskSubnets: { subnets: [...vpc.isolatedSubnets, ...vpc.publicSubnets]},
+      taskImageOptions: {
+        containerPort: 3001,
+        environment: {
+          DATABASE_URL: `postgres://${props.dbCredentials.username}:${props.dbCredentials.password}${db.instanceEndpoint.hostname}:${db.instanceEndpoint.port}`,
+          PORT: '3001',
+        },
+        // image: ContainerImage.fromEcrRepository(Repository.fromRepositoryName(this, 'skopos-collection-runner-repo', 'skopos-collection-runner')),
+        image: ContainerImage.fromRegistry("nykaelad/graphql-service:latest"),
+        taskRole: fargateServiceRole,
+        executionRole: fargateServiceRole,
+      },
+    })
+
+
+    // // allow graphql load balance out anywhere
+    this.graphqlService.loadBalancer.connections.allowToAnyIpv4(Port.allTcp())
+
+    // // allow graphql to connect to RDS
+    this.graphqlService.loadBalancer.connections.allowTo(db, Port.tcp(5432))
+
+    this.collectionRunnerService = new ApplicationLoadBalancedFargateService(this, 'CollectionRunnerService', {
+      assignPublicIp: true,
+      desiredCount: 1,
+      cluster: collectionRunnerCluster,
+      publicLoadBalancer: true,
+      //protocol: ApplicationProtocol.HTTP,
+      serviceName: 'collection-runner-service',
+      cpu: 512,
+      memoryLimitMiB: 1024,
+      taskImageOptions: {
+        containerPort: 3003,
+        environment: {
+          GRAPHQL_URL: `http://${this.graphqlService.loadBalancer.loadBalancerFullName}`,
+          AWS_REGION: 'us-east-1'
+        },
+        executionRole: fargateServiceRole,
+        taskRole: fargateServiceRole,
+        image: ContainerImage.fromRegistry(
+          "nykaelad/collection-runner:latest"
+        ),
+    
+      },
+    })
+    
+    this.collectionRunnerService.targetGroup.configureHealthCheck({
+      port: '3003',
+      path: '/health',
+    })
     //
 
     // const taskDefinition = new TaskDefinition(this, 'collection-runner-task', {

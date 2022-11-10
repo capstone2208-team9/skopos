@@ -18,7 +18,7 @@ const postRequest = (body: any) => {
       res.on("end", () => {
         try {
           resolve(buffer);
-        } catch (err: any) {
+        } catch (err) {
           reject(new Error(err));
         }
       });
@@ -41,7 +41,7 @@ export const collectionRunner = async (event: any) => {
       status: response.status,
       body: response.body,
     };
-  } catch (err: any) {
+  } catch (err) {
     console.log("catch block", err);
     return {
       status: 400,
