@@ -10,7 +10,8 @@ import {Construct} from 'constructs'
 export interface EcsStackProps extends cdk.StackProps {
   db: DatabaseInstance
   dbCredentials: { username: string, password: string }
-  vpc: Vpc
+  vpc: Vpc,
+  lambdaArn: string
 }
 
 export class EcsStack extends cdk.Stack {

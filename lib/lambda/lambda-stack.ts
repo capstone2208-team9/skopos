@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as path from 'path';
 
 export class LambdaStack extends cdk.Stack {
+  readonly functionArn: string
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -20,5 +21,7 @@ export class LambdaStack extends cdk.Stack {
         ),
       },
     });
+
+    this.functionArn = lambdaFunction.functionArn
   }
 }
