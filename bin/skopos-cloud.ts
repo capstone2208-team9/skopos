@@ -17,16 +17,17 @@ const vpc = new VpcStack(app, 'VpcStack')
 const rds = new RdsStack(app, 'RdsStack', {
   vpc: vpc.vpc
 })
-
-new LambdaStack(app, 'LambdaStack')
+const lambda = new LambdaStack(app, 'LambdaStack')
 
 new EcsStack(app, 'EcsStack', {
   db: rds.postgresQLInstance,
   vpc: vpc.vpc,
   dbCredentials: rds.credentials,
-  // what do we add here to pass in lambda ARN to be used as an ENV variable in graphql server?
+  lambdaArn: lambda.functionArn
 })
 
-new S3Stack(app, 'S3Stack')
+// change lambda env variable for pointing to ecs collection runner
+
+new S3Stack(app, 'S3Stack') 
 
 

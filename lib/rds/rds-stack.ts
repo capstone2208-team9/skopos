@@ -63,12 +63,12 @@ export class RdsStack extends cdk.Stack {
 
     const dbInstance = new DatabaseInstance(this, 'skopos-db', {
       engine: DatabaseInstanceEngine.postgres({
-        version: PostgresEngineVersion.VER_14_3,
+        version: PostgresEngineVersion.VER_13_7,
       }),
       instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),
       credentials: Credentials.fromSecret(databaseCredentialsSecret),
       vpc,
-      vpcSubnets: {subnetType: SubnetType.PRIVATE_ISOLATED,},
+      vpcSubnets: {subnetType: SubnetType.PUBLIC,},
       maxAllocatedStorage: 200,
       allowMajorVersionUpgrade: false,
       backupRetention: cdk.Duration.days(0),
