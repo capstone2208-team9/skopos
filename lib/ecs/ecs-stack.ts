@@ -37,15 +37,10 @@ export class EcsStack extends cdk.Stack {
     super(scope, id, props);
     const { vpc, db, dbCredentials, lambdaArn } = props;
 
-    const graphqlCluster = new Cluster(this, "graphqlCluster", {
+    const cluster = new Cluster(this, "ECSCluster", {
       vpc,
       containerInsights: true,
     });
-    const collectionRunnerCluster = new Cluster(
-      this,
-      "collectionRunnerCluster",
-      { vpc, containerInsights: true }
-    );
 
     // from aws-deploy
     const backendServiceTaskDefinition = new FargateTaskDefinition(
@@ -60,7 +55,7 @@ export class EcsStack extends cdk.Stack {
     const backendServiceContainer = backendServiceTaskDefinition.addContainer(
       "backend-server-container",
       {
-        image: ContainerImage.fromRegistry("kat201/skopos-backend"),
+        image: ContainerImage.fromRegistry("nykaelad/graphql-server:1.1"),
       }
     );
 
@@ -82,7 +77,7 @@ export class EcsStack extends cdk.Stack {
       this,
       "backend-service-fargate",
       {
-        cluster: graphqlCluster,
+        cluster,
         taskDefinition: backendServiceTaskDefinition,
         assignPublicIp: true,
         desiredCount: 1,
@@ -149,7 +144,7 @@ export class EcsStack extends cdk.Stack {
       this,
       "collectionRunner-service-fargate",
       {
-        cluster: collectionRunnerCluster,
+        cluster,
         taskDefinition: collectionRunnerServiceTaskDefinition,
         assignPublicIp: true,
         desiredCount: 1,
@@ -190,7 +185,7 @@ export class EcsStack extends cdk.Stack {
       priority: 1,
       targets: [backendServiceFargate],
       // @ts-ignore
-      pathPatterns: ["/graphql", "/backend/health"],
+      pathPatterns: ["/graphql/*", "/backend/health"],
     });
 
     httpServerListener.addTargets("target-for-collectionRunner-lb", {
@@ -199,7 +194,7 @@ export class EcsStack extends cdk.Stack {
       targets: [collectionRunnerServiceFargate],
       // @ts-ignore
       // might have to add a route in collection runner to disambiguate between routes
-      pathPatterns: ["run-collection/*", "/collection-runner/health"],
+      pathPatterns: ["collection-runner/*", "/collection-runner/health"],
     });
 
     backendServiceSG.connections.allowFrom(httpServerLB, Port.tcp(3001));
@@ -221,9 +216,11 @@ export class EcsStack extends cdk.Stack {
     backendServiceContainer.addEnvironment("AWS_REGION", "us-east-1");
 
     collectionRunnerServiceContainer.addEnvironment(
-      "SERVER_URL",
-      httpServerLB.loadBalancerDnsName
+      "GRAPH_URL",
+      `${httpServerLB.loadBalancerDnsName}/graphql`
     );
+
+    collectionRunnerServiceContainer.addEnvironment("AWS_REGION", "us-east-1");
 
     // const graphqlCluster = new Cluster(this, 'graphqlCluster', {vpc, containerInsights: true})
     // const collectionRunnerCluster = new Cluster(this, 'collectionRunnerCluster', {vpc, containerInsights: true})
