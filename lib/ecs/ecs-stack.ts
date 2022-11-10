@@ -1,30 +1,51 @@
-import * as cdk from 'aws-cdk-lib'
-import {CfnOutput} from 'aws-cdk-lib'
-import {Port, Vpc, SecurityGroup} from 'aws-cdk-lib/aws-ec2'
-import {Cluster, Compatibility, ContainerImage, FargateService, NetworkMode, TaskDefinition, FargateTaskDefinition} from 'aws-cdk-lib/aws-ecs'
-import {ApplicationLoadBalancedFargateService} from 'aws-cdk-lib/aws-ecs-patterns'
-import {Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal} from 'aws-cdk-lib/aws-iam'
-import {DatabaseInstance} from 'aws-cdk-lib/aws-rds'
-import {Construct} from 'constructs'
+import * as cdk from "aws-cdk-lib";
+import { CfnOutput } from "aws-cdk-lib";
+import { Port, Vpc, SecurityGroup } from "aws-cdk-lib/aws-ec2";
+import {
+  Cluster,
+  Compatibility,
+  ContainerImage,
+  FargateService,
+  NetworkMode,
+  TaskDefinition,
+  FargateTaskDefinition,
+} from "aws-cdk-lib/aws-ecs";
+import { ApplicationLoadBalancedFargateService } from "aws-cdk-lib/aws-ecs-patterns";
+import {
+  Effect,
+  ManagedPolicy,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from "aws-cdk-lib/aws-iam";
+import { DatabaseInstance } from "aws-cdk-lib/aws-rds";
+import { Construct } from "constructs";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 
 export interface EcsStackProps extends cdk.StackProps {
-  db: DatabaseInstance
-  dbCredentials: { username: string, password: string }
-  vpc: Vpc,
-  lambdaArn: string
+  db: DatabaseInstance;
+  dbCredentials: { username: string; password: string };
+  vpc: Vpc;
+  lambdaArn: string;
 }
 
 export class EcsStack extends cdk.Stack {
-  readonly collectionRunnerService: ApplicationLoadBalancedFargateService
-  readonly graphqlService: ApplicationLoadBalancedFargateService
+  readonly collectionRunnerService: ApplicationLoadBalancedFargateService;
+  readonly graphqlService: ApplicationLoadBalancedFargateService;
 
   constructor(scope: Construct, id: string, props: EcsStackProps) {
-    super(scope, id, props)
-    const {vpc, db, dbCredentials, lambdaArn} = props
+    super(scope, id, props);
+    const { vpc, db, dbCredentials, lambdaArn } = props;
 
-    const graphqlCluster = new Cluster(this, 'graphqlCluster', {vpc, containerInsights: true})
-    const collectionRunnerCluster = new Cluster(this, 'collectionRunnerCluster', {vpc, containerInsights: true})
+    const graphqlCluster = new Cluster(this, "graphqlCluster", {
+      vpc,
+      containerInsights: true,
+    });
+    const collectionRunnerCluster = new Cluster(
+      this,
+      "collectionRunnerCluster",
+      { vpc, containerInsights: true }
+    );
 
     // from aws-deploy
     const backendServiceTaskDefinition = new FargateTaskDefinition(
@@ -39,7 +60,7 @@ export class EcsStack extends cdk.Stack {
     const backendServiceContainer = backendServiceTaskDefinition.addContainer(
       "backend-server-container",
       {
-        image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.7"),
+        image: ContainerImage.fromRegistry("kat201/skopos-backend"),
       }
     );
 
@@ -69,27 +90,29 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
-    backendServiceTaskDefinition.addToTaskRolePolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      resources: ['*'],
-      actions: [
-        'events:EnableRule',
-        'events:PutRule',
-        'sns:CreateTopic',
-        'sns:Unsubscribe',
-        'events:DeleteRule',
-        'events:PutTargets',
-        'sns:Publish',
-        'events:ListRuleNamesByTarget',
-        'events:ListRules',
-        'sns:Subscribe',
-        'events:RemoveTargets',
-        'events:ListTargetsByRule',
-        'events:DisableRule',
-        'lambda:AddPermission',
-        'lambda:RemovePermission'
-      ],
-    }))
+    backendServiceTaskDefinition.addToTaskRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: ["*"],
+        actions: [
+          "events:EnableRule",
+          "events:PutRule",
+          "sns:CreateTopic",
+          "sns:Unsubscribe",
+          "events:DeleteRule",
+          "events:PutTargets",
+          "sns:Publish",
+          "events:ListRuleNamesByTarget",
+          "events:ListRules",
+          "sns:Subscribe",
+          "events:RemoveTargets",
+          "events:ListTargetsByRule",
+          "events:DisableRule",
+          "lambda:AddPermission",
+          "lambda:RemovePermission",
+        ],
+      })
+    );
 
     const collectionRunnerServiceTaskDefinition = new FargateTaskDefinition(
       this,
@@ -104,9 +127,7 @@ export class EcsStack extends cdk.Stack {
       collectionRunnerServiceTaskDefinition.addContainer(
         "collectionRunner-server-container",
         {
-          image: ContainerImage.fromRegistry(
-            "hanselde/collection-runner:latest"
-          ),
+          image: ContainerImage.fromRegistry("nykaelad/collection-runner:1.0"),
         }
       );
 
@@ -169,7 +190,7 @@ export class EcsStack extends cdk.Stack {
       priority: 1,
       targets: [backendServiceFargate],
       // @ts-ignore
-      pathPatterns: ["/graphql", "/run-collection/*", "/backend/health"]
+      pathPatterns: ["/graphql", "/backend/health"],
     });
 
     httpServerListener.addTargets("target-for-collectionRunner-lb", {
@@ -178,7 +199,7 @@ export class EcsStack extends cdk.Stack {
       targets: [collectionRunnerServiceFargate],
       // @ts-ignore
       // might have to add a route in collection runner to disambiguate between routes
-      pathPattern: "/*",
+      pathPatterns: ["run-collection/*", "/collection-runner/health"],
     });
 
     backendServiceSG.connections.allowFrom(httpServerLB, Port.tcp(3001));
@@ -187,7 +208,7 @@ export class EcsStack extends cdk.Stack {
       Port.tcp(3003)
     );
 
-    const dbUrl = `postgresql://${dbCredentials.username}:${dbCredentials.password}:${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}` //dbCredentials { user: password: }, db: instance
+    const dbUrl = `postgresql://${dbCredentials.username}:${dbCredentials.password}@${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}/prisma?schema=public&connect_timeout=60`;
     backendServiceContainer.addEnvironment("DATABASE_URL", dbUrl);
 
     backendServiceContainer.addEnvironment(
@@ -195,10 +216,7 @@ export class EcsStack extends cdk.Stack {
       httpServerLB.loadBalancerDnsName
     );
 
-    backendServiceContainer.addEnvironment(
-      "LAMDA_ARN",
-      lambdaArn
-    );
+    backendServiceContainer.addEnvironment("LAMDA_ARN", lambdaArn);
 
     backendServiceContainer.addEnvironment("AWS_REGION", "us-east-1");
 
@@ -290,7 +308,6 @@ export class EcsStack extends cdk.Stack {
     //   essential: true,
     // })
 
-
     // const backendService = new FargateService(this, 'BackendService', {
     //   assignPublicIp: true,
     //   cluster,
@@ -325,7 +342,6 @@ export class EcsStack extends cdk.Stack {
     //   },
     // })
 
-
     // // // allow graphql load balance out anywhere
     // this.graphqlService.loadBalancer.connections.allowToAnyIpv4(Port.allTcp())
 
@@ -352,10 +368,10 @@ export class EcsStack extends cdk.Stack {
     //     image: ContainerImage.fromRegistry(
     //       "nykaelad/collection-runner:latest"
     //     ),
-    
+
     //   },
     // })
-    
+
     // this.collectionRunnerService.targetGroup.configureHealthCheck({
     //   port: '3003',
     //   path: '/health',
@@ -383,7 +399,6 @@ export class EcsStack extends cdk.Stack {
     //   },
     // })
     //
-
 
     // this.collectionRunnerService = new FargateService(this, 'collection-runner-service', {
     //   serviceName: 'collection-runner-service',
@@ -422,7 +437,6 @@ export class EcsStack extends cdk.Stack {
     //   protocol: ApplicationProtocol.HTTP,
     // })
 
-
     // const backendService = new FargateService(this, 'skopos-backend-service', {
     //   cluster,
     //   desiredCount: 1,
@@ -434,7 +448,6 @@ export class EcsStack extends cdk.Stack {
     //     executionRole: role,
     //   })
     // })
-
 
     // db.connections.allowFrom(backendService, Port.tcp(5432))
     // // postgresql://postgres:secret@localhost:5432/prisma?schema=public
@@ -473,7 +486,6 @@ export class EcsStack extends cdk.Stack {
     //   })
     // })
 
-
     // runnerService.taskDefinition.addContainer('RunnerContainer', {
     //   image: ContainerImage.fromEcrRepository(Repository.fromRepositoryName(this, 'skopos-collection-runner-repo', 'skopos-collection-runner')),
     //   cpu: 1024,
@@ -498,7 +510,6 @@ export class EcsStack extends cdk.Stack {
     // runnerService.connections.allowToAnyIpv4(Port.allTcp(), 'Allow HTTP anywhere')
     // runnerService.connections.allowFrom(collectionRunnerLoadBalancer, Port.allTcp())
     // runnerService.connections.allowFrom(backendLoadBalancer, Port.allTcp())
-
 
     // new CfnOutput(this, 'BackendLoadBalancerDNSName', {
     //   value: this.graphqlService.loadBalancer.loadBalancerDnsName,
