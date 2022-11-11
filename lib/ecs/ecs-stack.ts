@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib'
 import {CfnOutput} from 'aws-cdk-lib'
-import {SecurityGroup, Vpc} from 'aws-cdk-lib/aws-ec2'
+import {Vpc} from 'aws-cdk-lib/aws-ec2'
 import {Cluster, ContainerImage,} from 'aws-cdk-lib/aws-ecs'
 import {ApplicationLoadBalancedFargateService} from 'aws-cdk-lib/aws-ecs-patterns'
 import {ApplicationProtocol} from 'aws-cdk-lib/aws-elasticloadbalancingv2'
@@ -43,19 +43,6 @@ export class EcsStack extends cdk.Stack {
       },
     });
 
-    // const backendServiceSG = new SecurityGroup(
-    //   this,
-    //   `backend-server-security-group`,
-    //   {
-    //     allowAllOutbound: true,
-    //     securityGroupName: `backend-server-security-group`,
-    //     vpc,
-    //   }
-    // );
-
-
-
-
     this.backendFargateService = new ApplicationLoadBalancedFargateService(this, 'BackendFargateService', {
       cluster,
       publicLoadBalancer: true,
@@ -75,11 +62,10 @@ export class EcsStack extends cdk.Stack {
         environment: {
           DATABASE_URL: `postgresql://${dbCredentials.username}:${dbCredentials.password}@${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}/prisma?schema=public&connect_timeout=60`,
           LAMBDA_ARN: func.functionArn,
-          AWS_REGION: 'us-east-1'
+          AWS_REGION: cdk.Stack.of(this).region
         },
       }
     })
-    // backendServiceSG.connections.allowFrom(this.backendFargateService.loadBalancer, Port.tcp(3001))
 
     this.backendFargateService.taskDefinition.addToTaskRolePolicy(
       new PolicyStatement({
@@ -110,16 +96,6 @@ export class EcsStack extends cdk.Stack {
       path: '/health'
     })
 
-    const collectionRunnerServiceSG = new SecurityGroup(
-      this,
-      `collectionRunner-server-security-group`,
-      {
-        allowAllOutbound: true,
-        securityGroupName: `collectionRunner-server-security-group`,
-        vpc,
-      }
-    );
-
     this.collectionRunnerFargateService = new ApplicationLoadBalancedFargateService(this, 'CollectionRunnerFargateService', {
       cluster,
       publicLoadBalancer: true,
@@ -142,22 +118,15 @@ export class EcsStack extends cdk.Stack {
       }
     })
 
-    // collectionRunnerServiceSG.connections.allowFrom(this.collectionRunnerFargateService.loadBalancer, Port.tcp(3003))
-
-
     this.collectionRunnerFargateService.targetGroup.configureHealthCheck({
       port: '3003',
       path: '/health',
-
     })
 
     func.addEnvironment('' +
       'COLLECTION_RUNNER_URI',
       this.collectionRunnerFargateService.loadBalancer.loadBalancerDnsName,
     )
-
-
-
 
     new CfnOutput(this, 'BackendLoadBalancerDNSName', {
       value: this.backendFargateService.loadBalancer.loadBalancerDnsName,
