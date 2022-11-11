@@ -14,7 +14,6 @@ import {
   Credentials,
   DatabaseInstance,
   DatabaseInstanceEngine,
-  DatabaseSecret,
   PostgresEngineVersion
 } from 'aws-cdk-lib/aws-rds'
 import {StringParameter} from 'aws-cdk-lib/aws-ssm'
@@ -76,7 +75,7 @@ export class RdsStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       deletionProtection: false,
       databaseName: 'prisma',
-      publiclyAccessible: false,
+      publiclyAccessible: true,
       securityGroups: [dbSecurityGroup]
     })
 

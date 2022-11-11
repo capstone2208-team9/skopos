@@ -1,10 +1,13 @@
+import {ClientRequest, IncomingMessage} from 'http'
+
 const http = require("http");
 
 const postRequest = (body: any) => {
+  const hostname = process.env.COLLECTION_RUNNER_URI || ''
   const params = {
-    hostname: "localhost", // needs to be public IP of collection-runner
+    hostname, // needs to be public IP of collection-runner
     path: `/${body.collectionId}`,
-    port: 3003,
+    port: 80,
     headers: {
       "Content-Type": "application/json",
     },
@@ -12,15 +15,14 @@ const postRequest = (body: any) => {
   };
 
   return new Promise((resolve, reject) => {
-    const req = http.request(params, (res: any) => {
+    const req: ClientRequest = http.request(params, (res: IncomingMessage) => {
       let buffer = "";
       res.on("data", (chunk: any) => { buffer += chunk });
       res.on("end", () => {
-        try {
-          resolve(buffer);
-        } catch (err) {
-          reject(new Error(err));
-        }
+        resolve({
+          status: res.statusCode,
+          body: buffer || 'none'
+        });
       });
     });
 
