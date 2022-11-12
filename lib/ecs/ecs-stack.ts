@@ -94,7 +94,7 @@ export class EcsStack extends cdk.Stack {
         cpu: 512,
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
-          image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.9"),
+          image: ContainerImage.fromRegistry("nykaelad/graphql-server:1.3"),
           containerPort: 3001,
           containerName: "BackendContainer",
           enableLogging: true,
@@ -103,6 +103,7 @@ export class EcsStack extends cdk.Stack {
             PORT: "3001",
             LAMBDA_ARN: func.functionArn,
             AWS_REGION: "us-east-1",
+            LAMBDA_FUNCTION_NAME: func.functionName
           },
         },
       }
@@ -153,7 +154,7 @@ export class EcsStack extends cdk.Stack {
         placementStrategies: [PlacementStrategy.packedByCpu()],
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
-          image: ContainerImage.fromRegistry("ahamoudeis/collection_runner_skopos:1.0"),
+          image: ContainerImage.fromRegistry("nykaelad/collection-runner:1.0"),
           containerPort: 3003,
           containerName: "CollectionRunnerContainer",
           enableLogging: true,
