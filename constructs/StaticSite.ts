@@ -318,9 +318,10 @@ export class StaticSite extends Construct {
     this.cdk.bucket = this.createS3Bucket();
 
     // Create S3 Deployment
-    const s3deployCR = this.createS3Deployment();
+    // const s3deployCR = this.createS3Deployment();
+    this.createS3Deployment();
 
-    // Create CloudFront
+    // TODO: Create CloudFront if we can get certificate and domain
     // this.cdk.distribution = this.createCfDistribution();
     // this.cdk.distribution.node.addDependency(s3deployCR);
 
@@ -330,7 +331,7 @@ export class StaticSite extends Construct {
   }
 
   /**
-   * The CloudFront URL of the website.
+   * The CloudFront URL of the website. (TODO: change this if adding Cloudfront back in)
    */
   public get url(): string {
     return `https://${this.cdk.bucket.bucketWebsiteUrl}`;
@@ -503,32 +504,18 @@ export class StaticSite extends Construct {
   private createS3Bucket(): s3.Bucket {
     const { cdk } = this.props;
 
-    // cdk.bucket is an imported construct
-    if (cdk?.bucket && isCDKConstruct(cdk?.bucket)) {
-      return cdk.bucket as s3.Bucket;
-    }
-    // cdk.bucket is a prop
-    else {
       const bucketProps = cdk?.bucket as s3.BucketProps;
-      // Validate s3Bucket
-      if (bucketProps?.websiteIndexDocument) {
-        throw new Error(
-          `Do not configure the "s3Bucket.websiteIndexDocument". Use the "indexPage" to configure the StaticSite index page.`
-        );
-      }
 
-      if (bucketProps?.websiteErrorDocument) {
-        throw new Error(
-          `Do not configure the "s3Bucket.websiteErrorDocument". Use the "errorPage" to configure the StaticSite index page.`
-        );
-      }
-
-      return new s3.Bucket(this, "S3Bucket", {
+      const websiteBucket =  new s3.Bucket(this, "S3Bucket", {
         autoDeleteObjects: true,
+        publicReadAccess: true,
         removalPolicy: RemovalPolicy.DESTROY,
         ...bucketProps,
+        websiteIndexDocument: 'index.html',
+        websiteErrorDocument: 'index.html',
       });
-    }
+      websiteBucket.grantPublicAccess('*', 's3:GetObject')
+    return websiteBucket
   }
 
   private createS3Deployment(): CustomResource {

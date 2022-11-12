@@ -115,7 +115,7 @@ export class EcsStack extends cdk.Stack {
         containerName: 'CollectionRunnerContainer',
         enableLogging: true,
         environment: {
-          GRAPHQL_URL: `${backendFargateService.loadBalancer.loadBalancerDnsName}/graphql`,
+          GRAPHQL_URL: `http://${backendFargateService.loadBalancer.loadBalancerDnsName}/graphql`,
           AWS_REGION: 'us-east-1',
         }
       }

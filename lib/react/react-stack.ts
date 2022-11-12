@@ -1,4 +1,3 @@
-import * as chalk from 'chalk';
 import {CfnOutput} from 'aws-cdk-lib'
 import * as cdk from 'aws-cdk-lib'
 import {Construct} from 'constructs'
@@ -10,7 +9,6 @@ export interface ReactStackProps extends cdk.StackProps {
 }
 
 export class ReactStack extends cdk.Stack {
-  readonly password: string;
   constructor(scope: Construct, id: string, props: ReactStackProps) {
     super(scope, id, props)
     const site = new ReactStaticSite(this, 'SkoposFrontend', {
