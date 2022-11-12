@@ -17,8 +17,8 @@ export interface EcsStackProps extends cdk.StackProps {
 }
 
 export class EcsStack extends cdk.Stack {
-  readonly backendFargateService: ApplicationLoadBalancedFargateService
-  readonly collectionRunnerFargateService: ApplicationLoadBalancedFargateService
+  readonly backendURI: string
+  readonly collectionRunnerURI: string
 
   constructor(scope: Construct, id: string, props: EcsStackProps) {
     super(scope, id, props)
@@ -30,6 +30,7 @@ export class EcsStack extends cdk.Stack {
     })
 
     const func = new lambda.Function(this, 'call-collection-runner', {
+      functionName: 'call-collection-runner',
       runtime: lambda.Runtime.NODEJS_16_X,
       memorySize: 1024,
       timeout: cdk.Duration.seconds(5),
@@ -43,19 +44,19 @@ export class EcsStack extends cdk.Stack {
       },
     });
 
-    this.backendFargateService = new ApplicationLoadBalancedFargateService(this, 'BackendFargateService', {
+    const backendFargateService = new ApplicationLoadBalancedFargateService(this, 'BackendFargateService', {
       cluster,
       publicLoadBalancer: true,
       openListener: true,
       assignPublicIp: true,
-      loadBalancerName: 'BackendLoadBalancerDNSName',
+      loadBalancerName: 'skopos-backend',
       serviceName: 'BackendService',
       desiredCount: 1,
-      memoryLimitMiB: 1024,
-      cpu: 512,
+      memoryLimitMiB: 512,
+      cpu: 256,
       protocol: ApplicationProtocol.HTTP,
       taskImageOptions: {
-        image: ContainerImage.fromRegistry('kat201/skopos-backend'),
+        image: ContainerImage.fromRegistry('kat201/skopos-backend-1.2'),
         containerPort: 3001,
         containerName: 'BackendContainer',
         enableLogging: true,
@@ -67,7 +68,9 @@ export class EcsStack extends cdk.Stack {
       }
     })
 
-    this.backendFargateService.taskDefinition.addToTaskRolePolicy(
+    this.backendURI = backendFargateService.loadBalancer.loadBalancerDnsName
+
+    backendFargateService.taskDefinition.addToTaskRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         resources: ['*'],
@@ -91,49 +94,54 @@ export class EcsStack extends cdk.Stack {
       })
     )
 
-    this.backendFargateService.targetGroup.configureHealthCheck({
+    backendFargateService.targetGroup.configureHealthCheck({
       port: '3001',
       path: '/health'
     })
 
-    this.collectionRunnerFargateService = new ApplicationLoadBalancedFargateService(this, 'CollectionRunnerFargateService', {
+    const collectionRunnerFargateService = new ApplicationLoadBalancedFargateService(this, 'CollectionRunnerFargateService', {
       cluster,
       publicLoadBalancer: true,
       openListener: true,
       assignPublicIp: true,
-      loadBalancerName: 'CollectionRunnerDNSName',
+      loadBalancerName: 'collection-runner',
       serviceName: 'CollectionRunnerService',
       desiredCount: 1,
-      memoryLimitMiB: 1024,
-      cpu: 512,
+      memoryLimitMiB: 512,
+      cpu: 256,
       taskImageOptions: {
-        image: ContainerImage.fromRegistry('kat201/collection-runner'),
+        image: ContainerImage.fromRegistry('kat201/collection-runner1.1'),
         containerPort: 3003,
         containerName: 'CollectionRunnerContainer',
         enableLogging: true,
         environment: {
-          GRAPHQL_URL: `${this.backendFargateService.loadBalancer.loadBalancerDnsName}/graphql`,
+          GRAPHQL_URL: `${backendFargateService.loadBalancer.loadBalancerDnsName}/graphql`,
           AWS_REGION: 'us-east-1',
         }
       }
     })
 
-    this.collectionRunnerFargateService.targetGroup.configureHealthCheck({
+    this.collectionRunnerURI = collectionRunnerFargateService.loadBalancer.loadBalancerDnsName
+
+    collectionRunnerFargateService.targetGroup.configureHealthCheck({
       port: '3003',
       path: '/health',
     })
 
-    func.addEnvironment('' +
-      'COLLECTION_RUNNER_URI',
-      this.collectionRunnerFargateService.loadBalancer.loadBalancerDnsName,
+    func.addEnvironment('COLLECTION_RUNNER_URI',
+      collectionRunnerFargateService.loadBalancer.loadBalancerDnsName,
     )
 
-    new CfnOutput(this, 'BackendLoadBalancerDNSName', {
-      value: this.backendFargateService.loadBalancer.loadBalancerDnsName,
+    new CfnOutput(this, 'skopos-backend', {
+      value: backendFargateService.loadBalancer.loadBalancerDnsName,
     })
 
     new CfnOutput(this, 'CollectionRunnerLoadBalancerDNSName', {
-      value: this.collectionRunnerFargateService.loadBalancer.loadBalancerDnsName,
+      value: collectionRunnerFargateService.loadBalancer.loadBalancerDnsName,
+    })
+
+    new CfnOutput(this, 'LambdaARN', {
+      value: func.functionArn
     })
   }
 }
