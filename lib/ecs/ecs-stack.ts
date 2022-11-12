@@ -91,7 +91,7 @@ export class EcsStack extends cdk.Stack {
         serviceName: "BackendService",
         desiredCount: 1,
         memoryLimitMiB: 512,
-        cpu: 256,
+        cpu: 512,
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.9"),
@@ -100,6 +100,7 @@ export class EcsStack extends cdk.Stack {
           enableLogging: true,
           environment: {
             DATABASE_URL: `postgresql://${dbCredentials.username}:${dbCredentials.password}@${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}/prisma?schema=public&connect_timeout=60`,
+            PORT: "3001",
             LAMBDA_ARN: func.functionArn,
             AWS_REGION: "us-east-1",
           },
