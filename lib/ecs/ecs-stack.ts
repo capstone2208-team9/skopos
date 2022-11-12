@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { CfnOutput } from "aws-cdk-lib";
+import { CfnOutput, Duration } from "aws-cdk-lib";
 import {
   SecurityGroup,
   Vpc,
@@ -9,6 +9,8 @@ import {
 import {
   Cluster,
   ContainerImage,
+  PlacementConstraint,
+  PlacementStrategy,
 } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancedEc2Service } from "aws-cdk-lib/aws-ecs-patterns";
 import { ApplicationProtocol } from "aws-cdk-lib/aws-elasticloadbalancingv2";
@@ -46,7 +48,7 @@ export class EcsStack extends cdk.Stack {
       instanceType: new InstanceType("t3.micro"),
       desiredCapacity: 1,
       minCapacity: 1,
-      maxCapacity: 10,
+      maxCapacity: 1,
       vpcSubnets: {
         subnetType: SubnetType.PUBLIC,
       },
@@ -56,7 +58,7 @@ export class EcsStack extends cdk.Stack {
       instanceType: new InstanceType("t3.micro"),
       desiredCapacity: 1,
       minCapacity: 1,
-      maxCapacity: 1,
+      maxCapacity: 5,
       vpcSubnets: {
         subnetType: SubnetType.PUBLIC,
       },
@@ -89,10 +91,10 @@ export class EcsStack extends cdk.Stack {
         serviceName: "BackendService",
         desiredCount: 1,
         memoryLimitMiB: 512,
-        cpu: 128,
+        cpu: 256,
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
-          image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.8"),
+          image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.9"),
           containerPort: 3001,
           containerName: "BackendContainer",
           enableLogging: true,
@@ -105,10 +107,10 @@ export class EcsStack extends cdk.Stack {
       }
     );
     // backendServiceSG.connections.allowFrom(this.backendEc2Service.loadBalancer, Port.tcp(3001))
-    // this.backendEc2Service.targetGroup.configureHealthCheck({
-    //   port: '3001',
-    //   path: '/health'
-    // })
+    this.backendEc2Service.targetGroup.configureHealthCheck({
+      interval: Duration.seconds(120),
+      path: '/health'
+    })
 
     this.backendEc2Service.taskDefinition.addToTaskRolePolicy(
       new PolicyStatement({
@@ -146,7 +148,8 @@ export class EcsStack extends cdk.Stack {
         desiredCount: 1,
         memoryLimitMiB: 512,
         cpu: 128,
-        //add health check to the service
+        placementConstraints: [PlacementConstraint.distinctInstances()],
+        placementStrategies: [PlacementStrategy.packedByCpu()],
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           image: ContainerImage.fromRegistry("ahamoudeis/collection_runner_skopos:1.0"),
@@ -161,7 +164,15 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
+    this.collectionRunnerEc2Service.service.autoScaleTaskCount({
+      maxCapacity: 5,
+      minCapacity: 1,
+    })
     // collectionRunnerServiceSG.connections.allowFrom(this.collectionRunnerEc2Service.loadBalancer, Port.tcp(3003))
+    this.collectionRunnerEc2Service.targetGroup.configureHealthCheck({
+      interval: Duration.seconds(120),
+      path: '/health'
+    })
 
     func.addEnvironment(
       "COLLECTION_RUNNER_URI",
