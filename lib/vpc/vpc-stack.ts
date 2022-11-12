@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib'
-import {IpAddresses, Vpc} from 'aws-cdk-lib/aws-ec2'
+import {IpAddresses, Vpc, SubnetType} from 'aws-cdk-lib/aws-ec2'
 import {Construct} from 'constructs'
 
 export class VpcStack extends cdk.Stack {
@@ -11,6 +11,18 @@ export class VpcStack extends cdk.Stack {
       ipAddresses: IpAddresses.cidr('10.0.0.0/16'),
       vpcName: 'SkoposVPC',
       maxAzs: 2,
-    })
+      subnetConfiguration: [
+      {
+        name: "public-subnet-skopos-1",
+        subnetType: SubnetType.PUBLIC,
+        cidrMask: 24,
+      },
+      {
+        name: "isolated-subnet-database-1",
+        subnetType: SubnetType.PRIVATE_ISOLATED,
+        cidrMask: 28,
+      },
+    ],
+  })
   }
 }

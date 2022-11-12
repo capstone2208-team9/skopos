@@ -78,16 +78,6 @@ export class EcsStack extends cdk.Stack {
       },
     });
 
-    // const backendServiceSG = new SecurityGroup(
-    //   this,
-    //   `backend-server-security-group`,
-    //   {
-    //     allowAllOutbound: true,
-    //     securityGroupName: `backend-server-security-group`,
-    //     vpc,
-    //   }
-    // );
-
     this.backendEc2Service = new ApplicationLoadBalancedEc2Service(
       this,
       "BackendEc2Service",
@@ -115,6 +105,10 @@ export class EcsStack extends cdk.Stack {
       }
     );
     // backendServiceSG.connections.allowFrom(this.backendEc2Service.loadBalancer, Port.tcp(3001))
+    // this.backendEc2Service.targetGroup.configureHealthCheck({
+    //   port: '3001',
+    //   path: '/health'
+    // })
 
     this.backendEc2Service.taskDefinition.addToTaskRolePolicy(
       new PolicyStatement({
@@ -152,6 +146,8 @@ export class EcsStack extends cdk.Stack {
         desiredCount: 1,
         memoryLimitMiB: 512,
         cpu: 128,
+        //add health check to the service
+        protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           image: ContainerImage.fromRegistry("ahamoudeis/collection_runner_skopos:1.0"),
           containerPort: 3003,
@@ -176,8 +172,8 @@ export class EcsStack extends cdk.Stack {
       value: this.backendEc2Service.loadBalancer.loadBalancerDnsName,
     });
 
-    new CfnOutput(this, "CollectionRunnerLoadBalancerDNSName", {
-      value: this.collectionRunnerEc2Service.loadBalancer.loadBalancerDnsName,
-    });
+    // new CfnOutput(this, "CollectionRunnerLoadBalancerDNSName", {
+    //   value: this.collectionRunnerEc2Service.loadBalancer.loadBalancerDnsName,
+    // });
   }
 }

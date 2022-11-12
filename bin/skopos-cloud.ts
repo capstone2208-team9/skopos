@@ -9,18 +9,6 @@ import { SkoposCloudStack } from '../lib/skopos-cloud-stack';
 const app = new cdk.App();
 new SkoposCloudStack(app, 'SkoposCloudStack');
 
-// const iam = new IamStack(app, 'IamStack')
-const vpc = new VpcStack(app, 'VpcStack')
-const rds = new RdsStack(app, 'RdsStack', {
-  vpc: vpc.vpc
-})
-
-new EcsStack(app, 'EcsStack', {
-  db: rds.postgresQLInstance,
-  vpc: vpc.vpc,
-  dbCredentials: rds.credentials,
-})
-
 // change lambda env variable for pointing to ecs collection runner
 
 
