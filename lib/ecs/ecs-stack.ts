@@ -32,17 +32,31 @@ export class EcsStack extends cdk.Stack {
     super(scope, id, props);
     const { vpc, db, dbCredentials } = props;
 
-    const cluster = new Cluster(this, "ECSCluster", {
+    const backendCluster = new Cluster(this, "ECSBackendCluster", {
       vpc,
       containerInsights: true,
     });
 
+    const collectionRunnerCluster = new Cluster(this, "ECSCollectionRunnerCluster", {
+      vpc,
+      containerInsights: true,
+    });
     //add capacity to the cluster
-    cluster.addCapacity("DefaultAutoScalingGroup", {
+    backendCluster.addCapacity("DefaultAutoScalingGroup", {
       instanceType: new InstanceType("t3.micro"),
-      desiredCapacity: 2,
-      minCapacity: 2,
-      maxCapacity: 3,
+      desiredCapacity: 1,
+      minCapacity: 1,
+      maxCapacity: 10,
+      vpcSubnets: {
+        subnetType: SubnetType.PUBLIC,
+      },
+    });
+
+    collectionRunnerCluster.addCapacity("DefaultAutoScalingGroup", {
+      instanceType: new InstanceType("t3.micro"),
+      desiredCapacity: 1,
+      minCapacity: 1,
+      maxCapacity: 1,
       vpcSubnets: {
         subnetType: SubnetType.PUBLIC,
       },
@@ -76,16 +90,16 @@ export class EcsStack extends cdk.Stack {
 
     this.backendEc2Service = new ApplicationLoadBalancedEc2Service(
       this,
-      "BackendFargateService",
+      "BackendEc2Service",
       {
-        cluster,
+        cluster: backendCluster,
         publicLoadBalancer: true,
         openListener: true,
         loadBalancerName: "BackendLoadBalancerDNSName",
         serviceName: "BackendService",
         desiredCount: 1,
-        memoryLimitMiB: 1024,
-        cpu: 512,
+        memoryLimitMiB: 512,
+        cpu: 128,
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           image: ContainerImage.fromRegistry("ahamoudeis/backend_skopos:1.8"),
@@ -128,16 +142,16 @@ export class EcsStack extends cdk.Stack {
 
     this.collectionRunnerEc2Service = new ApplicationLoadBalancedEc2Service(
       this,
-      "CollectionRunnerFargateService",
+      "CollectionRunnerEc2Service",
       {
-        cluster,
+        cluster: collectionRunnerCluster,
         publicLoadBalancer: true,
         openListener: true,
         loadBalancerName: "CollectionRunnerDNSName",
         serviceName: "CollectionRunnerService",
         desiredCount: 1,
-        memoryLimitMiB: 1024,
-        cpu: 512,
+        memoryLimitMiB: 512,
+        cpu: 128,
         taskImageOptions: {
           image: ContainerImage.fromRegistry("ahamoudeis/collection_runner_skopos:1.0"),
           containerPort: 3003,
@@ -151,10 +165,10 @@ export class EcsStack extends cdk.Stack {
       }
     );
 
-    // collectionRunnerServiceSG.connections.allowFrom(this.collectionRunnerFargateService.loadBalancer, Port.tcp(3003))
+    // collectionRunnerServiceSG.connections.allowFrom(this.collectionRunnerEc2Service.loadBalancer, Port.tcp(3003))
 
     func.addEnvironment(
-      "" + "COLLECTION_RUNNER_URI",
+      "COLLECTION_RUNNER_URI",
       this.collectionRunnerEc2Service.loadBalancer.loadBalancerDnsName
     );
 
