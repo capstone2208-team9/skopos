@@ -33,7 +33,6 @@ export class RdsStack extends cdk.Stack {
 
     const vpc = props.vpc
 
-
     const dbSecurityGroup = new SecurityGroup(this, 'SkoposDBSecurityGroup', {
       vpc
     })
@@ -67,7 +66,7 @@ export class RdsStack extends cdk.Stack {
       instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),
       credentials: Credentials.fromSecret(databaseCredentialsSecret),
       vpc,
-      vpcSubnets: {subnetType: SubnetType.PUBLIC,},
+      vpcSubnets: {subnetType: SubnetType.PRIVATE_ISOLATED,},
       maxAllocatedStorage: 200,
       allowMajorVersionUpgrade: false,
       backupRetention: cdk.Duration.days(0),
@@ -81,16 +80,16 @@ export class RdsStack extends cdk.Stack {
 
     this.postgresQLInstance = dbInstance
 
-    new CfnOutput(this, 'dbEndpoint', {
-      value: dbInstance.dbInstanceEndpointAddress
-    })
+    // new CfnOutput(this, 'dbEndpoint', {
+    //   value: dbInstance.dbInstanceEndpointAddress
+    // })
 
-    new CfnOutput(this, 'dbCredentials', {
-      value: JSON.stringify(this.credentials)
-    })
+    // new CfnOutput(this, 'dbCredentials', {
+    //   value: JSON.stringify(this.credentials)
+    // })
 
-    new cdk.CfnOutput(this, 'Secret Name', { value: databaseCredentialsSecret.secretName });
-    new cdk.CfnOutput(this, 'Secret ARN', { value: databaseCredentialsSecret.secretArn });
-    new cdk.CfnOutput(this, 'Secret Full ARN', { value: databaseCredentialsSecret.secretFullArn || '' });
+    // new cdk.CfnOutput(this, 'Secret Name', { value: databaseCredentialsSecret.secretName });
+    // new cdk.CfnOutput(this, 'Secret ARN', { value: databaseCredentialsSecret.secretArn });
+    // new cdk.CfnOutput(this, 'Secret Full ARN', { value: databaseCredentialsSecret.secretFullArn || '' });
   }
 }

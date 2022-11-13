@@ -8,6 +8,7 @@ import {VpcStack} from '../lib/vpc/vpc-stack'
 
 const app = new cdk.App();
 
+<<<<<<< HEAD
 const vpc = new VpcStack(app, 'VpcStack')
 const rds = new RdsStack(app, 'RdsStack', {
   vpc: vpc.vpcInstance
@@ -20,6 +21,9 @@ const ecsStack = new EcsStack(app, 'EcsStack', {
 })
 
 const { backendURI, collectionRunnerURI} = ecsStack
+=======
+// change lambda env variable for pointing to ecs collection runner
+>>>>>>> ec2
 
 new ReactStack(app, 'ReactStack', {
   backendURI, collectionRunnerURI
