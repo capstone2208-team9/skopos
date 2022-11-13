@@ -56,7 +56,7 @@ export class EcsStack extends cdk.Stack {
       cpu: 256,
       protocol: ApplicationProtocol.HTTP,
       taskImageOptions: {
-        image: ContainerImage.fromRegistry('kat201/skopos-backend-1.2'),
+        image: ContainerImage.fromRegistry('kat201/skopos-backend:latest'),
         containerPort: 3001,
         containerName: 'BackendContainer',
         enableLogging: true,
@@ -110,7 +110,7 @@ export class EcsStack extends cdk.Stack {
       memoryLimitMiB: 512,
       cpu: 256,
       taskImageOptions: {
-        image: ContainerImage.fromRegistry('kat201/collection-runner1.1'),
+        image: ContainerImage.fromRegistry('kat201/collection-runner-1.2'),
         containerPort: 3003,
         containerName: 'CollectionRunnerContainer',
         enableLogging: true,
@@ -129,7 +129,7 @@ export class EcsStack extends cdk.Stack {
     })
 
     func.addEnvironment('COLLECTION_RUNNER_URI',
-      collectionRunnerFargateService.loadBalancer.loadBalancerDnsName,
+      this.collectionRunnerURI
     )
 
     new CfnOutput(this, 'skopos-backend', {
