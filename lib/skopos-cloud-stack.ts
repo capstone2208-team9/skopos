@@ -10,12 +10,12 @@ export class SkoposCloudStack extends cdk.Stack {
     // const iam = new IamStack(app, 'IamStack')
     const vpc = new VpcStack(scope, 'VpcStack')
     const rds = new RdsStack(scope, 'RdsStack', {
-      vpc: vpc.vpcInstance
+      vpc: vpc.instance
     })
 
     new EcsStack(scope, 'EcsStack', {
       db: rds.postgresQLInstance,
-      vpc: vpc.vpcInstance,
+      vpc: vpc.instance,
       dbCredentials: rds.credentials,
     })
   }

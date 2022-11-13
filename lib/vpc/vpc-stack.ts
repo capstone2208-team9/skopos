@@ -3,11 +3,11 @@ import {IpAddresses, Vpc, SubnetType} from 'aws-cdk-lib/aws-ec2'
 import {Construct} from 'constructs'
 
 export class VpcStack extends cdk.Stack {
-  readonly vpcInstance: Vpc
+  readonly instance: Vpc
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
-    this.vpcInstance = new Vpc(this, 'SkoposVPC', {
+    this.instance = new Vpc(this, 'SkoposVPC', {
       ipAddresses: IpAddresses.cidr('10.0.0.0/16'),
       vpcName: 'SkoposVPC',
       maxAzs: 2,
