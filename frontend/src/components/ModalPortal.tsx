@@ -41,6 +41,5 @@ interface ModalProps {
 }
 
 export default function ModalPortal({id, children}: ModalProps) {
-  console.log('portalId', id)
   return <ReactPortal wrapperId={id}>{children}</ReactPortal>
 }

@@ -63,7 +63,6 @@ export default function MonitorForm({ loading, monitor, onSave = () => {}, onUpd
   };
 
   const collectionOptions = useMemo<{label: string, value: string}[]>(() => {
-    console.log('usememo')
     if (!collectionData) return [];
     return collectionData.collections.map(({ id, title }) => ({ value: id, label: title }));
   }, [collectionData]);

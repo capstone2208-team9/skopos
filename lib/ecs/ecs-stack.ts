@@ -1,9 +1,10 @@
 import * as cdk from 'aws-cdk-lib'
-import {Duration} from 'aws-cdk-lib'
+import {Duration, Stack} from 'aws-cdk-lib'
 import {InstanceType, SubnetType, Vpc} from 'aws-cdk-lib/aws-ec2'
 import {Cluster, ContainerImage, PlacementConstraint, PlacementStrategy,} from 'aws-cdk-lib/aws-ecs'
 import {ApplicationLoadBalancedEc2Service} from 'aws-cdk-lib/aws-ecs-patterns'
 import {ApplicationProtocol} from 'aws-cdk-lib/aws-elasticloadbalancingv2'
+import {Effect, PolicyStatement} from 'aws-cdk-lib/aws-iam'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import {DatabaseInstance} from 'aws-cdk-lib/aws-rds'
 import {Construct} from 'constructs'
@@ -57,6 +58,7 @@ export class EcsStack extends cdk.Stack {
 
     const func = new lambda.Function(this, 'call-collection-runner', {
       runtime: lambda.Runtime.NODEJS_16_X,
+      functionName: 'call-collection-runner',
       memorySize: 1024,
       timeout: cdk.Duration.seconds(5),
       handler: 'index.collectionRunner',
@@ -70,6 +72,7 @@ export class EcsStack extends cdk.Stack {
         ),
       },
     })
+
     this.backendEc2Service = new ApplicationLoadBalancedEc2Service(
       this,
       'BackendEc2Service',
@@ -77,7 +80,7 @@ export class EcsStack extends cdk.Stack {
         cluster: backendCluster,
         publicLoadBalancer: true,
         openListener: true,
-        loadBalancerName: 'BackendLoadBalancerDNSName',
+        loadBalancerName: 'skopos-graphql-lb',
         serviceName: 'BackendService',
         desiredCount: 1,
         memoryLimitMiB: 512,
@@ -93,12 +96,34 @@ export class EcsStack extends cdk.Stack {
             DATABASE_URL: `postgresql://${dbCredentials.username}:${dbCredentials.password}@${db.dbInstanceEndpointAddress}:${db.dbInstanceEndpointPort}/prisma?schema=public&connect_timeout=60`,
             PORT: '3001',
             LAMBDA_ARN: func.functionArn,
-            AWS_REGION: 'us-east-1',
+            AWS_REGION: Stack.of(this).region,
             LAMBDA_FUNCTION_NAME: func.functionName
           },
         },
       }
     )
+    this.backendEc2Service.taskDefinition.addToTaskRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: ['*'],
+        actions: [
+          'events:EnableRule',
+          'events:PutRule',
+          'sns:CreateTopic',
+          'sns:Unsubscribe',
+          'events:DeleteRule',
+          'events:PutTargets',
+          'sns:Publish',
+          'events:ListRuleNamesByTarget',
+          'events:ListRules',
+          'sns:Subscribe',
+          'events:RemoveTargets',
+          'events:ListTargetsByRule',
+          'events:DisableRule',
+          'lambda:AddPermission',
+          'lambda:RemovePermission',
+        ],
+      }))
 
     this.backendEc2Service.targetGroup.configureHealthCheck({
       interval: Duration.seconds(120),
@@ -113,7 +138,7 @@ export class EcsStack extends cdk.Stack {
         cluster: collectionRunnerCluster,
         publicLoadBalancer: true,
         openListener: true,
-        loadBalancerName: 'CollectionRunnerDNSName',
+        loadBalancerName: 'collection-runner-lb',
         serviceName: 'CollectionRunnerService',
         desiredCount: 1,
         memoryLimitMiB: 512,
@@ -123,13 +148,13 @@ export class EcsStack extends cdk.Stack {
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/collection-runner:1.0'),
-          image: ContainerImage.fromRegistry('kat201/collection-runner-1.2'),
+          image: ContainerImage.fromRegistry('kat201/collection-runner:1.0'),
           containerPort: 3003,
           containerName: 'CollectionRunnerContainer',
           enableLogging: true,
           environment: {
-            GRAPHQL_URL: `${this.backendEc2Service.loadBalancer.loadBalancerDnsName}/graphql`,
-            AWS_REGION: 'us-east-1',
+            GRAPHQL_URL: `http://${this.backendEc2Service.loadBalancer.loadBalancerDnsName}/graphql`,
+            AWS_REGION: Stack.of(this).region,
           },
         },
       }
@@ -139,12 +164,14 @@ export class EcsStack extends cdk.Stack {
       maxCapacity: 5,
       minCapacity: 1,
     })
+
     this.collectionRunnerEc2Service.targetGroup.configureHealthCheck({
       interval: Duration.seconds(120),
       path: '/health'
     })
 
     this.collectionRunnerURI = this.collectionRunnerEc2Service.loadBalancer.loadBalancerDnsName
+
     func.addEnvironment(
       'COLLECTION_RUNNER_URI',
       this.collectionRunnerEc2Service.loadBalancer.loadBalancerDnsName
