@@ -1,4 +1,3 @@
-import {CfnOutput} from 'aws-cdk-lib'
 import * as cdk from 'aws-cdk-lib'
 import {
   InstanceClass,
@@ -10,15 +9,10 @@ import {
   SubnetType,
   Vpc
 } from 'aws-cdk-lib/aws-ec2'
-import {
-  Credentials,
-  DatabaseInstance,
-  DatabaseInstanceEngine,
-  PostgresEngineVersion
-} from 'aws-cdk-lib/aws-rds'
+import {Credentials, DatabaseInstance, DatabaseInstanceEngine, PostgresEngineVersion} from 'aws-cdk-lib/aws-rds'
+import {Secret} from 'aws-cdk-lib/aws-secretsmanager'
 import {StringParameter} from 'aws-cdk-lib/aws-ssm'
 import {Construct} from 'constructs'
-import { Secret } from 'aws-cdk-lib/aws-secretsmanager'
 
 export interface RDSStackProps extends cdk.StackProps {
   vpc: Vpc
@@ -59,7 +53,7 @@ export class RdsStack extends cdk.Stack {
       stringValue: databaseCredentialsSecret.secretArn,
     });
 
-    const dbInstance = new DatabaseInstance(this, 'skopos-db', {
+    this.postgresQLInstance = new DatabaseInstance(this, 'skopos-db', {
       engine: DatabaseInstanceEngine.postgres({
         version: PostgresEngineVersion.VER_13_7,
       }),
@@ -77,19 +71,5 @@ export class RdsStack extends cdk.Stack {
       publiclyAccessible: true,
       securityGroups: [dbSecurityGroup]
     })
-
-    this.postgresQLInstance = dbInstance
-
-    // new CfnOutput(this, 'dbEndpoint', {
-    //   value: dbInstance.dbInstanceEndpointAddress
-    // })
-
-    // new CfnOutput(this, 'dbCredentials', {
-    //   value: JSON.stringify(this.credentials)
-    // })
-
-    // new cdk.CfnOutput(this, 'Secret Name', { value: databaseCredentialsSecret.secretName });
-    // new cdk.CfnOutput(this, 'Secret ARN', { value: databaseCredentialsSecret.secretArn });
-    // new cdk.CfnOutput(this, 'Secret Full ARN', { value: databaseCredentialsSecret.secretFullArn || '' });
   }
 }
