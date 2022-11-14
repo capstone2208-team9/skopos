@@ -1,28 +1,13 @@
-# Welcome to your CDK TypeScript project
+This repo uses npm workspaces
 
-This is a blank project for CDK development with TypeScript.
+To install package in specific workspace  
+`npm install -w packages/cdk <package_name>`
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+To install all dependencies
+`npm install`
 
-## Useful commands
+There are a couple of scripts in the base package.json file. Feel free to add more
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
-
-If you don't specify 'env', this stack will be environment-agnostic.
-    * Account/Region-dependent features and context lookups will not work,
-    * but a single synthesized template can be deployed anywhere. */
-
-Uncomment the next line to specialize this stack for the AWS Account
-    * and Region that are implied by the current CLI configuration. */
-      // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-
-Uncomment the next line if you know exactly what Account and Region you
-    * want to deploy the stack to. */
-      // env: { account: '123456789012', region: 'us-east-1' },
-
-For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+packages
+cdk - aws cdk app  
+frontend - skopos react app
