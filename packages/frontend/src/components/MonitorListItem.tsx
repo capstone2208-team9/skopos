@@ -10,12 +10,12 @@ import { Button, Table, Tooltip } from "react-daisyui";
 import { FaSpinner } from "react-icons/fa";
 import { MdDelete, MdEdit, MdHistory } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { ICollection, Monitor } from "types";
+import {ICollection, Monitor, MonitorContactInfo} from 'types'
 
 interface Props {
   schedule: string;
   collections: ICollection[];
-  contactInfo: string;
+  contactInfo: MonitorContactInfo;
   id: number;
 }
 
@@ -42,11 +42,12 @@ export default function MonitorListItem({ schedule, collections, contactInfo, id
     if (deleteError) addToast(deleteError.message, "error");
   }, [deleteError, addToast]);
 
+  console.log(contactInfo)
   return (
     <>
       <Table.Row>
         <span>Running every {schedule}</span>
-        <span>{contactInfo || "No contact info"}</span>
+        <span>{Object.keys(contactInfo).join(', ') || "No contact info"}</span>
         <span className="flex gap-2">
           {collections.map(collection => (
             <span key={collection.id}>{collection.title}</span>

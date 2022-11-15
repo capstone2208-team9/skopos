@@ -44,14 +44,12 @@ export default function CreateMonitor() {
     const variables: any = {
       data: {
         schedule: `${value} ${+value > 1 ? units : units.slice(0, -1)}`,
+        contactInfo,
         collections: {
           connect: collections.map(id => ({id}))
         }
       }
     };
-    if (contactInfo) {
-      variables.data.contactInfo = contactInfo;
-    }
     await addMonitor({ variables });
   };
 
