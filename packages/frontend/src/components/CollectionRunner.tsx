@@ -11,8 +11,10 @@ import { BsCollectionPlay} from 'react-icons/bs'
 
 const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 
+interface CollectionRunnerProps {
+}
 
-export default function CollectionRunner() {
+export default function CollectionRunner({}: CollectionRunnerProps) {
   const {collectionId} = useParams()
   const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, { variables: {
       where: {

@@ -14,7 +14,7 @@ import HeaderList from './HeaderList'
 
 interface Props {
   request?: Request
-  stepNumber?: number
+  stepNumber: number
   onCancel: () => void
   onComplete: () => void
 }
@@ -223,6 +223,10 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
           value={formData.body || ''}
           onValueChange={handleChangeBody}
           padding={10}
+          style={{
+            border: '1px solid #ccc',
+            fontSize: '1rem',
+          }}
         />}
       {tabValue === 2 && <AssertionList assertions={formData.assertions ? formData.assertions : []}
                                         setAssertions={handleAssertionChange}/>}

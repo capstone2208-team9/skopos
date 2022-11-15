@@ -88,13 +88,19 @@ export const UpdateOneMonitor = gql`
 export const UpdateStepNumber = gql`
     mutation UpdateStepNumber($data: RequestUpdateInput!, $where: RequestWhereUniqueInput!) {
         updateOneRequest(data: $data, where: $where) {
-            body
-            headers
             id
-            method
-            stepNumber
             title
+            body
             url
+            method
+            headers
+            stepNumber
+            assertions {
+                id
+                expected
+                property
+                comparison
+            }
         }
     }
 `

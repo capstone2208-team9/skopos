@@ -18,7 +18,7 @@ export default function Collection() {
   const { collectionId } = useParams();
   const [selectedRequest, setSelectedRequest] = useState<Request | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [nextStep, setNextStep] = useState(1);
 
   let { loading, error, data } = useQuery<{ collection: ICollection }>(GetCollection, {
     variables: {
@@ -30,7 +30,7 @@ export default function Collection() {
           stepNumber: "asc"
         }
       ]
-    }
+    },
   });
 
   const [updateStepNumber] = useMutation(UpdateStepNumber, {
@@ -63,9 +63,10 @@ export default function Collection() {
 
   const handleDeleteRequest = async (id: number) => {
     setSelectedRequest(undefined)
-
     if (!data) return
     const remainingRequests = data.collection.requests.filter(r => r.id !== id)
+    setNextStep(remainingRequests.length)
+    console.log('num requests', remainingRequests.length)
     if (remainingRequests.length > 0) {
       const reqs = updateStepNumbers(remainingRequests)
       const promises = reqs.map(r => {
@@ -96,8 +97,10 @@ export default function Collection() {
   };
 
   useEffect(() => {
-    if (data && data.collection) {
-      setCurrentStep(data.collection.requests.length || 1);
+    if (data && data.collection.requests.length > 0) {
+      setNextStep(data.collection.requests.length + 1);
+    } else {
+      setNextStep(1)
     }
   }, [data]);
 
@@ -110,21 +113,23 @@ export default function Collection() {
   if (!data || !data.collection) return <></>;
 
   return (
-    <div className="flex flex-col gap-4 items-center h-full">
-      <section className='flex gap-4 items-center'>
+    <div className="flex flex-col gap-4 text-center items-center h-full z-50">
+      <section className='flex flex-col md:flex-row gap-4 items-center'>
         <h2 className="collection-title text-3xl font-medium">{data.collection.title}</h2>
         <div className="flex items-center gap-2">
           <Tooltip message='See Past Runs'>
-            <Link className='btn btn-sm' to={`/collection-runs/${collectionId}`}>
-              <MdHistory size='20' className='text-white'/>
+            <Link className='link' to={`/collection-runs/${collectionId}`}>
+              <MdHistory size='28' className='text-viridian-green'/>
             </Link>
           </Tooltip>
           <Button className="bg-cadmium-orange" size="sm" onClick={handleAddRequest}>Add Request</Button>
-          <CollectionRunner />
+          {data.collection.requests.length > 0 && (
+            <CollectionRunner />
+          )}
         </div>
       </section>
       {data.collection.requests.length > 0 ? (
-        <ul className="col-span-2">
+        <ul className="col-span-2 w-9/12">
           {data.collection.requests && data.collection.requests.map(request => (
             <CollectionRequestListItem key={request.id} onModalOpen={() => setModalOpen(true)} request={request} onDelete={handleDeleteRequest} onSelect={setSelectedRequest}/>
           ))}
@@ -141,7 +146,7 @@ export default function Collection() {
           </Modal.Header>
           <Modal.Body>
             <RequestForm onCancel={handleCancel} request={selectedRequest}
-                         stepNumber={currentStep}
+                         stepNumber={nextStep}
                          onComplete={toggleOpen} />
           </Modal.Body>
         </Modal>

@@ -28,7 +28,7 @@ export default function Root() {
           </header>
           <main className="mt-16 px-8">
             {location.pathname === '/' ? (<div className='grid place-items-center'>
-              <AddCollection/>
+              <AddCollection />
               <CollectionSVG className='max-w-md'/>
             </div>) : (<Outlet/>)}
           </main>
