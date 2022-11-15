@@ -1,7 +1,7 @@
 import {useMutation} from '@apollo/client'
 import {GetCollection} from 'graphql/queries'
 import {CreateOneRequest, RemoveRequestFromCollection} from 'graphql/mutations'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import {Button, Form, Tabs} from 'react-daisyui'
 import {useParams} from 'react-router-dom'
 import {Assertion, ICollection, Request} from 'types'
@@ -37,6 +37,7 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
 
   const [createRequest, {data, error}] = useMutation(CreateOneRequest, {
     update(cache, {data: {createOneRequest}}) {
+      if (!createOneRequest) return
       const variables = {
         where: {
           id: Number(collectionId),
@@ -63,6 +64,7 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
 
   const [updateRequest, {data: updateData, error: updateError}] = useMutation(RemoveRequestFromCollection, {
     update(cache, {data: {updateOneRequest}}) {
+      if (!updateOneRequest) return
       const variables = {
         where: {
           id: Number(collectionId),
@@ -91,6 +93,14 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
     const {name, value} = e.target
     setFormData({...formData, [name]: name === 'stepNumber' ? Number(value) : value})
   }
+
+  const { title, url, assertions } = formData
+  const { length } = assertions
+
+  const isValid = useMemo(() => {
+    console.log('useMemo')
+    return title && url && length
+  }, [title, url, length]);
 
   const reset = () => {
     setFormData(initialState)
@@ -231,11 +241,15 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
       {tabValue === 2 && <AssertionList assertions={formData.assertions ? formData.assertions : []}
                                         setAssertions={handleAssertionChange}/>}
       {!request && <div className='flex gap-4 ml-auto'>
-        <Button className='bg-sky-blue' type='button' onClick={handleSaveRequest}>Save</Button>
+        <Button className='bg-sky-blue' type='button' onClick={handleSaveRequest}
+                disabled={!isValid}
+        >Save</Button>
         <Button className='bg-cadmium-orange' type='button' onClick={reset}>Reset</Button>
       </div>}
       {request && <div className='flex gap-4 ml-auto'>
-        <Button className='bg-sky-blue' type='button' onClick={handleEditRequest}>Update</Button>
+        <Button className='bg-sky-blue' type='button' onClick={handleEditRequest}
+                disabled={!isValid}
+        >Update</Button>
         <Button className='bg-cadmium-orange' type='button' onClick={handleCancel}>Cancel</Button>
       </div>}
     </Form>

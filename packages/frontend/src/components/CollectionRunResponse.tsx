@@ -9,7 +9,7 @@ interface Props {
 
 export default function CollectionRunResponse({ response }: Props) {
   return (
-    <div>
+    <div className='grid place-items-center'>
       <h2 className='text-xl font-medium my-4'>{response.request.title} Results</h2>
       <Table>
         <Table.Head>
