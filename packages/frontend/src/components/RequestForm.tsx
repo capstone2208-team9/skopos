@@ -1,6 +1,7 @@
 import {useMutation} from '@apollo/client'
 import {GetCollection} from 'graphql/queries'
 import {CreateOneRequest, RemoveRequestFromCollection} from 'graphql/mutations'
+import {updateStepNumbers} from 'lib/updateStepNumbers'
 import React, {useEffect, useMemo, useState} from 'react'
 import {Button, Form, Tabs} from 'react-daisyui'
 import {useParams} from 'react-router-dom'
@@ -53,7 +54,7 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
           query: GetCollection, variables
         }
       ) as { collection: ICollection }
-      const requests = [...collection.requests, createOneRequest]
+      const requests = updateStepNumbers([...collection.requests, createOneRequest])
       cache.writeQuery({
         query: GetCollection,
         variables,
