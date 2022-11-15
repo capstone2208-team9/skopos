@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "build": "tsc",
+    "bootstrap": "cdk bootstrap",
     "deploy": "cdk deploy --all --require-approval never",
     "destroy": "cdk destroy --all"
   },
