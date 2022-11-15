@@ -5,6 +5,9 @@ import React, {useEffect, useState} from 'react'
 import {Button, Form, Tabs} from 'react-daisyui'
 import {useParams} from 'react-router-dom'
 import {Assertion, ICollection, Request} from 'types'
+import {highlight, languages} from 'prismjs'
+import Editor from 'react-simple-code-editor'
+
 
 import AssertionList from './AssertionList'
 import HeaderList from './HeaderList'
@@ -155,6 +158,10 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
     reset()
   }
 
+  const handleChangeBody = (body: string) => {
+    setFormData({...formData, body})
+  }
+
   useEffect(() => {
     if (updateData || data) {
       reset()
@@ -211,12 +218,12 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
         <HeaderList headers={formData.headers ? formData.headers : []} setHeaders={handleHeaderChange}/>}
 
       {tabValue === 1 &&
-        <div className='form-group'>
-          <label className='label' htmlFor='body'>
-            <textarea cols={26} className='textarea textarea-bordered' id='body' name='body' value={formData.body}
-                      onChange={handleSingleChange}/>
-          </label>
-        </div>}
+        <Editor
+          highlight={code => highlight(code, languages.js, 'js')}
+          value={formData.body || ''}
+          onValueChange={handleChangeBody}
+          padding={10}
+        />}
       {tabValue === 2 && <AssertionList assertions={formData.assertions ? formData.assertions : []}
                                         setAssertions={handleAssertionChange}/>}
       {!request && <div className='flex gap-4 ml-auto'>

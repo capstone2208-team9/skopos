@@ -14,7 +14,6 @@ interface Props {
   onUpdate?: (input: MonitorUpdateInput) => void;
 }
 
-type CollectionData = { collections: Pick<ICollection, "id" | "title" | "monitors">[] }
 type SelectOptions = { label: string, value: string }
 const units = ["minutes", "hours", "days"];
 const unitOptions: SelectOptions[] = units.map(unit => ({ value: unit, label: unit.toUpperCase() }));

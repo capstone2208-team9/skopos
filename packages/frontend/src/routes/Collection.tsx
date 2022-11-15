@@ -1,18 +1,25 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import CollectionRequestListItem from "components/CollectionRequestListItem";
 import CollectionRunner from "components/CollectionRunner";
 import ModalPortal from "components/ModalPortal";
+import {UpdateStepNumber} from 'graphql/mutations'
 import { GetCollection} from "graphql/queries";
+import {updateStepNumbers} from 'lib/updateStepNumbers'
 import { useCallback, useEffect, useState } from "react";
-import { Button, Modal } from "react-daisyui";
+import { Button, Modal, Tooltip  } from "react-daisyui";
 import { FaSpinner } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { ICollection, Request } from "types";
 import { ReactComponent as Empty } from 'assets/undraw_not_found_re_44w9.svg'
 import RequestForm from "../components/RequestForm";
+import { MdHistory } from "react-icons/md";
 
 export default function Collection() {
   const { collectionId } = useParams();
+  const [selectedRequest, setSelectedRequest] = useState<Request | undefined>();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+
   let { loading, error, data } = useQuery<{ collection: ICollection }>(GetCollection, {
     variables: {
       where: {
@@ -26,15 +33,58 @@ export default function Collection() {
     }
   });
 
-  const [selectedRequest, setSelectedRequest] = useState<Request | undefined>();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [updateStepNumber] = useMutation(UpdateStepNumber, {
+    update(cache, {data: {updateOneRequest}}) {
+      const {collection} = cache.readQuery<{collection: ICollection}>({query: GetCollection, variables: {
+          where: {
+            id: Number(collectionId)
+          },
+          orderBy: [
+            {
+              stepNumber: "asc"
+            }
+          ]
+        }
+      }) || {}
+      if (!collection) return
+      const requests = collection.requests.map(r => r.id === updateOneRequest.id ? updateOneRequest : r)
+      cache.writeQuery({
+        query: GetCollection,
+        data: {collection: {...collection, requests}}
+      })
+    },
+  })
 
   const toggleOpen = () => setModalOpen(prev => !prev);
 
   const handleAddRequest = () => {
     setModalOpen(true);
   };
+
+  const handleDeleteRequest = async (id: number) => {
+    setSelectedRequest(undefined)
+
+    if (!data) return
+    const remainingRequests = data.collection.requests.filter(r => r.id !== id)
+    if (remainingRequests.length > 0) {
+      const reqs = updateStepNumbers(remainingRequests)
+      const promises = reqs.map(r => {
+        return updateStepNumber({
+          variables: {
+            data: {
+              stepNumber: {
+                set: r.stepNumber
+              }
+            },
+            where: {
+              id: r.id
+            }
+          }
+        })
+      })
+      await Promise.all(promises)
+    }
+  }
 
   const handleCancel = useCallback(() => {
     setModalOpen(false);
@@ -64,6 +114,11 @@ export default function Collection() {
       <section className='flex gap-4 items-center'>
         <h2 className="collection-title text-3xl font-medium">{data.collection.title}</h2>
         <div className="flex items-center gap-2">
+          <Tooltip message='See Past Runs'>
+            <Link className='btn btn-sm' to={`/collection-runs/${collectionId}`}>
+              <MdHistory size='20' className='text-white'/>
+            </Link>
+          </Tooltip>
           <Button className="bg-cadmium-orange" size="sm" onClick={handleAddRequest}>Add Request</Button>
           <CollectionRunner />
         </div>
@@ -71,7 +126,7 @@ export default function Collection() {
       {data.collection.requests.length > 0 ? (
         <ul className="col-span-2">
           {data.collection.requests && data.collection.requests.map(request => (
-            <CollectionRequestListItem key={request.id} onModalOpen={() => setModalOpen(true)} request={request} onSelect={setSelectedRequest}/>
+            <CollectionRequestListItem key={request.id} onModalOpen={() => setModalOpen(true)} request={request} onDelete={handleDeleteRequest} onSelect={setSelectedRequest}/>
           ))}
         </ul>
       ) : (

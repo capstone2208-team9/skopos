@@ -5,7 +5,7 @@ import { ReactComponent as MonitorSVG } from "assets/undraw_surveillance_re_8tkl
 import MonitorListItem from "components/MonitorListItem";
 import { GetMonitors } from "graphql/queries";
 import { useToast } from "hooks/ToastProvider";
-import { useEffect } from "react";
+import {useEffect, useMemo} from 'react'
 import { Link } from "react-router-dom";
 import { Monitor } from "types";
 
@@ -20,6 +20,15 @@ export default function Monitors() {
     }
   });
   const { addToast } = useToast();
+
+  const className = useMemo(() => {
+    const canAdd =  data?.monitors.flatMap(m => m.collections).some(col => !col.monitorId)
+    let cName = 'ml-auto mb-4 btn bg-sky-blue'
+    if (!canAdd) {
+      cName += ' pointer-events-none opacity-50'
+    }
+    return cName
+  }, [data])
 
   useEffect(() => {
     if (error) addToast(error.message, "error");
@@ -43,7 +52,7 @@ export default function Monitors() {
 
   return (
     <div className='grid place-items-center'>
-      <Link to='new' className='ml-auto mb-4 btn bg-sky-blue'>Add Monitor</Link>
+      <Link to='new' className={className}>Add Monitor</Link>
       <Table compact>
         <Table.Head className='text-center'>
           <span>Schedule</span>

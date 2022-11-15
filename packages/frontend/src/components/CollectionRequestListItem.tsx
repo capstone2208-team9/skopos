@@ -1,17 +1,18 @@
 import { useMutation } from "@apollo/client";
 import { GetCollection} from "graphql/queries";
-import { RemoveRequestFromCollection } from 'graphql/mutations'
-import { Badge, Button, ButtonGroup, Tooltip } from "react-daisyui";
-import { MdDelete, MdEdit, MdHistory } from "react-icons/md";
-import { Link, useParams } from "react-router-dom";
+import {RemoveRequestFromCollection} from 'graphql/mutations'
+import { Badge, Button, ButtonGroup} from "react-daisyui";
+import { MdDelete, MdEdit} from "react-icons/md";
+import { useParams } from "react-router-dom";
 import { ICollection, Request } from "types";
 
 interface Props {
   request: Request
   onSelect: (request?: Request) => void
+  onDelete: (id: number) => void
   onModalOpen: () => void
 }
-export default function CollectionRequestListItem({request, onSelect, onModalOpen}: Props) {
+export default function CollectionRequestListItem({request, onDelete, onSelect, onModalOpen}: Props) {
   const { collectionId } = useParams();
   const [deleteRequest] = useMutation(RemoveRequestFromCollection, {
     update(cache, { data: { updateOneRequest } }) {
@@ -55,7 +56,7 @@ export default function CollectionRequestListItem({request, onSelect, onModalOpe
         }
       }
     });
-    onSelect(undefined);
+    onDelete(id);
   };
 
   const handleClickEdit = (request: Request) => {
@@ -69,11 +70,6 @@ export default function CollectionRequestListItem({request, onSelect, onModalOpe
                  {request.stepNumber}
                </Badge> {request.title}</span>
       <ButtonGroup className='ml-4'>
-        <Tooltip message='See Past Runs'>
-          <Link className='btn btn-ghost btn-sm' to={`/collection-runs/${collectionId}`}>
-            <MdHistory size='20' className='text-viridian-green'/>
-          </Link>
-        </Tooltip>
         <Button size="sm" color="ghost" type="button" onClick={() => handleClickEdit(request)}><MdEdit
           size='20' className="text-sky-blue text-xl" /></Button>
         <Button size="sm" color="ghost" type="button" onClick={() => handleClickDelete(request.id)}><MdDelete
