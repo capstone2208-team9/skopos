@@ -1,7 +1,7 @@
-import chalk from "chalk";
-import path from "path";
-import fs from "fs-extra";
-import crypto from "crypto";
+import * as chalk from "chalk";
+import * as path from "path";
+import * as fs from "fs-extra";
+import * as crypto from "crypto";
 import { execSync } from "child_process";
 import { Construct } from "constructs";
 import {
