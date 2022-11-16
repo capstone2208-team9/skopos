@@ -47,7 +47,7 @@ export default function MonitorListItem({ schedule, collections, contactInfo, id
     <>
       <Table.Row>
         <span>Running every {schedule}</span>
-        <span>{Object.keys(contactInfo).join(', ') || "No contact info"}</span>
+        <span className='capitalize'>{Object.keys(contactInfo).join(', ') || "No contact info"}</span>
         <span className="flex gap-2">
           {collections.map(collection => (
             <span key={collection.id}>{collection.title}</span>

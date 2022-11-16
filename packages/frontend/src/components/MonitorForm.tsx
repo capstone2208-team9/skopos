@@ -66,7 +66,11 @@ export default function MonitorForm({
   const {length } = collections
 
   useEffect(() => {
-    setDisabled(!value || !units || !length)
+    let isDisabled = !value || !units
+    if (!monitor) {
+      isDisabled = length === 0
+    }
+    setDisabled(isDisabled)
   }, [value, units, length])
 
 

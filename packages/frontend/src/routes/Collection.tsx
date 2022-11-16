@@ -114,7 +114,7 @@ export default function Collection() {
 
   return (
     <div className="flex flex-col gap-4 text-center items-center h-full z-50">
-      <section className='flex flex-col md:flex-row gap-4 items-center'>
+      <section className='flex flex-col md:flex-row gap-4 items-center mb-8'>
         <h2 className="collection-title text-3xl font-medium">{data.collection.title}</h2>
         <div className="flex items-center gap-2">
           <Tooltip message='See Past Runs'>

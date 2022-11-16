@@ -26,7 +26,7 @@ export default function Root() {
               <Logo height={64} width={64}/>
             </Link>
           </header>
-          <main className="mt-16 px-8">
+          <main className="px-8">
             {location.pathname === '/' ? (<div className='grid place-items-center'>
               <AddCollection />
               <CollectionSVG className='max-w-md'/>
