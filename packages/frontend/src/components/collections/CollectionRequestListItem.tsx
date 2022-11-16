@@ -66,7 +66,7 @@ export default function CollectionRequestListItem({request, onDelete, onSelect, 
 
   return (
     <li className="flex justify-start gap-4 mb-2 text-xl border-b py-2" key={request.id}>
-                 <Badge className='mr-4 rounded-full w-6 h-6 bg-viridian-green'>
+                 <Badge className='mr-4 rounded-full w-6 h-6 bg-sky-blue'>
                  {request.stepNumber}
                </Badge> {request.title}
       <ButtonGroup className='ml-auto'>

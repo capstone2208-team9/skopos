@@ -19,6 +19,8 @@ interface Props {
   id: number;
 }
 
+const ICON_SIZE = 24
+
 export default function MonitorListItem({ schedule, collections, contactInfo, id }: Props) {
   const [deleteModalOpen, toggleDeleteModalOpen] = useModal();
   const { addToast } = useToast();
@@ -42,12 +44,11 @@ export default function MonitorListItem({ schedule, collections, contactInfo, id
     if (deleteError) addToast(deleteError.message, "error");
   }, [deleteError, addToast]);
 
-  console.log(contactInfo)
   return (
     <>
       <Table.Row>
         <span>Running every {schedule}</span>
-        <span className='capitalize'>{Object.keys(contactInfo).join(', ') || "No contact info"}</span>
+        <span className='capitalize'>{Object.keys(contactInfo || {}).join(', ') || "No contact info"}</span>
         <span className="flex gap-2">
           {collections.map(collection => (
             <span key={collection.id}>{collection.title}</span>
@@ -56,13 +57,13 @@ export default function MonitorListItem({ schedule, collections, contactInfo, id
         <div className="flex gap-2 items-center">
           <Tooltip message="View History">
             <Link className="btn btn-ghost" to={`/monitors/${id}`}>
-              <MdHistory size="20" className="text-accent" />
+              <MdHistory size={ICON_SIZE} className="text-accent" />
             </Link>
           </Tooltip>
           <Link className='btn btn-ghost' to={`/monitors/${id}/edit`}>
-            <MdEdit size="20" className="text-primary" />
+            <MdEdit size={ICON_SIZE} className="text-sky-blue" />
           </Link>
-          <Button startIcon={<MdDelete size="20" className="text-error" />} color="ghost" size="md"
+          <Button startIcon={<MdDelete size={ICON_SIZE} className="text-error" />} color="ghost" size="md"
                   onClick={toggleDeleteModalOpen}
           >{deleting && <FaSpinner className="animate-spin" />}</Button>
         </div>

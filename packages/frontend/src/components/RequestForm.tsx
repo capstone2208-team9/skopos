@@ -99,7 +99,6 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
   const { length } = assertions
 
   const isValid = useMemo(() => {
-    console.log('useMemo')
     return title && url && length
   }, [title, url, length]);
 

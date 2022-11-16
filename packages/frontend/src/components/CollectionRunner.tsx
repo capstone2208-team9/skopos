@@ -51,7 +51,7 @@ export default function CollectionRunner({}: CollectionRunnerProps) {
   if (loading) return <p>Loading...</p>
   if (!data) return <Button startIcon={<BsCollectionPlay/>}
                             onClick={handleRunCollection}
-                            className='bg-viridian-green'
+                            className='bg-sky-blue'
                             size='sm'
   ><span className='ml-2'>Run</span></Button>
   if (error) return <p>Error {error.message}</p>

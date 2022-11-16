@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@apollo/client";
-import CollectionRequestListItem from "components/CollectionRequestListItem";
+import CollectionRequestListItem from "components/collections/CollectionRequestListItem";
 import CollectionRunner from "components/CollectionRunner";
 import ModalPortal from "components/ModalPortal";
 import {UpdateStepNumber} from 'graphql/mutations'
@@ -117,9 +117,9 @@ export default function Collection() {
       <section className='flex gap-8 items-center mb-8'>
         <h2 className="collection-title text-3xl font-medium">{data.collection.title}</h2>
         <div className="flex items-center gap-4">
-          <Tooltip message='See Past Runs'>
-            <Link className='link' to={`/collection-runs/${collectionId}`}>
-              <MdHistory size='28' className='text-viridian-green'/>
+          <Tooltip className='text-sky-blue hover:text-cadmium-orange hover:scale-105' message='See Past Runs'>
+            <Link className='link text-inherit' to={`/collection-runs/${collectionId}`}>
+              <MdHistory size='28' className='fill-current'/>
             </Link>
           </Tooltip>
           <Button className="bg-cadmium-orange" size="sm" onClick={handleAddRequest}>Add Request</Button>

@@ -1,7 +1,7 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import AddCollection from "components/AddCollection";
+import AddCollection from "components/collections/AddCollection";
 import { ToastProvider } from "hooks/ToastProvider";
 import { BrowserRouter } from "react-router-dom";
 

@@ -51,7 +51,7 @@ export default function Monitors() {
   }
 
   return (
-    <div className='grid place-items-center'>
+    <div className='grid place-items-center min-w-[768px] overflow-x-auto'>
       <Link to='new' className={className}>Add Monitor</Link>
       <Table compact>
         <Table.Head className='text-center'>

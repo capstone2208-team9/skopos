@@ -28,9 +28,9 @@ const defaultUnitOption = (schedule: string) => {
 }
 
 export default function MonitorForm({
-                                      loading, monitor,
-                                      onSave = () => {},
-                                      onUpdate = () => {}}: Props) {
+  loading, monitor,
+  onSave = () => {},
+  onUpdate = () => {}}: Props) {
   const [collections, setCollections] = useState<string[]>([])
   const [contactInfo, setContactInfo] = useState<MonitorContactInfo>(monitor?.contactInfo || {})
   const [value, setValue] = useState(monitor?.schedule.split(' ')[0] || '')

@@ -15,6 +15,11 @@ export default function CollectionForm({collection, show, onClose}: Props) {
   const [title, setTitle] = useState(collection?.title || '')
   const [updateCollectionTitle] =
     useMutation(UpdateCollectionTitle);
+  
+  const handleClose = () => {
+    setTitle('')
+    onClose()
+  }
 
   const handleSaveTitle: React.FormEventHandler = async (e) => {
     e.preventDefault()
@@ -30,7 +35,7 @@ export default function CollectionForm({collection, show, onClose}: Props) {
         },
       },
     })
-    onClose()
+    handleClose
   }
 
   useEffect(() => {
@@ -57,7 +62,7 @@ export default function CollectionForm({collection, show, onClose}: Props) {
         </Modal.Body>
         <Modal.Actions>
           <Button type='submit' form='rename-collection' className='mx-2' color='primary'>Save</Button>
-          <Button type='button' color='secondary' onClick={onClose}>Cancel</Button>
+          <Button type='button' color='secondary' onClick={handleClose}>Cancel</Button>
         </Modal.Actions>
       </Modal>
 

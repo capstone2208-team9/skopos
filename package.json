@@ -1,7 +1,9 @@
 {
   "version": "0.1.0",
   "private": true,
-
+  "scripts": {
+    "dev:frontend": "npm run start -w packages/frontend"
+  },
   "workspaces": [
     "./packages/*"
   ]
