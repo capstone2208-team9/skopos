@@ -8,7 +8,7 @@ import {Dropdown } from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
 import {HiOutlineFolder} from 'react-icons/hi'
 import {MdDelete, MdEdit} from 'react-icons/md'
-import {RiMore2Line} from 'react-icons/ri'
+import {MdMoreVert} from 'react-icons/md'
 import {NavLink, Outlet, useLocation, useNavigate} from 'react-router-dom'
 import {ICollection} from 'types'
 import {ReactComponent as CollectionImage} from 'assets/undraw_collecting_re_lp6p.svg'
@@ -37,7 +37,7 @@ export default function Collections() {
   return (
     <div className='grid grid-cols-12 min-w-[768px]'>
       <div className='col-span-3 md:col-span-2'>
-        <div className='flex'>
+        <div className='flex gap-4'>
           <h2 id='collection-heading' className='text-xl mb-4 font-medium'>Collections</h2>
           <AddCollection buttonSize='sm' compact />
         </div>
@@ -45,13 +45,13 @@ export default function Collections() {
           {loading && <><span className='sr-only'>Loading</span><FaSpinner /></>}
           {data && data.collections.map(collection => (
             <li className='flex items-center text-lg whitespace-nowrap' key={collection.id}>
-              <NavLink to={collection.id.toString()} className={({isActive}) => isActive ? `flex items-center gap-2 text-viridian-green font-medium` : `flex text-dark-green items-center gap-2`}>
-                <HiOutlineFolder size='26'/>
-                <span className='hover:scale-105 transition-transform transition-400'>{collection.title}</span>
+              <NavLink to={collection.id.toString()} className={({isActive}) => isActive ? `group flex items-center gap-2 text-viridian-green font-medium` : `group flex text-dark-green items-center gap-2`}>
+                <HiOutlineFolder className='group-hover:scale-105' size='26'/>
+                <span className='group-hover:scale-105 transition-transform transition-400'>{collection.title}</span>
               </NavLink>
               <Dropdown horizontal='right'>
                 <Dropdown.Toggle size='xs' color='ghost' className='ml-1'>
-                  <RiMore2Line size='18'/>
+                  <MdMoreVert size='18'/>
                 </Dropdown.Toggle>
                 <Dropdown.Menu className='shadow-xl bg-base-100'>
                   <Dropdown.Item className='text-primary' onClick={() => setEditCollection(collection)}><MdEdit/> Edit</Dropdown.Item>
@@ -71,7 +71,7 @@ export default function Collections() {
         </ul>
       </div>
 
-      <div className='col-span-9'>
+      <div className='col-span-9 self-center'>
         {pathname === '/collections' ? (
           <CollectionImage className='max-w-full'/>
         ) : (<Outlet/>)}

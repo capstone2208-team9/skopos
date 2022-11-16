@@ -63,7 +63,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
     <>
       {compact ? (
           <Tooltip className={className} message='Add a collection'>
-            <Button size={buttonSize} className={`ml-auto bg-sky-blue`} onClick={() => setOpen(true)}>
+            <Button size={buttonSize} className={`ml-auto bg-viridian-green border-none`} onClick={() => setOpen(true)}>
               <HiOutlineFolderAdd size='24'/>
             </Button>
           </Tooltip>

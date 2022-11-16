@@ -113,10 +113,10 @@ export default function Collection() {
   if (!data || !data.collection) return <></>;
 
   return (
-    <div className="flex flex-col gap-4 text-center items-center h-full z-50">
-      <section className='flex flex-col md:flex-row gap-4 items-center mb-8'>
+    <div className="flex flex-col gap-4 items-center">
+      <section className='flex gap-8 items-center mb-8'>
         <h2 className="collection-title text-3xl font-medium">{data.collection.title}</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Tooltip message='See Past Runs'>
             <Link className='link' to={`/collection-runs/${collectionId}`}>
               <MdHistory size='28' className='text-viridian-green'/>
