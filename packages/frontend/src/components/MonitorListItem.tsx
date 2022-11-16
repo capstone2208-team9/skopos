@@ -44,11 +44,13 @@ export default function MonitorListItem({ schedule, collections, contactInfo, id
     if (deleteError) addToast(deleteError.message, "error");
   }, [deleteError, addToast]);
 
+  const info = contactInfo ? Object.keys(contactInfo).join(', ') : 'N/A'
+
   return (
     <>
       <Table.Row>
         <span>Running every {schedule}</span>
-        <span className='capitalize'>{Object.keys(contactInfo || {}).join(', ') || "No contact info"}</span>
+        <span className='capitalize'>{info}</span>
         <span className="flex gap-2">
           {collections.map(collection => (
             <span key={collection.id}>{collection.title}</span>

@@ -37,19 +37,21 @@ export default function EditMonitor() {
     if (units.endsWith("s") && value === "1") {
       unit = unit.slice(0, -1);
     }
-    const variables = {
+    const variables: any = {
       data: {
         schedule: {
           set: `${value} ${unit}`
         },
-        contactInfo: {
-          set: contactInfo
-        }
       },
       where: {
         id
       }
     };
+    if (contactInfo && Object.keys(contactInfo).length > 0) {
+      variables.data.contactInfo = {
+        set: contactInfo
+      }
+    }
     await updateMonitor(
       { variables }
     );

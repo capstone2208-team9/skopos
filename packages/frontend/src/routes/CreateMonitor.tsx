@@ -30,7 +30,8 @@ export default function CreateMonitor() {
         }
       });
       cache.writeQuery({ query: GetCollectionNames, variables, data: {
-          collections: getCollectionNames?.collections.filter(collection => !createOneMonitor.collections.includes(collection.id))
+          collections: getCollectionNames?.collections
+            .filter(collection => !createOneMonitor.collections.includes(collection.id))
         } })
       if (!monitorQuery) return;
       cache.writeQuery({
@@ -44,12 +45,14 @@ export default function CreateMonitor() {
     const variables: any = {
       data: {
         schedule: `${value} ${+value > 1 ? units : units.slice(0, -1)}`,
-        contactInfo,
         collections: {
           connect: collections.map(id => ({id}))
         }
       }
     };
+    if (contactInfo && Object.keys(contactInfo).length > 0) { // only add contactInfo if values provided
+      variables.data.contactInfo = contactInfo
+    }
     await addMonitor({ variables });
   };
 

@@ -22,7 +22,10 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
   const [createCollection, { data, error, loading}] =
     useMutation(CreateCollection, {
       update(cache, {data: {createOneCollection}}) {
-        const existingCollectionNames = cache.readQuery({query: GetCollectionNames}) as {collections: Pick<ICollection, 'id'| 'title'>[]}
+        if (!createOneCollection) return
+        let existingCollectionNames = cache.readQuery<any>({query: GetCollectionNames})
+        if (!existingCollectionNames) return
+        existingCollectionNames = existingCollectionNames as {collections: Pick<ICollection, 'id'| 'title'>[]}
         const collections = [...existingCollectionNames.collections, createOneCollection] || [createOneCollection]
         cache.writeQuery({
           query: GetCollectionNames,
