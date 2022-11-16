@@ -12,7 +12,7 @@ export async function executeCommand(cwd: string, command: string) {
   process.stdout.on('data', (data: string) =>
     console.log(chalk.blueBright(data.toString())))
 
-  process.stdout.on('data', (data: string) =>
+  process.stderr.on('data', (data: string) =>
     console.log(chalk.redBright(data.toString())))
 
   process.stdout.on('exit', (code) =>
