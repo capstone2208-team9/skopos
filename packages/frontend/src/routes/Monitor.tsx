@@ -41,8 +41,8 @@ export default function Monitor() {
       <div className='flex items-center gap-4'>
         <Button size='sm' className='bg-cadmium-orange' onClick={() => navigate(-1)}>Back</Button>
         <Tooltip message='Last 5 runs'>
-          <Button size='sm' className='bg-viridian-green' onClick={() => refetch()}>
-            {loading ? (<Loader size='20'/>) : (
+          <Button size='sm' className='bg-viridian-green' disabled={loading} onClick={() => refetch()}>
+            {loading ? (<Loader size='24'/>) : (
               <IoMdRefresh size='24' className='text-white'/>
             )}
           </Button>
@@ -52,7 +52,7 @@ export default function Monitor() {
         return (<div className='self-center' key={collection.id}>
           <h2 className='text-2xl font-bold'>{collection.title}</h2>
           {collection.collectionRuns.map(run => (<CollectionRun key={run.id}
-                                                                          collectionRun={run}
+                                                                collectionRun={run}
           />))}
         </div>)
       })}

@@ -25,7 +25,7 @@ export function useAddMonitor() {
     return canAdd ? (
       <Component className={cName}/>
     ) : (
-      <Tooltip message='Add new collection to create a monitor'>
+      <Tooltip className='ml-auto' message='All collections currently have monitors'>
         <Component className={cName}/>
       </Tooltip>
     )

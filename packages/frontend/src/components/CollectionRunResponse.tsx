@@ -40,20 +40,3 @@ export default function CollectionRunResponse({ response }: Props) {
     </div>
   );
 }
-
-// use card or table?
-// <Card key={response.id}>
-//   <Card.Body>
-//     <h2>{response.request.title}</h2>
-//     <p>Response Time: {response.latency}</p>
-//     {response.assertionResults.map(result => (
-//       <p key={result.id}
-//          className={`${result.pass ? "text-green-500" : "text-red-500"}`}
-//       >
-//         {/*Expected {result.assertion.expected}*/}
-//         {result.assertion.property} was {result.actual}
-//       </p>
-//     ))}
-//   </Card.Body>
-// </Card>
-
