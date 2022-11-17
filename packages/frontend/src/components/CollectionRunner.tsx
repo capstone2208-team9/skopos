@@ -11,8 +11,10 @@ import { BsCollectionPlay} from 'react-icons/bs'
 
 const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 
+interface CollectionRunnerProps {
+}
 
-export default function CollectionRunner() {
+export default function CollectionRunner({}: CollectionRunnerProps) {
   const {collectionId} = useParams()
   const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, { variables: {
       where: {
@@ -49,7 +51,7 @@ export default function CollectionRunner() {
   if (loading) return <p>Loading...</p>
   if (!data) return <Button startIcon={<BsCollectionPlay/>}
                             onClick={handleRunCollection}
-                            className='bg-viridian-green'
+                            className='bg-sky-blue'
                             size='sm'
   ><span className='ml-2'>Run</span></Button>
   if (error) return <p>Error {error.message}</p>

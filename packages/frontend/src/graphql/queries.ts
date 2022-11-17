@@ -188,7 +188,6 @@ export const GetCollectionsWithoutMonitors = gql`
         collections(where: $where) {
             id
             title
-            monitorId
         }
     }
 `;

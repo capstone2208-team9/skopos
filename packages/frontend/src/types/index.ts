@@ -29,7 +29,8 @@ export interface ICollection {
   title: string;
   requests: Request[];
   collectionRuns: CollectionRun[]
-  monitors: Monitor[]
+  monitorId?: number
+  monitor?: Monitor
 }
 
 export interface Request {
@@ -67,15 +68,28 @@ export interface CollectionRun {
   responses: Response[]
 }
 
+export enum MonitorAlert {
+  email = 'email',
+  pagerDuty = 'pagerDuty',
+  slack = 'slack'
+}
+
+export interface MonitorContactInfo {
+  email?: string
+  pagerDuty?: string
+  slack?: string
+}
+
+
 export interface Monitor {
   id: number
   schedule: string
-  contactInfo: string
+  contactInfo: MonitorContactInfo
   collections: ICollection[]
 }
 
 export interface MonitorCreateInput {
-  contactInfo?: string
+  contactInfo?: MonitorContactInfo
   value: string
   units: string
   collections: number[]

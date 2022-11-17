@@ -1,13 +1,14 @@
 import Loader from "components/Loader";
+import AddMonitor from 'components/monitors/AddMonitor'
+import {GetMonitors} from 'graphql/queries'
 import { Table } from "react-daisyui";
-import { useQuery } from "@apollo/client";
 import { ReactComponent as MonitorSVG } from "assets/undraw_surveillance_re_8tkl.svg";
 import MonitorListItem from "components/MonitorListItem";
-import { GetMonitors } from "graphql/queries";
 import { useToast } from "hooks/ToastProvider";
-import { useEffect } from "react";
+import {useEffect} from 'react'
 import { Link } from "react-router-dom";
-import { Monitor } from "types";
+import { useQuery } from "@apollo/client";
+import {Monitor} from 'types'
 
 export default function Monitors() {
   const { data, error, loading } = useQuery<{ monitors: Monitor[] }>(GetMonitors, {
@@ -25,11 +26,9 @@ export default function Monitors() {
     if (error) addToast(error.message, "error");
   }, [error, addToast]);
 
-  if (loading || !data) return <Loader/>
-  if (error) return <></>
-  if (!data) return <></>
+  if (loading) return <Loader/>
 
-  if (data.monitors.length === 0) {
+  if (data?.monitors.length === 0) {
     return (
       <div className="flex flex-col">
         <h2 className="text-2xl font-medium">Monitors</h2>
@@ -42,8 +41,8 @@ export default function Monitors() {
   }
 
   return (
-    <div className='grid place-items-center'>
-      <Link to='new' className='ml-auto mb-4 btn bg-sky-blue'>Add Monitor</Link>
+    <div className='grid place-items-center min-w-[768px] overflow-x-auto'>
+      <AddMonitor/>
       <Table compact>
         <Table.Head className='text-center'>
           <span>Schedule</span>
@@ -52,7 +51,7 @@ export default function Monitors() {
           <span>Actions</span>
         </Table.Head>
         <Table.Body>
-          {data.monitors.map(monitor => (<MonitorListItem key={monitor.id} {...monitor}/>))}
+          {data?.monitors.map(monitor => (<MonitorListItem key={monitor.id} {...monitor}/>))}
         </Table.Body>
       </Table>
     </div>

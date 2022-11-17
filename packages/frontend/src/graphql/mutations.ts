@@ -42,7 +42,18 @@ export const RemoveRequestFromCollection = gql`
     mutation UpdateOneRequest($data: RequestUpdateInput!, $where: RequestWhereUniqueInput!) {
         updateOneRequest(data: $data, where: $where) {
             id
-            collectionId
+            title
+            body
+            url
+            method
+            headers
+            stepNumber
+            assertions {
+                id
+                expected
+                property
+                comparison
+            }
         }
     }
 `
@@ -63,6 +74,8 @@ export const CreateOneMonitor = gql`
             contactInfo
             collections {
                 id
+                title
+                monitorId
             }
         }
     }`;
@@ -84,4 +97,24 @@ export const UpdateOneMonitor = gql`
         }
     }
 `;
+
+export const UpdateStepNumber = gql`
+    mutation UpdateStepNumber($data: RequestUpdateInput!, $where: RequestWhereUniqueInput!) {
+        updateOneRequest(data: $data, where: $where) {
+            id
+            title
+            body
+            url
+            method
+            headers
+            stepNumber
+            assertions {
+                id
+                expected
+                property
+                comparison
+            }
+        }
+    }
+`
 

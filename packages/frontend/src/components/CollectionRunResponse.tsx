@@ -9,7 +9,7 @@ interface Props {
 
 export default function CollectionRunResponse({ response }: Props) {
   return (
-    <div>
+    <div className='grid place-items-center'>
       <h2 className='text-xl font-medium my-4'>{response.request.title} Results</h2>
       <Table>
         <Table.Head>
@@ -40,20 +40,3 @@ export default function CollectionRunResponse({ response }: Props) {
     </div>
   );
 }
-
-// use card or table?
-// <Card key={response.id}>
-//   <Card.Body>
-//     <h2>{response.request.title}</h2>
-//     <p>Response Time: {response.latency}</p>
-//     {response.assertionResults.map(result => (
-//       <p key={result.id}
-//          className={`${result.pass ? "text-green-500" : "text-red-500"}`}
-//       >
-//         {/*Expected {result.assertion.expected}*/}
-//         {result.assertion.property} was {result.actual}
-//       </p>
-//     ))}
-//   </Card.Body>
-// </Card>
-

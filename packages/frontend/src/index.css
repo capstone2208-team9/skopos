@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 h1,
 h2,
 h3
@@ -12,4 +11,7 @@ h3
     font-family: 'Oswald', sans-serif;
 }
 
-
+main {
+    max-width: 1000px;
+    min-width: 680px;
+}

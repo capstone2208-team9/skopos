@@ -2,16 +2,19 @@ import {useMutation} from '@apollo/client'
 import {CreateCollection, GetCollectionNames} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import React, {useEffect, useState} from 'react'
-import {Button, ButtonGroup, Form, Modal} from 'react-daisyui'
+import {Button, ButtonGroup, Form, Modal, Tooltip} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import {ICollection} from 'types'
+import {HiOutlineFolderAdd} from 'react-icons/hi'
 
 interface Props {
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg'
+  compact?: boolean
+  className?: string
 }
 
-export default function AddCollection({buttonSize = 'md'}: Props) {
+export default function AddCollection({buttonSize = 'md', compact = false, className = 'ml-auto'}: Props) {
   const { addToast } = useToast()
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
@@ -19,7 +22,10 @@ export default function AddCollection({buttonSize = 'md'}: Props) {
   const [createCollection, { data, error, loading}] =
     useMutation(CreateCollection, {
       update(cache, {data: {createOneCollection}}) {
-        const existingCollectionNames = cache.readQuery({query: GetCollectionNames}) as {collections: Pick<ICollection, 'id'| 'title'>[]}
+        if (!createOneCollection) return
+        let existingCollectionNames = cache.readQuery<any>({query: GetCollectionNames})
+        if (!existingCollectionNames) return
+        existingCollectionNames = existingCollectionNames as {collections: Pick<ICollection, 'id'| 'title'>[]}
         const collections = [...existingCollectionNames.collections, createOneCollection] || [createOneCollection]
         cache.writeQuery({
           query: GetCollectionNames,
@@ -27,6 +33,7 @@ export default function AddCollection({buttonSize = 'md'}: Props) {
         })
       },
     });
+
 
   const handleAddCollection: React.FormEventHandler = async (e) => {
     e.preventDefault()
@@ -57,7 +64,15 @@ export default function AddCollection({buttonSize = 'md'}: Props) {
 
   return (
     <>
-      <Button size={buttonSize} className='ml-auto bg-sky-blue hover:bg-dark-green' onClick={() => setOpen(true)}>Add Collection</Button>
+      {compact ? (
+          <Tooltip className={className} message='Add a collection'>
+            <Button size={buttonSize} className={`ml-auto bg-sky-blue border-none`} onClick={() => setOpen(true)}>
+              <HiOutlineFolderAdd size='24'/>
+            </Button>
+          </Tooltip>
+        ) : (
+        <Button size={buttonSize} className={`ml-auto bg-sky-blue `} onClick={() => setOpen(true)}>Add Collection</Button>
+      )}
       <Modal open={open} onClickBackdrop={() => setOpen(false)}>
         <Modal.Header className='text-center mb-2'>
           <h3>Add Collection</h3>
@@ -69,12 +84,12 @@ export default function AddCollection({buttonSize = 'md'}: Props) {
                      onChange={(e) => setTitle(e.target.value)}
                      placeholder='Collection Name'
               />
-              <ButtonGroup>
-                <Button disabled={!title} color='primary' size='md' type='submit'>
+              <ButtonGroup className='gap-2'>
+                <Button className='bg-sky-blue' disabled={!title} size='md' type='submit'>
                   {loading && <FaSpinner className='mx-1 animate-spin'/>}
                   Save
                 </Button>
-                <Button color='secondary' type='button' size='md'
+                <Button className='bg-cadmium-orange' type='button' size='md'
                         onClick={() => {
                           setTitle('')
                           setOpen(false)
