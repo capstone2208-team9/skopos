@@ -46,6 +46,7 @@ export class EcsStack extends cdk.Stack {
       },
     })
 
+
     collectionRunnerCluster.addCapacity('DefaultAutoScalingGroup', {
       instanceType: new InstanceType('t3.micro'),
       desiredCapacity: 1,
@@ -84,11 +85,11 @@ export class EcsStack extends cdk.Stack {
         serviceName: 'BackendService',
         desiredCount: 1,
         memoryLimitMiB: 512,
-        cpu: 512,
+        cpu: 256,
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/graphql-server:1.3'),
-          image: ContainerImage.fromRegistry('kat201/skopos-backend:latest'),
+          image: ContainerImage.fromRegistry('kat201/skopos-graphql:1.1'),
           containerPort: 3001,
           containerName: 'BackendContainer',
           enableLogging: true,
@@ -97,7 +98,7 @@ export class EcsStack extends cdk.Stack {
             PORT: '3001',
             LAMBDA_ARN: func.functionArn,
             AWS_REGION: Stack.of(this).region,
-            LAMBDA_FUNCTION_NAME: func.functionName
+            LAMBDA_NAME: func.functionName
           },
         },
       }
@@ -142,13 +143,13 @@ export class EcsStack extends cdk.Stack {
         serviceName: 'CollectionRunnerService',
         desiredCount: 1,
         memoryLimitMiB: 512,
-        cpu: 128,
+        cpu: 256,
         placementConstraints: [PlacementConstraint.distinctInstances()],
         placementStrategies: [PlacementStrategy.packedByCpu()],
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/collection-runner:1.0'),
-          image: ContainerImage.fromRegistry('kat201/collection-runner:1.0'),
+          image: ContainerImage.fromRegistry('kat201/skopos-collection-runner:1.1'),
           containerPort: 3003,
           containerName: 'CollectionRunnerContainer',
           enableLogging: true,
