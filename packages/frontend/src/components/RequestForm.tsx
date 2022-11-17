@@ -1,4 +1,5 @@
 import {useMutation} from '@apollo/client'
+import Loader from 'components/Loader'
 import {GetCollection} from 'graphql/queries'
 import {CreateOneRequest, RemoveRequestFromCollection} from 'graphql/mutations'
 import {updateStepNumbers} from 'lib/updateStepNumbers'
@@ -36,7 +37,7 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
   })
   const [tabValue, setTabValue] = useState(0)
 
-  const [createRequest, {data, error}] = useMutation(CreateOneRequest, {
+  const [createRequest, {data, error, loading}] = useMutation(CreateOneRequest, {
     update(cache, {data: {createOneRequest}}) {
       if (!createOneRequest) return
       const variables = {
@@ -243,13 +244,13 @@ export default function RequestForm({onCancel, onComplete, request, stepNumber}:
       {!request && <div className='flex gap-4 ml-auto'>
         <Button className='bg-sky-blue' type='button' onClick={handleSaveRequest}
                 disabled={!isValid}
-        >Save</Button>
+        >{loading ? <Loader size='20'/> : 'Save'}</Button>
         <Button className='bg-cadmium-orange' type='button' onClick={reset}>Reset</Button>
       </div>}
       {request && <div className='flex gap-4 ml-auto'>
         <Button className='bg-sky-blue' type='button' onClick={handleEditRequest}
                 disabled={!isValid}
-        >Update</Button>
+        >{loading ? <Loader size='20'/> : 'Update'}</Button>
         <Button className='bg-cadmium-orange' type='button' onClick={handleCancel}>Cancel</Button>
       </div>}
     </Form>

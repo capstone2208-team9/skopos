@@ -1,19 +1,10 @@
-import {useQuery} from '@apollo/client'
 import ToggleInputField from 'components/ToggleInputField'
-import {GetCollectionsWithoutMonitors} from 'graphql/queries'
-import React, {useEffect, useMemo, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Button, Card, Form, Input} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import Select from 'react-select'
 import {ICollection, Monitor, MonitorContactInfo, MonitorCreateInput, MonitorUpdateInput} from 'types'
-
-interface Props {
-  loading: boolean;
-  monitor?: Monitor;
-  onSave?: (input: MonitorCreateInput) => void;
-  onUpdate?: (input: MonitorUpdateInput) => void;
-}
 
 type SelectOptions = { label: string, value: string }
 const units = ['minutes', 'hours', 'days']
@@ -27,24 +18,25 @@ const defaultUnitOption = (schedule: string) => {
   }
 }
 
+interface Props {
+  availableCollections?: ICollection[];
+  loading: boolean;
+  monitor?: Monitor;
+  onSave?: (input: MonitorCreateInput) => void;
+  onUpdate?: (input: MonitorUpdateInput) => void;
+}
+
+
 export default function MonitorForm({
+  availableCollections = [],
   loading, monitor,
   onSave = () => {},
   onUpdate = () => {}}: Props) {
-  const [collections, setCollections] = useState<string[]>([])
+  const [collections, setCollections] = useState<number[]>([])
   const [contactInfo, setContactInfo] = useState<MonitorContactInfo>(monitor?.contactInfo || {})
   const [value, setValue] = useState(monitor?.schedule.split(' ')[0] || '')
   const [units, setUnits] = useState(monitor?.schedule.split(' ')[1] || 'hours')
   const [disabled, setDisabled] = useState(true)
-  const {data: collectionData} = useQuery(GetCollectionsWithoutMonitors, {
-    variables: {
-      where: {
-        monitor: {
-          is: null,
-        }
-      }
-    },
-  })
   const navigate = useNavigate()
 
   const handleSubmit: React.FormEventHandler = async (e) => {
@@ -58,10 +50,7 @@ export default function MonitorForm({
     setContactInfo({...contactInfo, [name]: value})
   }
 
-  const collectionOptions = useMemo<{ label: string, value: string }[]>(() => {
-    if (!collectionData) return []
-    return collectionData.collections.map(({id, title}: ICollection) => ({value: id, label: title}))
-  }, [collectionData])
+  const collectionOptions = availableCollections?.map(({id, title}: ICollection) => ({value: id, label: title}))
 
   const {length } = collections
 
@@ -72,8 +61,6 @@ export default function MonitorForm({
     }
     setDisabled(isDisabled)
   }, [value, units, length])
-
-
 
   return (
     <Card className='p-4'>

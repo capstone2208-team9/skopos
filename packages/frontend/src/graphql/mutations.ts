@@ -74,6 +74,8 @@ export const CreateOneMonitor = gql`
             contactInfo
             collections {
                 id
+                title
+                monitorId
             }
         }
     }`;
