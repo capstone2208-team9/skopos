@@ -24,13 +24,19 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
       update(cache, {data: {createOneCollection}}) {
         if (!createOneCollection) return
         let existingCollectionNames = cache.readQuery<any>({query: GetCollectionNames})
-        if (!existingCollectionNames) return
-        existingCollectionNames = existingCollectionNames as {collections: Pick<ICollection, 'id'| 'title'>[]}
-        const collections = [...existingCollectionNames.collections, createOneCollection] || [createOneCollection]
-        cache.writeQuery({
-          query: GetCollectionNames,
-          data: {collections}
-        })
+        if (!existingCollectionNames) {
+          cache.writeQuery({
+            query: GetCollectionNames,
+            data: {collections: [createOneCollection]}
+          })
+        } else {
+          existingCollectionNames = existingCollectionNames as {collections: Pick<ICollection, 'id'| 'title'>[]}
+          const collections = [...existingCollectionNames.collections, createOneCollection] || [createOneCollection]
+          cache.writeQuery({
+            query: GetCollectionNames,
+            data: {collections}
+          })
+        }
       },
     });
 

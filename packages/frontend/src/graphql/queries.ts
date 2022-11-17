@@ -3,8 +3,8 @@ import { gql } from "@apollo/client";
 export const CreateCollection = gql`
     mutation Mutation($data: CollectionCreateInput!) {
         createOneCollection(data: $data) {
-            title
             id
+            title
         }
     }
 `;
