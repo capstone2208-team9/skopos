@@ -35,7 +35,7 @@ export default function CollectionForm({collection, show, onClose}: Props) {
         },
       },
     })
-    handleClose
+    handleClose()
   }
 
   useEffect(() => {

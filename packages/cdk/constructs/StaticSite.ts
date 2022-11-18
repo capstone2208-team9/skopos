@@ -334,7 +334,7 @@ export class StaticSite extends Construct {
    * The CloudFront URL of the website. (TODO: change this if adding Cloudfront back in)
    */
   public get url(): string {
-    return `https://${this.cdk.bucket.bucketWebsiteUrl}`;
+    return this.cdk.bucket.bucketWebsiteUrl
   }
 
   /**

@@ -89,7 +89,7 @@ export class EcsStack extends cdk.Stack {
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/graphql-server:1.3'),
-          image: ContainerImage.fromRegistry('kat201/skopos-graphql:1.1'),
+          image: ContainerImage.fromRegistry('kat201/skopos-graphql:1.2'),
           containerPort: 3001,
           containerName: 'BackendContainer',
           enableLogging: true,
@@ -103,6 +103,7 @@ export class EcsStack extends cdk.Stack {
         },
       }
     )
+    // TODO: add SNS:ListSubscriptionsByTopic to policy
     this.backendEc2Service.taskDefinition.addToTaskRolePolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
@@ -110,16 +111,19 @@ export class EcsStack extends cdk.Stack {
         actions: [
           'events:EnableRule',
           'events:PutRule',
-          'sns:CreateTopic',
-          'sns:Unsubscribe',
           'events:DeleteRule',
           'events:PutTargets',
-          'sns:Publish',
           'events:ListRuleNamesByTarget',
           'events:ListRules',
-          'sns:Subscribe',
           'events:RemoveTargets',
           'events:ListTargetsByRule',
+          'sns:CreateTopic',
+          'sns:DeleteTopic',
+          'sns:Unsubscribe',
+          'sns:Publish',
+          'sns:CreateSubscription',
+          'sns:ListSubscriptionsByTopic',
+          'sns:Subscribe',
           'events:DisableRule',
           'lambda:AddPermission',
           'lambda:RemovePermission',
@@ -160,6 +164,17 @@ export class EcsStack extends cdk.Stack {
         },
       }
     )
+
+    // TODO: this gives collection runner permissions it needs
+    this.collectionRunnerEc2Service.taskDefinition.addToTaskRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: ['*'],
+        actions: [
+          'sns:Publish',
+        ],
+      }))
+
 
     this.collectionRunnerEc2Service.service.autoScaleTaskCount({
       maxCapacity: 5,

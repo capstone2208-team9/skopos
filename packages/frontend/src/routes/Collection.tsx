@@ -15,7 +15,6 @@ import {ICollection, Request} from 'types'
 import RequestForm from '../components/RequestForm'
 
 export default function Collection() {
-  console.log('render Collection')
   const {collectionId} = useParams()
   const [selectedRequest, setSelectedRequest] = useState<Request | undefined>()
   const [modalOpen, setModalOpen] = useState(false)
@@ -71,7 +70,6 @@ export default function Collection() {
     if (!data) return
     const remainingRequests = data.collection.requests.filter(r => r.id !== id)
     setNextStep(remainingRequests.length)
-    console.log('num requests', remainingRequests.length)
     if (remainingRequests.length > 0) {
       const reqs = updateStepNumbers(remainingRequests)
       const promises = reqs.map(r => {
@@ -90,7 +88,6 @@ export default function Collection() {
         })
       })
       await Promise.all(promises)
-      console.log('fetched!!')
     }
   }, [data])
 
@@ -106,10 +103,8 @@ export default function Collection() {
 
   const handleMove = useCallback(async (fromStep: number, toStep: number) => {
     if (!data) return
-    // const reqs = reorder(data.collection.requests, fromStep, toStep)
     const movedRequests = data.collection.requests
       .filter(r => [fromStep, toStep].includes(r.stepNumber))
-    console.log(movedRequests)
     const promises = movedRequests?.map(r => {
       return updateStepNumber({
         // eslint-disable-next-line @typescript-eslint/no-empty-function
