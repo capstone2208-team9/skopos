@@ -12,7 +12,7 @@ interface AssertionListProps {
 
 export default function AssertionList({assertions, setAssertions}: AssertionListProps) {
   const handleClickDelete = (idx: number) => {
-    let assertionCopy = [...assertions]
+    const assertionCopy = [...assertions]
     setAssertions(assertionCopy.filter((assertion, copyIdx) => copyIdx !== idx))
   }
 

@@ -10,7 +10,7 @@ interface HeaderListProps {
 
 export default function HeaderList({headers, setHeaders}: HeaderListProps) {
   const handleClickDelete = (key: string) => {
-    let headerCopy = {...headers}
+    const headerCopy = {...headers}
     delete headerCopy[key]
     setHeaders(headerCopy)
   }

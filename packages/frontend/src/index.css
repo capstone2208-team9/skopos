@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    body {
+        @apply text-dark-green
+    }
+}
+
 h1,
 h2,
 h3

@@ -8,7 +8,7 @@ export default function ErrorPage() {
   return (
     <div className='grid place-items-center gap-4 min-w-screen pt-8'>
       <h1 className='text-5xl font-bold'>Oops!</h1>
-      <p>We couldn't find what you were looking for</p>
+      <p>We couldn&post find what you were looking for</p>
       <NavLink className='text-primary' to='/'>Back Home</NavLink>
       <UndrawSVG className='max-w-sm md:max-w-lg'/>
     </div>

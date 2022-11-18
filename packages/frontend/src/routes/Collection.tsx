@@ -1,8 +1,8 @@
 import {useMutation, useQuery} from '@apollo/client'
 import {ReactComponent as Empty} from 'assets/undraw_not_found_re_44w9.svg'
 import CollectionRunner from 'components/CollectionRunner'
-import CollectionRequestListItem from 'components/collections/CollectionRequestListItem'
 import ModalPortal from 'components/ModalPortal'
+import RequestList from 'components/requests/RequestList'
 import {UpdateStepNumber} from 'graphql/mutations'
 import {GetCollection} from 'graphql/queries'
 import {updateStepNumbers} from 'lib/updateStepNumbers'
@@ -15,12 +15,14 @@ import {ICollection, Request} from 'types'
 import RequestForm from '../components/RequestForm'
 
 export default function Collection() {
+  console.log('render Collection')
   const {collectionId} = useParams()
   const [selectedRequest, setSelectedRequest] = useState<Request | undefined>()
   const [modalOpen, setModalOpen] = useState(false)
   const [nextStep, setNextStep] = useState(1)
+  const [requestList, setRequestList] = useState<Request[]>([])
 
-  let {loading, error, data} = useQuery<{ collection: ICollection }>(GetCollection, {
+  const {loading, error, data } = useQuery<{ collection: ICollection }>(GetCollection, {
     variables: {
       where: {
         id: Number(collectionId)
@@ -35,7 +37,7 @@ export default function Collection() {
 
   const [updateStepNumber] = useMutation(UpdateStepNumber, {
     update(cache, {data: {updateOneRequest}}) {
-      const {collection} = cache.readQuery<{ collection: ICollection }>({
+      const query = cache.readQuery<{ collection: ICollection }>({
         query: GetCollection, variables: {
           where: {
             id: Number(collectionId)
@@ -46,23 +48,25 @@ export default function Collection() {
             }
           ]
         }
-      }) || {}
-      if (!collection) return
-      const requests = collection.requests.map(r => r.id === updateOneRequest.id ? updateOneRequest : r)
+      })
+      if (!query) return
+      const requests = query.collection.requests.map(r => {
+        return r.id === updateOneRequest.id ? updateOneRequest : r
+      })
       cache.writeQuery({
         query: GetCollection,
-        data: {collection: {...collection, requests}}
+        data: {collection: {...query.collection, requests: updateStepNumbers(requests)}}
       })
     },
   })
 
-  const toggleOpen = () => setModalOpen(prev => !prev)
+  const toggleOpen = useCallback(() => setModalOpen(prev => !prev), [])
 
-  const handleAddRequest = () => {
+  const handleAddRequest = useCallback(() => {
     setModalOpen(true)
-  }
+  }, [])
 
-  const handleDeleteRequest = async (id: number) => {
+  const handleDeleteRequest = useCallback(async (id: number) => {
     setSelectedRequest(undefined)
     if (!data) return
     const remainingRequests = data.collection.requests.filter(r => r.id !== id)
@@ -72,6 +76,7 @@ export default function Collection() {
       const reqs = updateStepNumbers(remainingRequests)
       const promises = reqs.map(r => {
         return updateStepNumber({
+          ignoreResults: true,
           variables: {
             data: {
               stepNumber: {
@@ -85,20 +90,54 @@ export default function Collection() {
         })
       })
       await Promise.all(promises)
+      console.log('fetched!!')
     }
-  }
+  }, [data])
 
   const handleCancel = useCallback(() => {
     setModalOpen(false)
     setSelectedRequest(undefined)
   }, [])
 
-  const handleClickBackdrop = () => {
+  const handleClickBackdrop = useCallback(() => {
     setModalOpen(false)
-  }
+  }, [])
+
+
+  const handleMove = useCallback(async (fromStep: number, toStep: number) => {
+    if (!data) return
+    // const reqs = reorder(data.collection.requests, fromStep, toStep)
+    const movedRequests = data.collection.requests
+      .filter(r => [fromStep, toStep].includes(r.stepNumber))
+    console.log(movedRequests)
+    const promises = movedRequests?.map(r => {
+      return updateStepNumber({
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        update(){},
+        variables: {
+          data: {
+            stepNumber: {
+              set: r.stepNumber === fromStep ? toStep : fromStep
+            }
+          },
+          where: {
+            id: r.id
+          }
+        },
+      })
+    })
+    await Promise.all(promises)
+  }, [data])
 
   useEffect(() => {
-    if (data && data.collection.requests.length > 0) {
+    if (data) {
+      const requests = data?.collection.requests ? [...data.collection.requests] : []
+      // TODO: not sure if this is the most efficient way to keep in sync with database updates
+      setRequestList(() => {
+        return requests.sort((a,b) => {
+          return a.stepNumber < b.stepNumber ? -1 : 1
+        })
+      })
       setNextStep(data.collection.requests.length + 1)
     } else {
       setNextStep(1)
@@ -130,16 +169,9 @@ export default function Collection() {
         </div>
       </section>
       {data.collection.requests.length > 0 ? (
-        <ul className='col-span-2 w-9/12'>
-          {data.collection.requests && data.collection.requests.map(request => (
-            <CollectionRequestListItem
-              key={request.id}
-              request={request}
-              onModalOpen={() => setModalOpen(true)}
-              onDelete={handleDeleteRequest}
-              onSelect={setSelectedRequest}/>
-          ))}
-        </ul>
+        <RequestList onMove={handleMove} requests={requestList} onModalOpen={() => setModalOpen(true)}
+                     onDelete={handleDeleteRequest} onSelect={setSelectedRequest}
+        />
       ) : (
         <Empty className='max-w-md mt-auto'/>
       )}

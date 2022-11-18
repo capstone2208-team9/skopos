@@ -27,8 +27,7 @@ const variables = (collectionId?: string) => {
   )
 }
 
-interface Props {}
-export default function CollectionRuns({}: Props) {
+export default function CollectionRuns() {
   const {collectionId} = useParams()
   const {addToast} = useToast()
   const navigate = useNavigate()

@@ -11,10 +11,7 @@ import { BsCollectionPlay} from 'react-icons/bs'
 
 const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 
-interface CollectionRunnerProps {
-}
-
-export default function CollectionRunner({}: CollectionRunnerProps) {
+export default function CollectionRunner() {
   const {collectionId} = useParams()
   const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, { variables: {
       where: {
@@ -63,7 +60,7 @@ export default function CollectionRunner({}: CollectionRunnerProps) {
         <Modal open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
           <Modal.Body>
             {responses.map(response => (
-              <CollectionRunResponse response={response}/>
+              <CollectionRunResponse key={response.id} response={response}/>
             ))}
           </Modal.Body>
         </Modal>

@@ -17,9 +17,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <RouterProvider router={router}/>
-    </ApolloProvider>
-  </React.StrictMode>
+  <ApolloProvider client={client}>
+    <RouterProvider router={router}/>
+  </ApolloProvider>
 );

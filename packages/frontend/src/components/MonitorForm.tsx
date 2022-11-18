@@ -11,7 +11,7 @@ const units = ['minutes', 'hours', 'days']
 const unitOptions: SelectOptions[] = units.map(unit => ({value: unit, label: unit.toUpperCase()}))
 
 const defaultUnitOption = (schedule: string) => {
-  let [_, units] = schedule.split(' ')
+  const units = schedule.split(' ')[1]
   return {
     label: units.toUpperCase(),
     value: units
@@ -30,8 +30,8 @@ interface Props {
 export default function MonitorForm({
   availableCollections = [],
   loading, monitor,
-  onSave = () => {},
-  onUpdate = () => {}}: Props) {
+  onSave,
+  onUpdate}: Props) {
   const [collections, setCollections] = useState<number[]>([])
   const [contactInfo, setContactInfo] = useState<MonitorContactInfo>(monitor?.contactInfo || {})
   const [value, setValue] = useState(monitor?.schedule.split(' ')[0] || '')
@@ -43,7 +43,11 @@ export default function MonitorForm({
     e.preventDefault()
     const inputCollections = collections.map(Number)
     const input = {collections: inputCollections, value, units, contactInfo}
-    return monitor ? onUpdate({...input, id: monitor.id}) : onSave(input)
+    if (monitor) {
+      onUpdate && onUpdate({...input, id: monitor.id})
+    } else {
+      onSave && onSave(input)
+    }
   }
 
   const handleUpdateContactInfo = (name: string, value: string) => {
