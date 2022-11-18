@@ -96,6 +96,7 @@ export const GetMonitors = gql`
     query Monitors($where: CollectionWhereInput) {
         monitors {
             id
+            enabled
             schedule
             contactInfo
             collections(where: $where) {

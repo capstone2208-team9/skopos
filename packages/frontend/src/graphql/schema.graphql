@@ -1577,8 +1577,9 @@ input JsonWithAggregatesFilter {
 type Monitor {
   _count: MonitorCount
   collections(cursor: CollectionWhereUniqueInput, distinct: [CollectionScalarFieldEnum!], orderBy: [CollectionOrderByWithRelationInput!], skip: Int, take: Int, where: CollectionWhereInput): [Collection!]!
-  contactInfo: String!
+  contactInfo: JSON
   createdAt: DateTime!
+  enabled: Boolean!
   id: Int!
   schedule: String!
   snsTopicArn: String
@@ -1600,6 +1601,7 @@ type MonitorCountAggregate {
   _all: Int!
   contactInfo: Int!
   createdAt: Int!
+  enabled: Int!
   id: Int!
   schedule: Int!
   snsTopicArn: Int!
@@ -1608,6 +1610,7 @@ type MonitorCountAggregate {
 input MonitorCountOrderByAggregateInput {
   contactInfo: SortOrder
   createdAt: SortOrder
+  enabled: SortOrder
   id: SortOrder
   schedule: SortOrder
   snsTopicArn: SortOrder
@@ -1615,15 +1618,17 @@ input MonitorCountOrderByAggregateInput {
 
 input MonitorCreateInput {
   collections: CollectionCreateNestedManyWithoutMonitorInput
-  contactInfo: String!
+  contactInfo: JSON
   createdAt: DateTime
+  enabled: Boolean
   schedule: String!
   snsTopicArn: String
 }
 
 input MonitorCreateManyInput {
-  contactInfo: String!
+  contactInfo: JSON
   createdAt: DateTime
+  enabled: Boolean
   id: Int
   schedule: String!
   snsTopicArn: String
@@ -1641,8 +1646,9 @@ input MonitorCreateOrConnectWithoutCollectionsInput {
 }
 
 input MonitorCreateWithoutCollectionsInput {
-  contactInfo: String!
+  contactInfo: JSON
   createdAt: DateTime
+  enabled: Boolean
   schedule: String!
   snsTopicArn: String
 }
@@ -1653,40 +1659,41 @@ type MonitorGroupBy {
   _max: MonitorMaxAggregate
   _min: MonitorMinAggregate
   _sum: MonitorSumAggregate
-  contactInfo: String!
+  contactInfo: JSON
   createdAt: DateTime!
+  enabled: Boolean!
   id: Int!
   schedule: String!
   snsTopicArn: String
 }
 
 type MonitorMaxAggregate {
-  contactInfo: String
   createdAt: DateTime
+  enabled: Boolean
   id: Int
   schedule: String
   snsTopicArn: String
 }
 
 input MonitorMaxOrderByAggregateInput {
-  contactInfo: SortOrder
   createdAt: SortOrder
+  enabled: SortOrder
   id: SortOrder
   schedule: SortOrder
   snsTopicArn: SortOrder
 }
 
 type MonitorMinAggregate {
-  contactInfo: String
   createdAt: DateTime
+  enabled: Boolean
   id: Int
   schedule: String
   snsTopicArn: String
 }
 
 input MonitorMinOrderByAggregateInput {
-  contactInfo: SortOrder
   createdAt: SortOrder
+  enabled: SortOrder
   id: SortOrder
   schedule: SortOrder
   snsTopicArn: SortOrder
@@ -1700,6 +1707,7 @@ input MonitorOrderByWithAggregationInput {
   _sum: MonitorSumOrderByAggregateInput
   contactInfo: SortOrder
   createdAt: SortOrder
+  enabled: SortOrder
   id: SortOrder
   schedule: SortOrder
   snsTopicArn: SortOrder
@@ -1709,6 +1717,7 @@ input MonitorOrderByWithRelationInput {
   collections: CollectionOrderByRelationAggregateInput
   contactInfo: SortOrder
   createdAt: SortOrder
+  enabled: SortOrder
   id: SortOrder
   schedule: SortOrder
   snsTopicArn: SortOrder
@@ -1722,6 +1731,7 @@ input MonitorRelationFilter {
 enum MonitorScalarFieldEnum {
   contactInfo
   createdAt
+  enabled
   id
   schedule
   snsTopicArn
@@ -1731,8 +1741,9 @@ input MonitorScalarWhereWithAggregatesInput {
   AND: [MonitorScalarWhereWithAggregatesInput!]
   NOT: [MonitorScalarWhereWithAggregatesInput!]
   OR: [MonitorScalarWhereWithAggregatesInput!]
-  contactInfo: StringWithAggregatesFilter
+  contactInfo: JsonNullableWithAggregatesFilter
   createdAt: DateTimeWithAggregatesFilter
+  enabled: BoolWithAggregatesFilter
   id: IntWithAggregatesFilter
   schedule: StringWithAggregatesFilter
   snsTopicArn: StringNullableWithAggregatesFilter
@@ -1748,15 +1759,17 @@ input MonitorSumOrderByAggregateInput {
 
 input MonitorUpdateInput {
   collections: CollectionUpdateManyWithoutMonitorNestedInput
-  contactInfo: StringFieldUpdateOperationsInput
+  contactInfo: JSON
   createdAt: DateTimeFieldUpdateOperationsInput
+  enabled: BoolFieldUpdateOperationsInput
   schedule: StringFieldUpdateOperationsInput
   snsTopicArn: NullableStringFieldUpdateOperationsInput
 }
 
 input MonitorUpdateManyMutationInput {
-  contactInfo: StringFieldUpdateOperationsInput
+  contactInfo: JSON
   createdAt: DateTimeFieldUpdateOperationsInput
+  enabled: BoolFieldUpdateOperationsInput
   schedule: StringFieldUpdateOperationsInput
   snsTopicArn: NullableStringFieldUpdateOperationsInput
 }
@@ -1772,8 +1785,9 @@ input MonitorUpdateOneWithoutCollectionsNestedInput {
 }
 
 input MonitorUpdateWithoutCollectionsInput {
-  contactInfo: StringFieldUpdateOperationsInput
+  contactInfo: JSON
   createdAt: DateTimeFieldUpdateOperationsInput
+  enabled: BoolFieldUpdateOperationsInput
   schedule: StringFieldUpdateOperationsInput
   snsTopicArn: NullableStringFieldUpdateOperationsInput
 }
@@ -1788,8 +1802,9 @@ input MonitorWhereInput {
   NOT: [MonitorWhereInput!]
   OR: [MonitorWhereInput!]
   collections: CollectionListRelationFilter
-  contactInfo: StringFilter
+  contactInfo: JsonNullableFilter
   createdAt: DateTimeFilter
+  enabled: BoolFilter
   id: IntFilter
   schedule: StringFilter
   snsTopicArn: StringNullableFilter

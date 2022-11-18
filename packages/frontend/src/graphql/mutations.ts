@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import {gql} from '@apollo/client'
 
 export const UpdateCollectionTitle = gql`
     mutation Mutation($data: CollectionUpdateInput!, $where: CollectionWhereUniqueInput!) {
@@ -78,7 +78,7 @@ export const CreateOneMonitor = gql`
                 monitorId
             }
         }
-    }`;
+    }`
 
 export const DeleteOneMonitor = gql`
     mutation DeleteOneMonitor($where: MonitorWhereUniqueInput!) {
@@ -86,7 +86,7 @@ export const DeleteOneMonitor = gql`
             id
         }
     }
-`;
+`
 
 export const UpdateOneMonitor = gql`
     mutation UpdateOneMonitor($data: MonitorUpdateInput!, $where: MonitorWhereUniqueInput!) {
@@ -96,7 +96,7 @@ export const UpdateOneMonitor = gql`
             contactInfo
         }
     }
-`;
+`
 
 export const UpdateStepNumber = gql`
     mutation UpdateStepNumber($data: RequestUpdateInput!, $where: RequestWhereUniqueInput!) {
@@ -118,3 +118,11 @@ export const UpdateStepNumber = gql`
     }
 `
 
+export const ToggleMonitorEnabled = gql`
+    mutation ToggleMonitorEnabled($data: MonitorUpdateInput!, $where: MonitorWhereUniqueInput!) {
+        updateOneMonitor(data: $data, where: $where) {
+            id
+            enabled
+        }
+    }
+`

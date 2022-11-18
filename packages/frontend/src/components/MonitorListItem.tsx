@@ -2,12 +2,12 @@ import {useMutation} from '@apollo/client'
 import ConfirmDeleteModal from 'components/ConfirmDeleteModal'
 import Loader from 'components/Loader'
 import ModalPortal from 'components/ModalPortal'
-import {DeleteOneMonitor} from 'graphql/mutations'
+import {DeleteOneMonitor, ToggleMonitorEnabled} from 'graphql/mutations'
 import {GetCollectionsWithoutMonitors, GetMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useModal} from 'hooks/useModal'
 import {useEffect} from 'react'
-import {Button, Table, Tooltip} from 'react-daisyui'
+import {Button, Form, Table, Toggle, Tooltip} from 'react-daisyui'
 import {MdDelete, MdEdit, MdHistory} from 'react-icons/md'
 import {Link} from 'react-router-dom'
 import {ICollection, Monitor, MonitorContactInfo} from 'types'
@@ -16,6 +16,7 @@ interface Props {
   schedule: string;
   collections: ICollection[];
   contactInfo: MonitorContactInfo;
+  enabled: boolean;
   id: number;
 }
 
@@ -29,9 +30,28 @@ const whereMonitorNullVariables = {
   }
 }
 
-export default function MonitorListItem({schedule, collections, contactInfo, id}: Props) {
+export default function MonitorListItem({enabled, schedule, collections, contactInfo, id}: Props) {
   const [deleteModalOpen, toggleDeleteModalOpen] = useModal()
   const {addToast} = useToast()
+  const [toggleMonitorEnabled, {loading: toggling, error: toggleError}] = useMutation(ToggleMonitorEnabled, {
+    update(cache, {data: {updateOneMonitor}}) {
+      const monitorQuery = cache.readQuery<{ monitors: Monitor[] }>({
+        query: GetMonitors, variables: {
+          where: {
+            monitorId: {
+              not: null
+            }
+          }
+        }
+      })
+      if (!monitorQuery) return
+      const monitors = monitorQuery.monitors.map(m => m.id === updateOneMonitor.id ? {...m, enabled: updateOneMonitor.enabled} : m)
+      cache.writeQuery({
+        query: GetMonitors,
+        data: {monitors }
+      })
+    },
+  })
   const [deleteMonitor, {loading: deleting, error: deleteError}] = useMutation(DeleteOneMonitor, {
     update(cache, {data: {deleteOneMonitor}}) {
       const monitorQuery = cache.readQuery<{ monitors: Monitor[] }>({
@@ -67,9 +87,24 @@ export default function MonitorListItem({schedule, collections, contactInfo, id}
     await deleteMonitor({variables: {where: {id}}})
   }
 
+  const toggleEnabled = () => {
+    toggleMonitorEnabled({variables: {
+        data: {
+          enabled: {
+            set: !enabled
+          }
+        },
+        where: {id}
+      }})
+  }
+
   useEffect(() => {
     if (deleteError) addToast(deleteError.message, 'error')
   }, [deleteError, addToast])
+
+  useEffect(() => {
+    if (toggleError) addToast(toggleError.message, 'error')
+  }, [toggleError, addToast])
 
   const info = contactInfo ? Object.keys(contactInfo).join(', ') : 'N/A'
 
@@ -83,7 +118,7 @@ export default function MonitorListItem({schedule, collections, contactInfo, id}
             <span key={collection.id}>{collection.title}</span>
           ))}
         </span>
-        <div className='flex gap-2 items-center'>
+        <div className='flex items-center'>
           <Tooltip message='View History'>
             <Link className='btn btn-ghost' to={`/monitors/${id}`}>
               <MdHistory size={ICON_SIZE} className='text-accent'/>
@@ -96,11 +131,16 @@ export default function MonitorListItem({schedule, collections, contactInfo, id}
             <MdDelete size={ICON_SIZE} className='text-error'/>} color='ghost' size='md'
                   onClick={toggleDeleteModalOpen}
           />
+          {toggling ? (<Loader size={ICON_SIZE}/>) : (
+            <Form>
+              <Tooltip className='ml-1 pt-[5px]' message={`Monitor is ${enabled ? 'ON' : 'OFF'}`}>
+                <Toggle className="bg-sky-blue"
+                        onChange={toggleEnabled} checked={enabled}
+                ></Toggle>
+              </Tooltip>
+            </Form>
+          )}
         </div>
-        {id ? (
-          <div>
-          </div>
-        ) : <></>}
       </Table.Row>
       <ModalPortal id='confirm-delete-modal'>
         <ConfirmDeleteModal open={deleteModalOpen} onDelete={handleDelete}
