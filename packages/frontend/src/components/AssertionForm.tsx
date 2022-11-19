@@ -63,7 +63,7 @@ export default function AssertionForm ({ assertions, setAssertions }: AssertionF
           </Select>
         </Form.Label>
         <input className='input input-bordered input-sm' value={expected} placeholder='expected value' onChange={(e) => setExpected(e.target.value)} name="value" />
-        <Button type='button' size='sm' color="accent" onClick={handleAddAssertion}
+        <Button className='bg-viridian-green' type='button' size='sm' onClick={handleAddAssertion}
                 disabled={disabled}
         >
           <span className='sr-only'>Add</span>

@@ -43,8 +43,6 @@ export default function RequestList() {
   })
   const {addToast} = useToast()
 
-  console.log('numRequests', numRequests)
-
   const handleDrag = async (result) => {
     if (!result.destination || !collectionId) return
     await reorderRequests({

@@ -1,9 +1,9 @@
 import {useMutation} from '@apollo/client'
 import Loader from 'components/Loader'
 import {getRequestVariables} from 'components/requests/RequestList'
-import {GetCollection, GetRequests} from 'graphql/queries'
-import {CreateOneRequest, DeleteRequest } from 'graphql/mutations'
-import {updateStepNumbers} from 'lib/updateStepNumbers'
+import {GetRequests } from 'graphql/queries'
+import {CreateOneRequest, UpdateRequest } from 'graphql/mutations'
+import {useToast} from 'hooks/ToastProvider'
 import React, {useEffect, useMemo, useState} from 'react'
 import {Button, Form, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
@@ -31,6 +31,7 @@ const initialState = {
 
 export default function RequestForm({request, stepNumber}: Props) {
   const {collectionId} = useParams()
+  const {addToast} = useToast()
   const navigate = useNavigate()
   const [formData, setFormData] = useState<Omit<Request, 'stepNumber'>>({
     ...initialState,
@@ -41,36 +42,21 @@ export default function RequestForm({request, stepNumber}: Props) {
     update(cache, {data: {createOneRequest}}) {
       if (!createOneRequest) return
       const variables = getRequestVariables(collectionId)
-      const query = cache.readQuery<{requests: Request[]}>(
-        {
-          query: GetRequests, variables
-        }
-      )
-      if (!query) return
-      const requests = updateStepNumbers([...query.requests, createOneRequest])
-      cache.writeQuery({
-        query: GetRequests,
-        variables,
-        data: {requests}
-      })
+      cache.updateQuery({ query: GetRequests, variables }, (data) => ({
+        requests: [...data.request, createOneRequest]
+      }));
     },
   })
 
-  const [updateRequest, {data: updateData, error: updateError}] = useMutation(DeleteRequest, {
+  const [updateRequest, {data: updateData, error: updateError}] = useMutation(UpdateRequest, {
     update(cache, {data: {updateOneRequest}}) {
       if (!updateOneRequest) return
       const variables = getRequestVariables(collectionId)
-      const query = cache.readQuery<{requests: Request[]}>(
-        {
-          query: GetRequests, variables
-        }
-      )
-      if (!query) throw new Error('no requests')
-      cache.writeQuery({
-        query: GetCollection,
-        variables,
-        data: {requests: query.requests}
-      })
+      cache.updateQuery({ query: GetRequests, variables }, (data) => ({
+        requests: data.requests.map((request) => {
+          return request.id === updateOneRequest.id ? updateOneRequest : request
+        })
+      }));
     },
   })
 
@@ -113,7 +99,7 @@ export default function RequestForm({request, stepNumber}: Props) {
           }
         }
       })
-      navigate(-1)
+      navigate(`/collections/${collectionId}/requests`)
     } catch (err) {
       console.log(err)
     }
@@ -123,8 +109,36 @@ export default function RequestForm({request, stepNumber}: Props) {
     if (!request) return
     const variables = {
       data: {
-        collection: {
-          disconnect: true
+        title: {
+          set: formData.title
+        },
+        url: {
+          set: formData.url,
+        },
+        headers: formData.headers,
+        body: formData.body,
+        assertions: {
+          upsert: formData.assertions.map(a => (
+            {
+              create: {
+                expected: a.expected,
+                property: a.property,
+                comparison: a.comparison
+              },
+              update: {
+                comparison: {
+                  set: a.comparison
+                },
+                expected: {
+                  set: a.expected
+                },
+                property: {
+                  set: a.property
+                }
+              },
+              where: {id: a.id || -1}
+            }
+          ))
         }
       },
       where: {
@@ -132,8 +146,6 @@ export default function RequestForm({request, stepNumber}: Props) {
       }
     }
     await updateRequest({variables})
-    await handleSaveRequest()
-    navigate(-1)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -172,12 +184,14 @@ export default function RequestForm({request, stepNumber}: Props) {
     }
   }, [request])
 
-  error && console.error(error)
-  updateError && console.error(error)
+  useEffect(() => {
+    if (error) addToast(error.message, 'error')
+    if (updateError) addToast(updateError.message, 'error')
+  }, [error, updateError])
+
 
   return (
     <Form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-      {error && <p>{error.message}</p>}
       {updateError && <p>{updateError.message}</p>}
       <div className='flex gap-4 justify-between'>
         <div className='form-control flex-grow'>
@@ -232,6 +246,7 @@ export default function RequestForm({request, stepNumber}: Props) {
                 disabled={!isValid}
         >{loading ? <Loader size='20'/> : 'Save'}</Button>
         <Button className='bg-cadmium-orange' type='button' onClick={reset}>Reset</Button>
+        <Button className='bg-secondary' type='button' onClick={handleCancel}>Cancel</Button>
       </div>}
       {request && <div className='flex gap-4 ml-auto'>
         <Button className='bg-sky-blue' type='button' onClick={handleEditRequest}

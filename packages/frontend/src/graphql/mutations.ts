@@ -1,4 +1,5 @@
 import {gql} from '@apollo/client'
+import { RequestDefinitionFragment } from './fragments'
 
 export const UpdateCollectionTitle = gql`
     mutation Mutation($data: CollectionUpdateInput!, $where: CollectionWhereUniqueInput!) {
@@ -37,6 +38,19 @@ export const CreateOneRequest = gql`
         }
     }
 `
+
+export const UpdateRequest = gql`
+    ${RequestDefinitionFragment}
+    mutation Mutation(
+        $data: RequestUpdateInput!
+        $where: RequestWhereUniqueInput!
+    ) {
+        updateOneRequest(data: $data, where: $where) {
+            ...RequestDefinitionFragment
+        }
+    }
+`
+
 
 export const DeleteRequest = gql`
     mutation Mutation($data: DeleteRequestInput!) {

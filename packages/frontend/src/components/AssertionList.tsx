@@ -21,7 +21,7 @@ export default function AssertionList({assertions, setAssertions}: AssertionList
       <ul>
       {assertions.map((assertion, idx) => (
         <li className='my-1 flex gap-4 items-center' key={uuidv4()}>
-          <span className='text-primary'>{assertion.property} {assertion.comparison} {assertion.expected}</span>
+          <span className='text-sky-blue font-medium capitalize'>{assertion.property} {assertion.comparison} {assertion.expected}</span>
          <Button size='xs' color='ghost' type="button" onClick={() => handleClickDelete(idx)}><BiTrash className='text-lg text-error'/></Button>
         </li>
       ))}

@@ -13,8 +13,7 @@ interface Props {
 
 export default function CollectionForm({collection, show, onClose}: Props) {
   const [title, setTitle] = useState(collection?.title || '')
-  const [updateCollectionTitle] =
-    useMutation(UpdateCollectionTitle);
+  const [updateCollectionTitle] = useMutation(UpdateCollectionTitle);
   
   const handleClose = () => {
     setTitle('')

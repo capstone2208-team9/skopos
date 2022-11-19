@@ -18,9 +18,7 @@ export default function Collection() {
   const {collections, loading} = useCollections()
   const { pathname } = useLocation()
 
-  console.log(collections)
   const collection = collections.find(c => c.id === Number(collectionId))
-  console.log(collection)
 
   if (loading || !collection) return (
     <div className='grid place-items-center'>
@@ -38,7 +36,9 @@ export default function Collection() {
               <MdHistory size='28' className='fill-current'/>
             </Link>
           </Tooltip>
-          <Link className='btn btn-sm bg-cadmium-orange' to='requests/new'>Add Request</Link>
+          <Link className='btn btn-sm bg-cadmium-orange' to='requests/new'
+                state={{nextStep: collection?._count.requests + 1}}
+          >Add Request</Link>
           {collection?._count.requests > 0 && (
             <CollectionRunner/>
           )}

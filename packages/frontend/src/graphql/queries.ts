@@ -65,27 +65,6 @@ export const GetRequest = gql`
     ${RequestDefinitionFragment}
 `
 
-export const UpdateRequest = gql`
-    mutation Mutation(
-        $data: RequestUpdateInput!
-        $where: RequestWhereUniqueInput!
-    ) {
-        updateOneRequest(data: $data, where: $where) {
-            headers
-            id
-            title
-            body
-            method
-            collectionId
-            assertions {
-                id
-                expected
-                property
-            }
-        }
-    }
-`
-
 export const GetLastCollectionRun = gql`
     query Query($where: CollectionRunWhereInput, $orderBy: [CollectionRunOrderByWithRelationInput!], $take: Int) {
         collectionRuns(where: $where, orderBy: $orderBy, take: $take) {

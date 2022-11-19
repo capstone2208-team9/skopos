@@ -1,5 +1,6 @@
 import {useMutation} from '@apollo/client'
 import Loader from 'components/Loader'
+import {getRequestVariables} from 'components/requests/RequestList'
 import {DeleteRequest} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
 import {LegacyRef} from 'react'
@@ -19,7 +20,7 @@ const deleteRequestVariables = (collectionId: number, requestId: number) => ({
 interface RequestCardProps {
   title: string
   stepNumber: number
-  id?: number
+  id: number
   reordering: boolean
   nextStep: number
 }
@@ -27,28 +28,10 @@ interface RequestCardProps {
 const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCardProps) => {
   const {collectionId} = useParams()
 
-  const handleClickDelete = async (id: number) => {
-    if (!collectionId) return
-    await deleteRequest({
-      variables: deleteRequestVariables(+collectionId, id)
-    })
-  }
-
   const [deleteRequest, {loading: deleting}] = useMutation(DeleteRequest, {
     update(cache, {data: {deleteRequest}}) {
       if (!collectionId) return
-      const variables = {
-        where: {
-          collectionId: {
-            equals: +collectionId
-          },
-        },
-        orderBy: [
-          {
-            stepNumber: null
-          }
-        ]
-      }
+      const variables = getRequestVariables(collectionId)
       const requestQuery = cache.readQuery<{requests: Request[]}>(
         {
           query: GetRequests, variables
@@ -62,6 +45,15 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
       })
     }
   })
+
+  const handleClickDelete = async () => {
+    if (!collectionId) return
+    console.log('deleting', id)
+    await deleteRequest({
+      variables: deleteRequestVariables(+collectionId, id)
+    })
+  }
+
   return (
     <div className='flex justify-between'>
       <Badge className='mr-4 rounded-full w-6 h-6 bg-sky-blue'>
@@ -72,7 +64,9 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
         <Link className='btn btn-ghost' state={{nextStep}} to={`${id}/edit`}>
           <MdEdit size='20' className='text-sky-blue text-xl'/>
         </Link>
-        <Button size='md' color='ghost' type='button' onClick={() => handleClickDelete}>
+        <Button size='md' color='ghost' type='button' className='delete-button'
+                onClick={handleClickDelete}
+        >
           {deleting ? <Loader size='20'/> : <MdDelete
             size='20' className='text-error text-xl'/>}
         </Button>
@@ -82,12 +76,14 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
   )
 }
 
+type SavedRequest = Request & { id: number}
+
 interface Props {
   nextStep: number
   dragging: boolean
   reordering: boolean
   innerRef: LegacyRef<HTMLLIElement> | undefined//(element?: (HTMLElement | null | undefined)) => HTMLElement
-  request: Request
+  request: SavedRequest
   dragProviderProps: DraggableProvidedDraggableProps
   handleProps?: DraggableProvidedDragHandleProps
 }
