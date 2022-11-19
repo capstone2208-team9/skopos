@@ -1,6 +1,6 @@
 import CollectionNavListItem from 'components/collections/CollectionNavListItem'
 import {useEffect} from 'react'
-import {useQuery, useMutation} from '@apollo/client'
+import {useMutation} from '@apollo/client'
 import {FaSpinner} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import {GetCollectionNames} from 'graphql/queries'
@@ -12,11 +12,12 @@ type Collection = Pick<ICollection, 'id' | 'title'>
 interface Props {
   onSelect: (collection: Collection) => void
   pathname: string
+  collections?: Pick<ICollection, 'id' | 'title'>[]
+  loading: boolean
 }
 
-export default function CollectionNav({pathname, onSelect }: Props) {
+export default function CollectionNav({collections, loading, pathname, onSelect }: Props) {
   const navigate = useNavigate()
-  const {loading, data} = useQuery<{ collections: Collection[] }>(GetCollectionNames)
   const [deleteCollection, {data: deleteData}] = useMutation(DeleteCollection, {
     update(cache, {data: {deleteOneCollection}}) {
       const {collections} = cache.readQuery({query: GetCollectionNames}) as { collections: Pick<ICollection, 'id' | 'title'>[] }
@@ -46,7 +47,7 @@ export default function CollectionNav({pathname, onSelect }: Props) {
   return (
     <ul aria-labelledby='collection-heading' className='my-4'>
       {loading && <><span className='sr-only'>Loading</span><FaSpinner /></>}
-      {data && data.collections.map(collection => (
+      {collections && collections.map(collection => (
         <CollectionNavListItem key={collection.id}
                                collection={collection}
                                onDelete={handleDelete}

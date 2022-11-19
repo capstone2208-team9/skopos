@@ -38,6 +38,46 @@ export const CreateOneRequest = gql`
     }
 `
 
+export const DeleteRequest = gql`
+    mutation Mutation($data: DeleteRequestInput!) {
+        deleteRequest(data: $data) {
+            id
+            title
+            body
+            url
+            method
+            headers
+            stepNumber
+            assertions {
+                id
+                expected
+                property
+                comparison
+            }
+        }
+    }
+`
+
+export const ReorderRequests = gql`
+    mutation ReorderRequests($data: ReorderRequestInput!) {
+        reorderRequests(data: $data) {
+            id
+            title
+            body
+            url
+            method
+            headers
+            stepNumber
+            assertions {
+                id
+                expected
+                property
+                comparison
+            }
+        }
+    }
+`
+
 export const RemoveRequestFromCollection = gql`
     mutation UpdateOneRequest($data: RequestUpdateInput!, $where: RequestWhereUniqueInput!) {
         updateOneRequest(data: $data, where: $where) {

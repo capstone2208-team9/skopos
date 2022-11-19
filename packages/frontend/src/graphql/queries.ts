@@ -1,4 +1,5 @@
-import { gql } from "@apollo/client";
+import {gql} from '@apollo/client'
+import {RequestDefinitionFragment} from 'graphql/fragments'
 
 export const CreateCollection = gql`
     mutation Mutation($data: CollectionCreateInput!) {
@@ -7,16 +8,19 @@ export const CreateCollection = gql`
             title
         }
     }
-`;
+`
 
 export const GetCollectionNames = gql`
-    query GetCollectionNames {
+    query Query {
         collections {
+            _count {
+                requests
+            }
             id
             title
         }
     }
-`;
+`
 
 export const GetCollection = gql`
     query Collection($where: CollectionWhereUniqueInput!, $orderBy: [RequestOrderByWithRelationInput!]) {
@@ -40,7 +44,26 @@ export const GetCollection = gql`
             }
         }
     }
-`;
+`
+
+export const GetRequests = gql`
+    query Requests($where: RequestWhereInput, $orderBy: [RequestOrderByWithRelationInput!]) {
+        requests(where: $where, orderBy: $orderBy) {
+            ...RequestDefinitionFragment
+        }
+    }
+    ${RequestDefinitionFragment}
+`
+
+export const GetRequest = gql`
+    query Query($where: RequestWhereUniqueInput!) {
+        request(where: $where) {
+            ...RequestDefinitionFragment
+            collectionId
+        }
+    }
+    ${RequestDefinitionFragment}
+`
 
 export const UpdateRequest = gql`
     mutation Mutation(
@@ -61,7 +84,7 @@ export const UpdateRequest = gql`
             }
         }
     }
-`;
+`
 
 export const GetLastCollectionRun = gql`
     query Query($where: CollectionRunWhereInput, $orderBy: [CollectionRunOrderByWithRelationInput!], $take: Int) {
@@ -90,7 +113,7 @@ export const GetLastCollectionRun = gql`
             }
         }
     }
-`;
+`
 
 export const GetMonitors = gql`
     query Monitors($where: CollectionWhereInput) {
@@ -105,7 +128,7 @@ export const GetMonitors = gql`
                 monitorId
             }
         }
-    }`;
+    }`
 
 export const GetMonitor = gql`
     query Query($where: MonitorWhereUniqueInput!, $orderBy: [CollectionRunOrderByWithRelationInput!], $take: Int) {
@@ -142,7 +165,7 @@ export const GetMonitor = gql`
                 }
             }
         }
-    }`;
+    }`
 
 export const GetEditMonitor = gql`
     query Query($where: MonitorWhereUniqueInput!) {
@@ -152,7 +175,7 @@ export const GetEditMonitor = gql`
             contactInfo
         }
     }
-`;
+`
 
 export const GetCollectionRuns = gql`
     query CollectionRuns($where: CollectionRunWhereInput, $orderBy: [CollectionRunOrderByWithRelationInput!]) {
@@ -182,7 +205,7 @@ export const GetCollectionRuns = gql`
             }
         }
     }
-`;
+`
 
 export const GetCollectionsWithoutMonitors = gql`
     query Query($where: CollectionWhereInput) {
@@ -191,4 +214,4 @@ export const GetCollectionsWithoutMonitors = gql`
             title
         }
     }
-`;
+`

@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from "graphql-tag";
 
 export const CollectionRunsFragment = gql`
     fragment CollectionRunResponses on CollectionRun {
@@ -21,6 +21,24 @@ export const CollectionRunsFragment = gql`
                     property
                 }
             }
+        }
+    }
+`
+
+export const RequestDefinitionFragment = gql`
+    fragment RequestDefinitionFragment on Request {
+        id
+        title
+        body
+        url
+        method
+        headers
+        stepNumber
+        assertions {
+            id
+            expected
+            property
+            comparison
         }
     }
 `

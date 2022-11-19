@@ -1,8 +1,11 @@
+import RequestList from 'components/requests/RequestList'
 import { createBrowserRouter } from 'react-router-dom'
 import CollectionRuns from "routes/CollectionRuns";
 import Collections from 'routes/Collections'
 import CreateMonitor from "routes/CreateMonitor";
+import CreateRequest from 'routes/CreateRequest'
 import EditMonitor from "routes/EditMonitor";
+import EditRequest from 'routes/EditRequest'
 import Monitor from "routes/Monitor";
 import Monitors from 'routes/Monitors'
 import Root from 'routes/Root'
@@ -22,24 +25,42 @@ const router = createBrowserRouter([
           {
             path: ':collectionId',
             element: <Collection/>,
-          }
+            children: [
+              {
+                path: 'requests',
+                element: <RequestList/>,
+                children: [
+                  {
+                    path: 'new',
+                    element: <CreateRequest/>
+                  },
+                  {
+                    path: ':requestId/edit',
+                    element: <EditRequest/>
+                  },
+                ],
+              },
+            ],
+          },
         ]
       },
       {
         path: 'monitors',
         element: <Monitors/>,
-      },
-      {
-        path: 'monitors/:id',
-        element: <Monitor/>,
-      },
-      {
-        path: 'monitors/new',
-        element: <CreateMonitor/>
-      },
-      {
-        path: 'monitors/:id/edit',
-        element: <EditMonitor/>,
+        children: [
+          {
+            path: 'new',
+            element: <CreateMonitor/>
+          },
+          {
+            path: ':id',
+            element: <Monitor/>,
+          },
+          {
+            path: ':id/edit',
+            element: <EditMonitor/>,
+          },
+        ]
       },
       {
         path: 'collection-runs/:collectionId',
