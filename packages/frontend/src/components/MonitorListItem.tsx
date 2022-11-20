@@ -7,10 +7,11 @@ import {GetCollectionsWithoutMonitors, GetMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useModal} from 'hooks/useModal'
 import {useEffect} from 'react'
-import {Button, Form, Table, Toggle, Tooltip} from 'react-daisyui'
-import {MdDelete, MdEdit, MdHistory} from 'react-icons/md'
-import {Link} from 'react-router-dom'
-import {ICollection, Monitor, MonitorContactInfo} from 'types'
+import {Button, Dropdown, Form, Table, Toggle, Tooltip} from 'react-daisyui'
+import {MdDelete, MdEdit, MdHistory, MdMoreVert} from 'react-icons/md'
+import {Link, useNavigate} from 'react-router-dom'
+import {whereMonitorNotNullVariables} from 'routes/CreateMonitor'
+import {ICollection, MonitorContactInfo} from 'types'
 
 interface Props {
   schedule: string;
@@ -33,52 +34,23 @@ const whereMonitorNullVariables = {
 export default function MonitorListItem({enabled, schedule, collections, contactInfo, id}: Props) {
   const [deleteModalOpen, toggleDeleteModalOpen] = useModal()
   const {addToast} = useToast()
-  const [toggleMonitorEnabled, {loading: toggling, error: toggleError}] = useMutation(ToggleMonitorEnabled, {
-    update(cache, {data: {updateOneMonitor}}) {
-      const monitorQuery = cache.readQuery<{ monitors: Monitor[] }>({
-        query: GetMonitors, variables: {
-          where: {
-            monitorId: {
-              not: null
-            }
-          }
-        }
-      })
-      if (!monitorQuery) return
-      const monitors = monitorQuery.monitors.map(m => m.id === updateOneMonitor.id ? {...m, enabled: updateOneMonitor.enabled} : m)
-      cache.writeQuery({
-        query: GetMonitors,
-        data: {monitors }
-      })
-    },
-  })
+  const navigate = useNavigate()
+  const [toggleMonitorEnabled, {loading: toggling, error: toggleError}] = useMutation(ToggleMonitorEnabled)
   const [deleteMonitor, {loading: deleting, error: deleteError}] = useMutation(DeleteOneMonitor, {
     update(cache, {data: {deleteOneMonitor}}) {
-      const monitorQuery = cache.readQuery<{ monitors: Monitor[] }>({
-        query: GetMonitors, variables: {
-          where: {
-            monitorId: {
-              not: null
-            }
-          }
-        }
-      })
-      if (!monitorQuery) return
-      cache.writeQuery({
-        query: GetMonitors,
-        data: {monitors: monitorQuery.monitors.filter(monitor => monitor.id !== deleteOneMonitor.id)}
-      })
+      cache.updateQuery({
+        query: GetMonitors, variables: whereMonitorNotNullVariables
+      }, (data) => {
+        return {monitors: data.monitors.filter(m => m.id !== deleteOneMonitor.id)}
+      },)
 
-      const getCollectionNames = cache.readQuery<{ collections: ICollection[] }>({
-        query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables
+      cache.updateQuery({
+        query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables,
+      }, (data) => {
+        return data
+          ? {collections: [...data.collections, ...collections]}
+          : {collections}
       })
-      if (getCollectionNames) {
-        cache.writeQuery({
-          query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables, data: {
-            collections: [...getCollectionNames.collections, ...collections]
-          }
-        })
-      }
     }
   })
 
@@ -111,13 +83,23 @@ export default function MonitorListItem({enabled, schedule, collections, contact
   return (
     <>
       <Table.Row>
-        <span>Running every {schedule}</span>
-        <span className='capitalize'>{info}</span>
-        <span className='flex gap-2'>
-          {collections.map(collection => (
-            <span key={collection.id}>{collection.title}</span>
-          ))}
-        </span>
+        <p className='capitalize'>Running every {schedule}</p>
+        <p className='text-center truncate capitalize'>{info}</p>
+        <Dropdown horizontal='center' vertical='top' hover className='group group-hover:text-cadmium-orange ml-auto'>
+          <Dropdown.Toggle size='sm' color='secondary' className='ml-auto group-hover:text-cadmium-orange'>
+            <span className='text-gray-50 text-lg font-medium'>
+              {collections.length} collection{`${collections.length > 1 ? 's' : ''}`}
+            </span>
+            <MdMoreVert size='20' className='fill-gray-50'/>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className='shadow-xl bg-base-100'>
+            {collections.map(col => (
+              <Dropdown.Item key={col.id}
+                             className='text-secondary font-medium text-lg'
+                             onClick={() => navigate(`/collections/${col.id}/requests`)}>{col.title}</Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
         <div className='flex items-center'>
           <Tooltip message='View History'>
             <Link className='btn btn-ghost' to={`/monitors/${id}`}>
@@ -127,14 +109,14 @@ export default function MonitorListItem({enabled, schedule, collections, contact
           <Link className='btn btn-ghost' to={`/monitors/${id}/edit`}>
             <MdEdit size={ICON_SIZE} className='text-sky-blue'/>
           </Link>
-          <Button startIcon={deleting ? <Loader size={ICON_SIZE}/> :
+          <Button startIcon={deleting ? <Loader size='sm'/> :
             <MdDelete size={ICON_SIZE} className='text-error'/>} color='ghost' size='md'
                   onClick={toggleDeleteModalOpen}
           />
           {toggling ? (<Loader size={ICON_SIZE}/>) : (
             <Form>
               <Tooltip className='ml-1 pt-[5px]' message={`Monitor is ${enabled ? 'ON' : 'OFF'}`}>
-                <Toggle className="bg-sky-blue"
+                <Toggle size='sm' className="bg-sky-blue"
                         onChange={toggleEnabled} checked={enabled}
                 ></Toggle>
               </Tooltip>

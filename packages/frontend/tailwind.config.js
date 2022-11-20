@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// eslint-disable-next-line no-undef
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -9,6 +10,7 @@ module.exports = {
     extend: {
       colors: {
         'powder-blue': '#BCE2E8',
+        'powder-blue-lt': 'rgb(191,237,244)',
         'sky-blue': '#24C5E3',
         'viridian-green': '#2E939E',
         'cadmium-orange': '#E28027',

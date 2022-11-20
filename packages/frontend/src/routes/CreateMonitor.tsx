@@ -6,11 +6,12 @@ import {CreateOneMonitor} from 'graphql/mutations'
 import {GetCollectionsWithoutMonitors, GetMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useEffect} from 'react'
-import { Button } from 'react-daisyui'
+import { Button, Card } from 'react-daisyui'
 import {useNavigate} from 'react-router-dom'
-import {ICollection, Monitor, MonitorCreateInput} from 'types'
+import {MonitorContactInfo, MonitorCreateInput} from 'types'
+import {FiAlertCircle} from 'react-icons/fi'
 
-const whereMonitorNullVariables = {
+export const whereMonitorNullVariables = {
   where: {
     monitor: {
       is: null,
@@ -18,12 +19,23 @@ const whereMonitorNullVariables = {
   }
 }
 
-const whereMonitorNotNullVariables = {
+export const whereMonitorNotNullVariables = {
   where: {monitorId: {not: null}}
+}
+
+type CreateMonitorInput = {
+  data: {
+    schedule: string
+    collections: {
+      connect: {id: number}[]
+    }
+    contactInfo?: MonitorContactInfo
+  }
 }
 
 
 export default function CreateMonitor() {
+  console.log('create monitor')
   const {addToast} = useToast()
   const navigate = useNavigate()
   const {data: collectionData, loading} = useQuery(GetCollectionsWithoutMonitors, {
@@ -31,31 +43,23 @@ export default function CreateMonitor() {
   })
   const [addMonitor, {data, error, loading: saving}] = useMutation(CreateOneMonitor, {
     update(cache, {data: {createOneMonitor}}) {
-      const monitorQuery = cache.readQuery<{ monitors: Monitor[] }>({
+      cache.updateQuery({
         query: GetMonitors, variables: whereMonitorNotNullVariables
+      }, (data) => {
+        return {monitors: [...data.monitors, createOneMonitor]}
       })
-      if (monitorQuery) {
-        cache.writeQuery({
-          query: GetMonitors,
-          data: {monitors: [...monitorQuery.monitors, createOneMonitor]}
-        })
-      }
 
-      const getCollectionNames = cache.readQuery<{ collections: ICollection[] }>({
-        query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables})
-      if (getCollectionNames) {
-        cache.writeQuery({
-          query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables, data: {
-            collections: getCollectionNames?.collections
-              .filter(collection => createOneMonitor.collections.includes(collection.id))
-          }
-        })
-      }
+      cache.updateQuery({
+        query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables,
+      }, (data) => {
+        const ids = createOneMonitor.collections.map(c => c.id)
+        return {collections: data.collections.filter(col => !ids.includes(col.id))}
+      })
     }
   })
 
   const handleSave = async ({contactInfo, value, units, collections}: MonitorCreateInput) => {
-    const variables: any = {
+    const variables: CreateMonitorInput = {
       data: {
         schedule: `${value} ${+value > 1 ? units : units.slice(0, -1)}`,
         collections: {
@@ -84,14 +88,19 @@ export default function CreateMonitor() {
   if (loading) return <Loader size={46}/>
 
   if (collectionData && collectionData.collections.length === 0) {
-    return <div className='grid place-items-center gap-8'>
-      <h2 className='font-bold text-xl'>All collections are already assigned to a monitor.</h2>
-      <p className='max-w-md text-center'>You can update an existing monitor, remove a monitor, or create a new collection</p>
-      <div className='flex gap-4'>
+    return <Card className='grid bg-gray-50 -translate-y-24 z-20 m-auto bg-opacity-90 w-9/12 place-items-center gap-8 rounded shadow-xl p-4'>
+      <Card.Title className='text-cedar-chest text-xl'>
+        All collections are already assigned to a monitor.
+      </Card.Title>
+      <Card.Body className='grid place-items-center'>
+        <FiAlertCircle size='64'/>
+        <p className='max-w-md text-center text-lg'>You can update an existing monitor, remove a monitor, or create a new collection</p>
+      </Card.Body>
+      <Card.Actions className='flex gap-4'>
         <Button size='md' className='bg-cadmium-orange' onClick={() => navigate(-1)}>Back</Button>
         <AddCollection/>
-      </div>
-    </div>
+      </Card.Actions>
+    </Card>
   }
 
   return (

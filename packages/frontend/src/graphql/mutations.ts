@@ -126,10 +126,10 @@ export const CreateOneMonitor = gql`
             id
             schedule
             contactInfo
+            enabled
             collections {
                 id
                 title
-                monitorId
             }
         }
     }`

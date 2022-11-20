@@ -104,7 +104,6 @@ export const GetMonitors = gql`
             collections(where: $where) {
                 id
                 title
-                monitorId
             }
         }
     }`
