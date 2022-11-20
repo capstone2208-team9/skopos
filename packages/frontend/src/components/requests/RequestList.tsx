@@ -1,5 +1,4 @@
 import {useMutation, useQuery} from '@apollo/client'
-import {ReactComponent as Empty} from 'assets/undraw_not_found_re_44w9.svg'
 import RequestListItem from 'components/collections/RequestListItem'
 import Loader from 'components/Loader'
 import {ReorderRequests} from 'graphql/mutations'
@@ -67,7 +66,7 @@ export default function RequestList() {
   if (loading) return <Loader size={48}/>
 
   if (!data.requests.length) {
-    return <Empty className='max-w-md mt-auto'/>
+    return <></>
   }
 
   return (

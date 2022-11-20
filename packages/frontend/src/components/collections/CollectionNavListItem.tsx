@@ -21,7 +21,7 @@ export default function CollectionNavListItem({collection, onDelete, onSelect}: 
 
   return (
     <li className='group flex items-center text-lg whitespace-nowrap leading-5 my-4' key={collection.id}>
-      <NavLink to={collection.id.toString()} className={({isActive}) => className(isActive)}>
+      <NavLink to={`${collection.id.toString()}/requests`} className={({isActive}) => className(isActive)}>
         <HiOutlineFolder className='group-hover:scale-105 group-hover:text-cadmium-orange' size='26'/>
         <span className='group-hover:scale-105 group-hover:text-cadmium-orange transition-transform transition-400'>{collection.title}</span>
       </NavLink>

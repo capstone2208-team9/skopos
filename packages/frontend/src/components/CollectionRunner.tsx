@@ -1,19 +1,20 @@
 import {useLazyQuery} from '@apollo/client'
 import axios from 'axios'
-import CollectionRunResponse from "components/CollectionRunResponse";
-import ModalPortal from "components/ModalPortal";
+import CollectionRunResponse from 'components/CollectionRunResponse'
+import ModalPortal from 'components/ModalPortal'
 import {GetLastCollectionRun} from 'graphql/queries'
 import {useEffect, useState} from 'react'
-import {Button, Modal} from 'react-daisyui'
-import { useParams } from 'react-router-dom'
-import { Response } from 'types'
-import { BsCollectionPlay} from 'react-icons/bs'
+import {Button, Modal, Tooltip} from 'react-daisyui'
+import {BsCollectionPlayFill} from 'react-icons/bs'
+import {useParams} from 'react-router-dom'
+import {Response} from 'types'
 
 const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 
 export default function CollectionRunner() {
   const {collectionId} = useParams()
-  const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, { variables: {
+  const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, {
+    variables: {
       where: {
         collectionId: {
           equals: Number(collectionId)
@@ -21,11 +22,12 @@ export default function CollectionRunner() {
       },
       orderBy: [
         {
-          createdAt: "desc"
+          createdAt: 'desc'
         }
       ],
       take: 1
-    }, fetchPolicy: 'network-only'})
+    }, fetchPolicy: 'network-only'
+  })
   const [responses, setResponses] = useState<Response[]>([])
 
   const handleRunCollection = async () => {
@@ -33,7 +35,7 @@ export default function CollectionRunner() {
     try {
       await axios.post(url)
       await getLastCollectionRun()
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }
@@ -46,16 +48,22 @@ export default function CollectionRunner() {
   }, [data])
 
   if (loading) return <p>Loading...</p>
-  if (!data) return <Button startIcon={<BsCollectionPlay/>}
+  if (!data) return <Tooltip message='Run collection'>
+    <Button startIcon={<BsCollectionPlayFill size='32'/>}
                             onClick={handleRunCollection}
-                            className='bg-sky-blue'
-                            size='sm'
-  ><span className='ml-2'>Run</span></Button>
+                            className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
+                            size='md'/>
+  </Tooltip>
   if (error) return <p>Error {error.message}</p>
 
   return (
     <div>
-      <Button className='bg-viridian-green' size='sm' startIcon={<BsCollectionPlay/>} disabled={loading} onClick={handleRunCollection}>Run</Button>
+      <Tooltip message='Run collection'>
+        <Button startIcon={<BsCollectionPlayFill size='32'/>}
+                onClick={handleRunCollection}
+                className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
+                size='md'/>
+      </Tooltip>
       <ModalPortal id='collection-runner-results'>
         <Modal open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
           <Modal.Body>

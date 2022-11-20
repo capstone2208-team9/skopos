@@ -4,6 +4,7 @@ import {FaSpinner} from 'react-icons/fa'
 import {MdHistory} from 'react-icons/md'
 import {Link, Outlet, useLocation, useOutletContext, useParams} from 'react-router-dom'
 import {useCollections} from 'routes/Collections'
+import {ReactComponent as CollectionImage} from 'assets/undraw_collecting_re_lp6p.svg'
 
 type Context = {
   numRequests: number
@@ -36,19 +37,27 @@ export default function Collection() {
               <MdHistory size='28' className='fill-current'/>
             </Link>
           </Tooltip>
-          <Link className='btn btn-sm bg-cadmium-orange' to='requests/new'
-                state={{nextStep: collection?._count.requests + 1}}
-          >Add Request</Link>
           {collection?._count.requests > 0 && (
             <CollectionRunner/>
           )}
+          <Link className='btn btn-sm bg-cadmium-orange hover:bg-cadmium-orange hover:bg-opacity-80' to='requests/new'
+                state={{nextStep: collection?._count.requests + 1}}
+          >Add Request</Link>
         </div>
       </section>
-      {pathname.includes('requests') ? (
-        <Outlet context={{ numRequests: collection?._count.requests}}/>
-      ) : (
-        <Link className='btn btn-lg bg-sky-blue' to='requests'>View Requests</Link>
-      )}
+      <div className='grid grid-rows-1 grid-cols-1 w-full'>
+        <div className='col-span-full row-span-full col-start-1 row-start-1'>
+          <CollectionImage className='max-w-full opacity-50'/>
+        </div>
+        <div className='col-span-full row-span-full col-start-1 row-start-1 z-10'>
+          {pathname.includes('requests') ? (
+            <Outlet context={{ numRequests: collection?._count.requests}}/>
+          ) : (
+            <Link className='btn btn-lg bg-sky-blue' to='requests'>View Requests</Link>
+          )}
+
+        </div>
+      </div>
     </div>
   )
 }

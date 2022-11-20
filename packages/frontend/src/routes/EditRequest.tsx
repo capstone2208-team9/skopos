@@ -30,7 +30,7 @@ export default function EditRequest() {
     }
   })
   return (
-    <Card className='p-4 bg-gray-100 w-full'>
+    <Card className='bg-sky-50  p-4 rounded'>
       <Card.Title>
         <h3>
           Edit Request

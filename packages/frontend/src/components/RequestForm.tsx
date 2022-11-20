@@ -222,8 +222,8 @@ export default function RequestForm({request, stepNumber}: Props) {
       </div>
       <Tabs value={tabValue} onChange={setTabValue}>
         <Tabs.Tab value={0} className='tab tab-bordered text-dark-green'>Headers</Tabs.Tab>
-        <Tabs.Tab value={1} className='tab tab-bordered'>Body</Tabs.Tab>
-        <Tabs.Tab value={2} className='tab tab-bordered'>Assertions</Tabs.Tab>
+        <Tabs.Tab value={1} className='tab tab-bordered text-dark-green'>Body</Tabs.Tab>
+        <Tabs.Tab value={2} className='tab tab-bordered text-dark-green'>Assertions</Tabs.Tab>
       </Tabs>
       {tabValue === 0 &&
         <HeaderList headers={formData.headers ? formData.headers : []} setHeaders={handleHeaderChange}/>}
@@ -234,10 +234,7 @@ export default function RequestForm({request, stepNumber}: Props) {
           value={formData.body || ''}
           onValueChange={handleChangeBody}
           padding={10}
-          style={{
-            border: '1px solid #ccc',
-            fontSize: '1rem',
-          }}
+          className='bg-base-100 border-2 border-base-200'
         />}
       {tabValue === 2 && <AssertionList assertions={formData.assertions ? formData.assertions : []}
                                         setAssertions={handleAssertionChange}/>}

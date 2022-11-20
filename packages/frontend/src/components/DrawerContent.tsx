@@ -13,12 +13,12 @@ type NavLinkProps = string | ((props: { isActive: boolean; isPending: boolean; }
 export default function DrawerContent({onToggleDrawer}: Props) {
   const navClassName: NavLinkProps = ({isActive}) => {
     const baseClassName = `flex gap-2 items-center text-dark-green mb-2 text-xl`
-    return isActive ? baseClassName + ` font-medium text-sky-cadmium-orange` : baseClassName;
+    return isActive ? baseClassName + ` font-medium text-sky-blue` : baseClassName;
   }
   return (
-    <div className='flex flex-col items-center gap-8 w-48 bg-powder-blue p-4'>
-      <h1 className='text-2xl font-medium'>Skopos</h1>
-      <Menu>
+    <div className='flex flex-col items-center gap-8 w-48 bg-sky-100 bg-opacity-95 p-4'>
+      <h1 className='text-3xl font-medium mb-8'>Skopos</h1>
+      <Menu className='gap-4'>
         <NavLink className={navClassName}
                  key={uuid()}
                  to={`collections`}

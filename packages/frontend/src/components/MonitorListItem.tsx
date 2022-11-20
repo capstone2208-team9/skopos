@@ -85,12 +85,12 @@ export default function MonitorListItem({enabled, schedule, collections, contact
       <Table.Row>
         <p className='capitalize'>Running every {schedule}</p>
         <p className='text-center truncate capitalize'>{info}</p>
-        <Dropdown horizontal='center' vertical='top' hover className='group group-hover:text-cadmium-orange ml-auto'>
-          <Dropdown.Toggle size='sm' color='secondary' className='ml-auto group-hover:text-cadmium-orange'>
+        <Dropdown horizontal='center' vertical='top' hover className='group ml-auto'>
+          <Dropdown.Toggle size='sm' color='secondary' className='group ml-auto'>
             <span className='text-gray-50 text-lg font-medium'>
               {collections.length} collection{`${collections.length > 1 ? 's' : ''}`}
             </span>
-            <MdMoreVert size='20' className='fill-gray-50'/>
+            <MdMoreVert size='20' className='group-hover:fill-cadmium-orange  fill-gray-50 ml-2'/>
           </Dropdown.Toggle>
           <Dropdown.Menu className='shadow-xl bg-base-100'>
             {collections.map(col => (

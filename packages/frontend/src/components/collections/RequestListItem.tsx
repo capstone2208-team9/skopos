@@ -55,7 +55,7 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
   }
 
   return (
-    <div className='flex justify-between'>
+    <div className='flex items-center justify-between'>
       <Badge className='mr-4 rounded-full w-6 h-6 bg-sky-blue'>
         {reordering ? <Loader/> : stepNumber}
       </Badge>
@@ -97,7 +97,7 @@ export default function RequestListItem({
 
   return (
     <li key={request.id}
-        className={`border border-gray-300 rounded w-full p-4 mb-2 text-xl${dragClass}`}
+        className={`border bg-base-100 border-gray-300 rounded w-full p-4 mb-2 text-xl${dragClass}`}
         ref={innerRef}
         {...handleProps} {...dragProviderProps}
     >

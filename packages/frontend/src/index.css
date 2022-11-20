@@ -21,3 +21,11 @@ main {
     max-width: 1000px;
     min-width: 680px;
 }
+
+.tab {
+    @apply border-cadmium-orange border-opacity-30
+}
+
+.tab.tab-active {
+    @apply border-cadmium-orange border-b-2
+}

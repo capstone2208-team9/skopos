@@ -5,7 +5,6 @@ import React, {useEffect, useState} from 'react'
 import {Button, ButtonGroup, Form, Modal, Tooltip} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
-import {ICollection} from 'types'
 import {HiOutlineFolderAdd} from 'react-icons/hi'
 
 interface Props {
@@ -22,21 +21,13 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
   const [createCollection, { data, error, loading}] =
     useMutation(CreateCollection, {
       update(cache, {data: {createOneCollection}}) {
-        if (!createOneCollection) return
-        let existingCollectionNames = cache.readQuery<any>({query: GetCollectionNames})
-        if (!existingCollectionNames) {
-          cache.writeQuery({
-            query: GetCollectionNames,
-            data: {collections: [createOneCollection]}
-          })
-        } else {
-          existingCollectionNames = existingCollectionNames as {collections: Pick<ICollection, 'id'| 'title'>[]}
-          const collections = [...existingCollectionNames.collections, createOneCollection] || [createOneCollection]
-          cache.writeQuery({
-            query: GetCollectionNames,
-            data: {collections}
-          })
-        }
+        cache.updateQuery({
+          query: GetCollectionNames,
+        }, (data) => {
+          return data
+            ? {collections: [...data.collections, {...createOneCollection, _count: {requests: 0}}]}
+            : {collections: [{...createOneCollection, _count: {requests: 0}}]}
+        })
       },
     });
 
@@ -50,6 +41,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
         }
       }
     })
+    setTitle('')
   }
 
   useEffect(() => {
@@ -57,7 +49,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
       setTitle('')
       setOpen(false)
       addToast('Collection Created', 'success')
-      navigate(`/collections/${data.createOneCollection.id}`)
+      navigate(`/collections/${data.createOneCollection.id}/requests`)
     }
   }, [data])
 
@@ -72,14 +64,17 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
     <>
       {compact ? (
           <Tooltip className={className} message='Add a collection'>
-            <Button size={buttonSize} className={`ml-auto bg-sky-blue border-none`} onClick={() => setOpen(true)}>
-              <HiOutlineFolderAdd size='24'/>
+            <Button size={buttonSize} className={`ml-auto bg-transparent hover:bg-transparent text-sky-blue hover:text-cadmium-orange hover:scale-105 transition-transform border-none`} onClick={() => setOpen(true)}>
+              <HiOutlineFolderAdd size='36' className='text-inherit'/>
             </Button>
           </Tooltip>
         ) : (
         <Button size={buttonSize} className={`ml-auto bg-sky-blue `} onClick={() => setOpen(true)}>Add Collection</Button>
       )}
-      <Modal open={open} onClickBackdrop={() => setOpen(false)}>
+      <Modal open={open} onClickBackdrop={() => {
+        setOpen(false)
+        setTitle('')
+      }}>
         <Modal.Header className='text-center mb-2'>
           <h3>Add Collection</h3>
         </Modal.Header>
@@ -87,6 +82,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
           <Form onSubmit={handleAddCollection}>
             <div className='flex gap-2 items-center'>
               <input className='input input-bordered input-md' name='title'
+                     value={title}
                      onChange={(e) => setTitle(e.target.value)}
                      placeholder='Collection Name'
               />
@@ -97,6 +93,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
                 </Button>
                 <Button className='bg-cadmium-orange' type='button' size='md'
                         onClick={() => {
+                          console.log('clear title')
                           setTitle('')
                           setOpen(false)
                         }}

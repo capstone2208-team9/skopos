@@ -16,8 +16,9 @@ export default function CollectionForm({collection, show, onClose}: Props) {
   const [updateCollectionTitle] = useMutation(UpdateCollectionTitle);
   
   const handleClose = () => {
-    setTitle('')
+    console.log('handleClose')
     onClose()
+    setTitle('')
   }
 
   const handleSaveTitle: React.FormEventHandler = async (e) => {
