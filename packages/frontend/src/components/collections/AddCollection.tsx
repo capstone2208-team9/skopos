@@ -69,7 +69,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
             </Button>
           </Tooltip>
         ) : (
-        <Button size={buttonSize} className={`ml-auto bg-sky-blue `} onClick={() => setOpen(true)}>Add Collection</Button>
+        <Button size={buttonSize} className={`ml-auto bg-sky-blue hover:bg-cadmium-orange`} onClick={() => setOpen(true)}>Add Collection</Button>
       )}
       <Modal open={open} onClickBackdrop={() => {
         setOpen(false)

@@ -15,13 +15,13 @@ export default function Root() {
   return (
     <ToastProvider>
       <Drawer side={<DrawerContent onToggleDrawer={toggleDrawer}/>} open={drawerOpen} onClickOverlay={() => setDrawerOpen(!drawerOpen)} >
-        <div className='grid grid-rows-layout h-full'>
-          <header className='flex items-center p-4'>
-            <Button size='xs' color="ghost" onClick={() => setDrawerOpen(!drawerOpen)}>
-              <RiMenu3Line size={24}/>
+        <div className='grid grid-rows-layout p-4 h-full'>
+          <header className='flex items-center'>
+            <Button size='sm' className='bg-transparent border-none text-dark-green hover:scale-110 hover:bg-transparent hover:text-cadmium-orange' onClick={() => setDrawerOpen(!drawerOpen)}>
+              <RiMenu3Line size={28}/>
             </Button>
             <Link to='/' className='pt-2'>
-              <Logo height={64} width={64}/>
+              <Logo height={80} width={80}/>
             </Link>
           </header>
           <main className="p-8 min-w-[680px] w-full ml-auto mr-auto">

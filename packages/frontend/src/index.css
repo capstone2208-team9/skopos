@@ -29,3 +29,7 @@ main {
 .tab.tab-active {
     @apply border-cadmium-orange border-b-2
 }
+
+.collapse-arrow .collapse-title:after {
+    @apply left-0
+}

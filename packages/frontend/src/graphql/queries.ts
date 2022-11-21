@@ -1,5 +1,5 @@
 import {gql} from '@apollo/client'
-import {RequestDefinitionFragment} from 'graphql/fragments'
+import {CollectionRunResponses, RequestDefinitionFragment} from 'graphql/fragments'
 
 export const CreateCollection = gql`
     mutation Mutation($data: CollectionCreateInput!) {
@@ -23,24 +23,13 @@ export const GetCollectionNames = gql`
 `
 
 export const GetCollection = gql`
+    ${RequestDefinitionFragment}
     query Collection($where: CollectionWhereUniqueInput!, $orderBy: [RequestOrderByWithRelationInput!]) {
         collection(where: $where) {
             id
             title
             requests(orderBy: $orderBy) {
-                id
-                title
-                body
-                url
-                method
-                headers
-                stepNumber
-                assertions {
-                    id
-                    expected
-                    property
-                    comparison
-                }
+                ...RequestDefinitionFragment
             }
         }
     }
@@ -56,42 +45,29 @@ export const GetRequests = gql`
 `
 
 export const GetRequest = gql`
+    ${RequestDefinitionFragment}
     query Query($where: RequestWhereUniqueInput!) {
         request(where: $where) {
             ...RequestDefinitionFragment
             collectionId
         }
     }
-    ${RequestDefinitionFragment}
 `
 
 export const GetLastCollectionRun = gql`
-    query Query($where: CollectionRunWhereInput, $orderBy: [CollectionRunOrderByWithRelationInput!], $take: Int) {
+    query Query($where: CollectionRunWhereInput,
+        $orderBy: [CollectionRunOrderByWithRelationInput!],
+        $take: Int) {
         collectionRuns(where: $where, orderBy: $orderBy, take: $take) {
-            createdAt
-            responses {
-                id
-                status
-                headers
-                body
-                latency
-                request {
-                    title
-                }
-                assertionResults {
+            collection {
+                requests {
                     id
-                    pass
-                    actual
-                    assertion {
-                        id
-                        comparison
-                        expected
-                        property
-                    }
                 }
             }
+            ...CollectionRunResponses
         }
     }
+    ${CollectionRunResponses}
 `
 
 export const GetMonitors = gql`
@@ -108,7 +84,28 @@ export const GetMonitors = gql`
         }
     }`
 
+export const PaginateCollectionRuns = gql`
+    query Query($data: PaginateCollectionRunInput!) {
+        paginateCollectionRuns(data: $data) {
+            cursor
+            hasMore
+            items {
+                id
+                createdAt
+                collection {
+                    title
+                    requests {
+                        id
+                    }
+                }
+                ...CollectionRunResponses
+            }
+        }
+    }
+    ${CollectionRunResponses}
+`
 export const GetMonitor = gql`
+    ${CollectionRunResponses}
     query Query($where: MonitorWhereUniqueInput!, $orderBy: [CollectionRunOrderByWithRelationInput!], $take: Int) {
         monitor(where: $where) {
             id
@@ -116,30 +113,7 @@ export const GetMonitor = gql`
                 id
                 title
                 collectionRuns(orderBy: $orderBy, take: $take) {
-                    id
-                    createdAt
-                    responses {
-                        id
-                        status
-                        headers
-                        body
-                        latency
-                        request {
-                            id
-                            title
-                        }
-                        assertionResults {
-                            id
-                            pass
-                            actual
-                            assertion {
-                                id
-                                comparison
-                                expected
-                                property
-                            }
-                        }
-                    }
+                    ...CollectionRunResponses
                 }
             }
         }
@@ -157,32 +131,14 @@ export const GetEditMonitor = gql`
 
 export const GetCollectionRuns = gql`
     query CollectionRuns($where: CollectionRunWhereInput, $orderBy: [CollectionRunOrderByWithRelationInput!]) {
+        ${CollectionRunResponses}
         collectionRuns(where: $where, orderBy: $orderBy) {
             id
             createdAt
-            responses {
-                id
-                status
-                headers
-                body
-                latency
-                request {
-                    title
-                }
-                assertionResults {
-                    id
-                    pass
-                    actual
-                    assertion {
-                        id
-                        comparison
-                        expected
-                        property
-                    }
-                }
-            }
+            ...CollectionRunResponses
         }
     }
+    ${CollectionRunResponses}
 `
 
 export const GetCollectionsWithoutMonitors = gql`

@@ -65,8 +65,11 @@ export default function CollectionRunner() {
                 size='md'/>
       </Tooltip>
       <ModalPortal id='collection-runner-results'>
-        <Modal open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
-          <Modal.Body>
+        <Modal className='overflow-y-scroll' open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
+          <Modal.Body className='overflow-y-scroll'>
+            {data.collectionRuns && data.collectionRuns[0].collection.requests.length !== responses.length && (
+              <p className='text-cedar-chest'>Some responses were not recorded due to errors</p>
+            )}
             {responses.map(response => (
               <CollectionRunResponse key={response.id} response={response}/>
             ))}

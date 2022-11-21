@@ -4,8 +4,8 @@ import {BiTrash} from 'react-icons/bi'
 import HeaderForm from './HeaderForm'
 
 interface HeaderListProps {
-  headers: Record<string, string>
-  setHeaders: (header: Record<string, string>) => void
+  headers: Record<string, string|number>
+  setHeaders: (header: { [p: string]: string | number }) => void
 }
 
 export default function HeaderList({headers, setHeaders}: HeaderListProps) {

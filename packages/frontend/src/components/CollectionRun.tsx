@@ -15,6 +15,8 @@ export default function CollectionRun({collectionRun}: Props) {
   const handleClose = () => setExpanded(false)
   const toggle = () => setExpanded(prev => !prev)
   const date = formatDate(collectionRun.createdAt)
+
+  const notRun = (collectionRun.collection?.requests.length || 0) - collectionRun.responses.length
   return (
     <Collapse key={uuid()}
               checkbox
@@ -27,10 +29,15 @@ export default function CollectionRun({collectionRun}: Props) {
       >
         <span className='font-medium'>Run Date</span> {date}
       </Collapse.Title>
-      <Collapse.Content  className='grid md:grid-cols-2 gap-2'>
-        {collectionRun.responses.map(response => (
-          <CollectionRunResponse key={response.id} response={response}/>
-        ))}
+      <Collapse.Content className='flex flex-col items-center'>
+        {notRun > 0 && (
+          <p className='text-cedar-chest'><span>{notRun}</span> responses were not recorded due to errors</p>
+        )}
+        <div className='grid md:grid-cols-2 gap-2'>
+            {collectionRun.responses.map(response => (
+              <CollectionRunResponse key={response.id} response={response}/>
+            ))}
+        </div>
       </Collapse.Content>
     </Collapse>
   )

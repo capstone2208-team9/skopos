@@ -3,8 +3,8 @@ import {Button} from 'react-daisyui'
 import { AiOutlinePlus} from 'react-icons/ai'
 
 interface HeaderFormProps {
-  headers: Record<string, string>
-  setHeaders: (headers: Record<string, string>) => void
+  headers: Record<string, string|number>
+  setHeaders: (headers: Record<string, string|number>) => void
 }
 
 export default function HeaderForm ({ headers, setHeaders }: HeaderFormProps) {

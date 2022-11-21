@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-export const CollectionRunsFragment = gql`
+export const CollectionRunResponses = gql`
     fragment CollectionRunResponses on CollectionRun {
         responses {
             id
@@ -9,6 +9,7 @@ export const CollectionRunsFragment = gql`
             body
             latency
             request {
+                id
                 title
             }
             assertionResults {
@@ -43,3 +44,31 @@ export const RequestDefinitionFragment = gql`
     }
 `
 
+export const CollectionRunFragment = gql`
+    fragment CollectionRunFragment on CollectionRun {
+        id
+        createdAt
+        responses {
+            id
+            status
+            headers
+            body
+            latency
+            request {
+                id
+                title
+            }
+            assertionResults {
+                id
+                pass
+                actual
+                assertion {
+                    id
+                    comparison
+                    expected
+                    property
+                }
+            }
+        }
+    }
+`

@@ -35,14 +35,14 @@ export interface ICollection {
 
 export interface Request {
   __typename?: string
-  id?: number | any;
+  id?: number;
   collectionId?: number;
   stepNumber: number;
   title: string;
   method: string;
   url: string;
   body?: string;
-  headers?: Record<string | any, string | number | any>
+  headers?: Record<string, number|string>
   response?: Response;
   createdAt?: Date;
   assertions: Assertion[]
@@ -51,7 +51,7 @@ export interface Request {
 export interface Response {
   id: number;
   status: number;
-  headers?: Record<string, any>
+  headers?: Record<string, string|number>
   body?: Headers;
   latency: number;
   createdAt?: Date;
@@ -64,6 +64,7 @@ export interface Response {
 export interface CollectionRun {
   id: number;
   collectionId?: number;
+  collection?: ICollection
   createdAt?: string
   responses: Response[]
 }

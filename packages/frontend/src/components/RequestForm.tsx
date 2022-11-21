@@ -24,7 +24,7 @@ const initialState = {
   title: '',
   method: 'GET',
   url: '',
-  headers: {},
+  headers: {} as Record<string, string|number>,
   body: '',
   assertions: [],
 }
@@ -43,7 +43,7 @@ export default function RequestForm({request, stepNumber}: Props) {
       if (!createOneRequest) return
       const variables = getRequestVariables(collectionId)
       cache.updateQuery({ query: GetRequests, variables }, (data) => ({
-        requests: [...data.request, createOneRequest]
+        requests: [...data.requests, createOneRequest]
       }));
     },
   })
@@ -153,7 +153,7 @@ export default function RequestForm({request, stepNumber}: Props) {
     request ? handleSaveRequest() : handleEditRequest()
   }
 
-  const handleHeaderChange = (headers: Record<string, string>) => {
+  const handleHeaderChange = (headers: Record<string, string|number>) => {
     setFormData({...formData, headers})
   }
 
@@ -226,7 +226,7 @@ export default function RequestForm({request, stepNumber}: Props) {
         <Tabs.Tab value={2} className='tab tab-bordered text-dark-green'>Assertions</Tabs.Tab>
       </Tabs>
       {tabValue === 0 &&
-        <HeaderList headers={formData.headers ? formData.headers : []} setHeaders={handleHeaderChange}/>}
+        <HeaderList headers={formData.headers ? formData.headers : {} as Record<string, string|number>} setHeaders={handleHeaderChange}/>}
 
       {tabValue === 1 &&
         <Editor

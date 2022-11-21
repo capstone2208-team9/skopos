@@ -8,7 +8,7 @@ export default function Landing() {
   return (
     <div className='grid place-items-center'>
       <ButtonGroup className='gap-4'>
-        <AddMonitor className='ml-auto mb-4 btn bg-sky-blue'/>
+        <AddMonitor />
         <AddCollection/>
       </ButtonGroup>
       <SkoposLargeLogo className='max-w-md'/>

@@ -1,6 +1,5 @@
 import { CollectionRun as CollectionRunType } from "types"
 import CollectionRun from 'components/CollectionRun'
-import { v4 as uuid} from 'uuid'
 import {ReactComponent as SVGComponent } from 'assets/undraw_not_found_re_44w9.svg'
 
 interface Props {
@@ -16,7 +15,7 @@ export default function CollectionRunsContainer({collectionRuns}: Props) {
   return (
     <div className=''>
       {collectionRuns.map(run => (
-        <CollectionRun key={uuid()} collectionRun={run}/>
+        <CollectionRun key={run.id} collectionRun={run}/>
       ))}
     </div>
   )
