@@ -67,7 +67,7 @@ export default function MonitorForm({
   }, [value, units, length])
 
   return (
-    <Card className='p-4 rounded bg-powder-blue bg-opacity-95'>
+    <Card className='p-4 rounded bg-sky-50 bg-opacity-95 shadow-xl'>
       <Card.Title>
         <h2>{monitor ? 'Edit' : 'Add A'} Monitor</h2>
       </Card.Title>

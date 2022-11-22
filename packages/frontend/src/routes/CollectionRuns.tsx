@@ -4,10 +4,11 @@ import Loader from 'components/Loader'
 import {PaginateCollectionRuns} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useEffect, useRef} from 'react'
-import {Button} from 'react-daisyui'
+import {Button, ButtonGroup } from 'react-daisyui'
 import {IoMdRefresh} from 'react-icons/io'
-import {useNavigate, useParams} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {CollectionRun} from 'types'
+import { AiOutlineToTop } from 'react-icons/ai'
 
 const variables = (collectionId?: string, cursor = '') => {
   return (
@@ -24,8 +25,8 @@ const variables = (collectionId?: string, cursor = '') => {
 export default function CollectionRuns() {
   const {collectionId} = useParams()
   const {addToast} = useToast()
-  const navigate = useNavigate()
-  const ref = useRef<HTMLButtonElement>(null)
+  const bottomRef = useRef<HTMLButtonElement>(null)
+  const topRef = useRef<HTMLButtonElement>(null)
   const {
     data,
     error,
@@ -44,29 +45,26 @@ export default function CollectionRuns() {
 
   useEffect(() => {
     if (!data) return
-    ref.current?.scrollIntoView({behavior: 'smooth'})
-  }, [ref, data])
-  
+    bottomRef.current?.scrollIntoView({behavior: 'smooth'})
+  }, [bottomRef, data])
+
 
   if (loading) return <Loader/>
   if (!data) return <></>
 
 
   return (
-    <>
-      <div className='flex items-center gap-4'>
-        <Button size='sm' className='bg-cadmium-orange' onClick={() => navigate(-1)}>Back</Button>
-        <Button size='sm' className='bg-viridian-green' onClick={() => refetch()}>
-          {loading ? (<Loader size='20'/>) : (
-            <IoMdRefresh size='24' className='text-white'/>
-          )}
-        </Button>
-      </div>
-      <div>
-        <CollectionRunsContainer collectionRuns={data.paginateCollectionRuns.items}/>
-        <Button size='sm' disabled={!data.paginateCollectionRuns.hasMore}
-                ref={ref}
-                className='bg-dark-green'
+    <div className='flex flex-col gap-4 items-start'>
+      <Button ref={topRef} size='sm' className='bg-sky-blue' onClick={() => refetch()}>
+        {loading ? (<Loader size='20'/>) : (
+          <IoMdRefresh size='24' className='text-white'/>
+        )}
+      </Button>
+      <CollectionRunsContainer collectionRuns={data.paginateCollectionRuns.items}/>
+      <ButtonGroup className='gap-4 items-end'>
+        <Button size='md' disabled={!data.paginateCollectionRuns.hasMore}
+                ref={bottomRef}
+                className='bg-cadmium-orange'
                 onClick={async () => {
                   await fetchMore({
                     variables: variables(collectionId, data.paginateCollectionRuns.cursor)
@@ -77,8 +75,11 @@ export default function CollectionRuns() {
             'Load More'
           )}
         </Button>
+        <Button size='md' className='bg-secondary' startIcon={<AiOutlineToTop size='24'
+                onClick={() => topRef.current?.scrollIntoView({ behavior: 'smooth'})}
+        />}/>
+      </ButtonGroup>
+    </div>
 
-      </div>
-    </>
   )
 }

@@ -33,7 +33,7 @@ export default function CollectionRun({collectionRun}: Props) {
         {notRun > 0 && (
           <p className='text-cedar-chest'><span>{notRun}</span> responses were not recorded due to errors</p>
         )}
-        <div className='grid md:grid-cols-2 gap-2'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-2'>
             {collectionRun.responses.map(response => (
               <CollectionRunResponse key={response.id} response={response}/>
             ))}

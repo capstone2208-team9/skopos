@@ -1,20 +1,20 @@
+import ErrorPage from 'components/ErrorPage'
 import RequestList from 'components/requests/RequestList'
-import { createBrowserRouter } from 'react-router-dom'
-import CollectionRuns from "routes/CollectionRuns";
+import {createBrowserRouter} from 'react-router-dom'
+import Collection from 'routes/Collection'
+import CollectionRuns from 'routes/CollectionRuns'
 import Collections from 'routes/Collections'
-import CreateMonitor from "routes/CreateMonitor";
+import CreateMonitor from 'routes/CreateMonitor'
 import CreateRequest from 'routes/CreateRequest'
-import EditMonitor from "routes/EditMonitor";
+import EditMonitor from 'routes/EditMonitor'
 import EditRequest from 'routes/EditRequest'
-import Monitor from "routes/Monitor";
+import Monitor from 'routes/Monitor'
 import Monitors from 'routes/Monitors'
 import Root from 'routes/Root'
-import Collection from 'routes/Collection'
-import ErrorPage from 'components/ErrorPage'
 
 const router = createBrowserRouter([
   {
-    "path": "/",
+    'path': '/',
     element: <Root/>,
     errorElement: <ErrorPage/>,
     children: [
@@ -53,15 +53,31 @@ const router = createBrowserRouter([
             element: <CreateMonitor/>
           },
           {
-            path: ':id',
-            element: <Monitor/>,
-          },
-          {
             path: ':id/edit',
             element: <EditMonitor/>,
           },
+          {
+            path: ':id',
+            element: <Monitor/>,
+            children: [
+              {
+                path: ':collectionId',
+                element: <CollectionRuns/>
+              },
+            ],
+          },
         ]
       },
+      // {
+      //   path: 'monitors/:id',
+      //   element: <Monitor/>,
+      //   children: [
+      //     {
+      //       path: 'collections/:collectionId',
+      //       element: <CollectionRuns/>,
+      //     },
+      //   ]
+      // },
       {
         path: 'collection-runs/:collectionId',
         element: <CollectionRuns/>

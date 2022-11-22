@@ -105,16 +105,12 @@ export const PaginateCollectionRuns = gql`
     ${CollectionRunResponses}
 `
 export const GetMonitor = gql`
-    ${CollectionRunResponses}
-    query Query($where: MonitorWhereUniqueInput!, $orderBy: [CollectionRunOrderByWithRelationInput!], $take: Int) {
+    query Query($where: MonitorWhereUniqueInput!, $orderBy: [CollectionOrderByWithRelationInput!]) {
         monitor(where: $where) {
             id
-            collections {
+            collections(orderBy: $orderBy) {
                 id
                 title
-                collectionRuns(orderBy: $orderBy, take: $take) {
-                    ...CollectionRunResponses
-                }
             }
         }
     }`

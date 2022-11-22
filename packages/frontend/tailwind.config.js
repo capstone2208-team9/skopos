@@ -19,7 +19,7 @@ module.exports = {
       },
       gridTemplateRows: {
         'layout': '80px 1fr 80px'
-      }
+      },
     },
   },
   plugins: [
