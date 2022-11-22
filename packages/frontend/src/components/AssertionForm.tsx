@@ -51,7 +51,7 @@ export default function AssertionForm({assertions, setAssertions}: AssertionForm
             <Select.Option value='headers'>Headers</Select.Option>
           </Select>
         </div>
-        {property.startsWith('.body') &&
+        {property.startsWith('body') &&
           <div className='form-group'>
             <Form.Label title='Key' htmlFor='body-key'/>
             <Input value={body} onChange={handleBodyInputChange}
