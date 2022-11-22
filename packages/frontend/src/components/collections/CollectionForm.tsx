@@ -61,8 +61,8 @@ export default function CollectionForm({collection, show, onClose}: Props) {
           </Form>
         </Modal.Body>
         <Modal.Actions>
-          <Button type='submit' form='rename-collection' className='mx-2' color='primary'>Save</Button>
-          <Button type='button' color='secondary' onClick={handleClose}>Cancel</Button>
+          <Button type='submit' form='rename-collection' className='mx-2 bg-sky-blue'>Save</Button>
+          <Button type='button' onClick={handleClose} className='bg-cadmium-orange'>Cancel</Button>
         </Modal.Actions>
       </Modal>
 

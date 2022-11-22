@@ -30,8 +30,8 @@ export default function CollectionNavListItem({collection, onDelete, onSelect}: 
           <MdMoreVert size='20' className='fill-current'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='shadow-xl bg-base-100'>
-          <Dropdown.Item className='text-primary' onClick={() => onSelect(collection)}><MdEdit/> Edit</Dropdown.Item>
-          <Dropdown.Item className='text-error' onClick={() => onDelete(collection)}><MdDelete /> Delete</Dropdown.Item>
+          <Dropdown.Item className='text-sky-blue' onClick={() => onSelect(collection)}><MdEdit/> Edit</Dropdown.Item>
+          <Dropdown.Item className='text-cedar-chest' onClick={() => onDelete(collection)}><MdDelete /> Delete</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 

@@ -9,12 +9,13 @@ interface Props {
 
 export default function CollectionRunResponse({ response }: Props) {
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col min-w-max'>
       <h2 className='text-xl font-medium my-4'>{response.request.title} Results</h2>
       <Table>
         <Table.Head>
           <span>Property</span>
           <span>Expected</span>
+          <span>Comparison</span>
           <span>Actual</span>
           <span>Pass</span>
         </Table.Head>
@@ -28,6 +29,9 @@ export default function CollectionRunResponse({ response }: Props) {
                 {result.assertion.expected}
               </span>
               <span>
+                {result.assertion.comparison}
+              </span>
+              <span className='inline-block truncate max-w-full'>
                 {result.actual}
               </span>
               <span>

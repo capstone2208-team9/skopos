@@ -3,7 +3,7 @@ import Loader from "components/Loader";
 import {GetMonitor} from 'graphql/queries'
 import { useToast } from "hooks/ToastProvider";
 import {useEffect } from 'react'
-import { Button, ButtonGroup } from "react-daisyui";
+import { Button} from "react-daisyui";
 import {Link, Outlet, useNavigate, useParams } from "react-router-dom";
 
 export default function Monitor() {
@@ -41,14 +41,9 @@ export default function Monitor() {
   return (
     <div className='py-4 z-30 absolute top-32 w-full min-w-[768px] gap-8 grid grid-cols-12 justify-center bg-sky-50 shadow-xl' >
       <div className='flex flex-col col-span-3 gap-4 items-start'>
-        <ButtonGroup className='gap-2'>
-          <Button size='sm' className='bg-cadmium-orange' onClick={() => {
-            navigate(-1)
-          }}>Back</Button>
-          <Button size='sm' className='bg-sky-blue' onClick={() => {
-            navigate('/monitors')
-          }}>Monitors</Button>
-        </ButtonGroup>
+        <Button size='sm' className='bg-sky-blue' onClick={() => {
+          navigate('/monitors')
+        }}>Monitors</Button>
         <h2 className='text-2xl'>Collections</h2>
         <ul >
           {data.monitor.collections.map(c => (

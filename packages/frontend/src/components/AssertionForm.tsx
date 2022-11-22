@@ -1,55 +1,73 @@
-import { useState } from 'react'
-import {Button, Form, Select} from 'react-daisyui'
+import React, {useState} from 'react'
+import {Button, Form, Input, Select} from 'react-daisyui'
 import {AiOutlinePlus} from 'react-icons/ai'
-import { Assertion} from 'types'
+import {Assertion} from 'types'
 
 interface AssertionFormProps {
   assertions: Assertion[]
   setAssertions: (assertions: Assertion[]) => void
 }
 
-export default function AssertionForm ({ assertions, setAssertions }: AssertionFormProps) {
-  const [property, setProperty] = useState<string>("status")
-  const [comparison, setComparison] = useState<string>("is equal to")
-  const [expected, setExpected] = useState<string>("")
-  const [displayBodyInput, setDisplayBodyInput] = useState<boolean>(false)
-  const [bodyInput, setBodyInput] = useState<string>("body.")
+export default function AssertionForm({assertions, setAssertions}: AssertionFormProps) {
+  const [property, setProperty] = useState<string>('status')
+  const [comparison, setComparison] = useState<string>('is equal to')
+  const [expected, setExpected] = useState<string>('')
+  const [body, setBody] = useState<string>('body.')
+  const [headers, setHeaders] = useState<string>('headers.')
 
-  const disabled = !property || !comparison || !expected
+  const disabled = !property || !comparison
 
   const handleAddAssertion = () => {
-    setDisplayBodyInput(false)
-    setAssertions([...assertions, { property, comparison, expected } ])
+    setAssertions([...assertions, {property, comparison, expected}])
   }
 
   const handlePropertyChange = (value: string) => {
     setProperty(value)
-    setDisplayBodyInput(value === 'body')
   }
 
   const handleBodyInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBodyInput(e.target.value)
+    setBody(e.target.value)
     setProperty(e.target.value)
   }
 
+  const handleHeaderInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHeaders(e.target.value)
+    setProperty(e.target.value)
+  }
+
+  const grid = (['body', 'headers'].includes(property) && !comparison.includes('null')) ? 'grid-cols-3 grid-rows-2' : 'grid-cols-4'
+
   return (
     <div>
-      <div className='flex gap-2 items-center'>
-        <Form.Label htmlFor='property'>
-          <Select className='select select-bordered select-sm' id='property' name='property'
+      <div className={`grid ${grid} gap-4 items-end`}>
+        <div className='form-control' title='Property'>
+          <Form.Label htmlFor='property' title='Property'/>
+          <Select id='property' name='property' className='w-full'
                   onChange={handlePropertyChange}
           >
             <Select.Option value='status'>Status</Select.Option>
             <Select.Option value='latency'>Latency</Select.Option>
             <Select.Option value='body'>Body</Select.Option>
-            <Select.Option value='header'>Header</Select.Option>
+            <Select.Option value='headers'>Headers</Select.Option>
           </Select>
-        </Form.Label>
-        { displayBodyInput?
-          <input className='input input-bordered input-sm' value={bodyInput} onChange={handleBodyInputChange} name="value" />
-          : null }
-        <Form.Label htmlFor='comparison'>
-          <Select className='select select-bordered select-sm' id='comparison' name='comparison'
+        </div>
+        {property.startsWith('.body') &&
+          <div className='form-group'>
+            <Form.Label title='Key' htmlFor='body-key'/>
+            <Input value={body} onChange={handleBodyInputChange}
+                   name='body-key' className='w-full'/>
+          </div>
+        }
+        {property.startsWith('headers') &&
+          <div className='form-control'>
+            <Form.Label htmlFor='header-key' title='Key'/>
+            <Input value={headers} onChange={handleHeaderInputChange}
+                   name='header-key' className='w-full'/>
+          </div>
+        }
+        <div className='form-control'>
+          <Form.Label htmlFor='comparison' title='Comparison'/>
+          <Select id='comparison' name='comparison'
                   onChange={setComparison}
           >
             <Select.Option value='is equal to'>is equal to</Select.Option>
@@ -61,9 +79,16 @@ export default function AssertionForm ({ assertions, setAssertions }: AssertionF
             <Select.Option value='includes'>includes</Select.Option>
             <Select.Option value='does not include'>does not include</Select.Option>
           </Select>
-        </Form.Label>
-        <input className='input input-bordered input-sm' value={expected} placeholder='expected value' onChange={(e) => setExpected(e.target.value)} name="value" />
-        <Button className='bg-sky-blue' type='button' size='sm' onClick={handleAddAssertion}
+
+        </div>
+
+        {!comparison.includes('null') &&
+          <div className='form-control'>
+            <Form.Label htmlFor='expected' title='Expected'/>
+            <Input value={expected} placeholder='expected value' className='w-full'
+                   onChange={(e) => setExpected(e.target.value)} name='expected'/>
+          </div>}
+        <Button className='bg-sky-blue w-12' type='button' onClick={handleAddAssertion}
                 disabled={disabled}
         >
           <span className='sr-only'>Add</span>

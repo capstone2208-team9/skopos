@@ -1,7 +1,7 @@
 import {useMutation} from '@apollo/client'
 import Loader from 'components/Loader'
 import {getRequestVariables} from 'components/requests/RequestList'
-import {GetRequests } from 'graphql/queries'
+import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {CreateOneRequest, UpdateRequest } from 'graphql/mutations'
 import {useToast} from 'hooks/ToastProvider'
 import React, {useEffect, useMemo, useState} from 'react'
@@ -42,6 +42,12 @@ export default function RequestForm({request, stepNumber}: Props) {
     update(cache, {data: {createOneRequest}}) {
       if (!createOneRequest) return
       const variables = getRequestVariables(collectionId)
+      cache.updateQuery({query: GetCollectionNames}, (data) => {
+        const id = Number(collectionId)
+        return {collections: data.collections.map(c => {
+          return c.id === id ? {...c, _count : c._count.requests} : c
+          })}
+      })
       cache.updateQuery({ query: GetRequests, variables }, (data) => ({
         requests: [...data.requests, createOneRequest]
       }));

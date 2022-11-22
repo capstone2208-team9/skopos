@@ -1,3 +1,4 @@
+import CollectionRunLayout from 'components/CollectionRunLayout'
 import ErrorPage from 'components/ErrorPage'
 import RequestList from 'components/requests/RequestList'
 import {createBrowserRouter} from 'react-router-dom'
@@ -68,19 +69,11 @@ const router = createBrowserRouter([
           },
         ]
       },
-      // {
-      //   path: 'monitors/:id',
-      //   element: <Monitor/>,
-      //   children: [
-      //     {
-      //       path: 'collections/:collectionId',
-      //       element: <CollectionRuns/>,
-      //     },
-      //   ]
-      // },
       {
         path: 'collection-runs/:collectionId',
-        element: <CollectionRuns/>
+        element: <CollectionRunLayout>
+          <CollectionRuns/>
+        </CollectionRunLayout>
       },
     ]
   }

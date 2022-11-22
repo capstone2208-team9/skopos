@@ -1,6 +1,7 @@
 import {useLazyQuery} from '@apollo/client'
 import axios from 'axios'
 import CollectionRunResponse from 'components/CollectionRunResponse'
+import Loader from 'components/Loader'
 import ModalPortal from 'components/ModalPortal'
 import {GetLastCollectionRun} from 'graphql/queries'
 import {useEffect, useState} from 'react'
@@ -49,7 +50,7 @@ export default function CollectionRunner() {
 
   if (loading) return <p>Loading...</p>
   if (!data) return <Tooltip message='Run collection'>
-    <Button startIcon={<BsCollectionPlayFill size='32'/>}
+    <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                             onClick={handleRunCollection}
                             className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
                             size='md'/>
@@ -59,14 +60,14 @@ export default function CollectionRunner() {
   return (
     <div>
       <Tooltip message='Run collection'>
-        <Button startIcon={<BsCollectionPlayFill size='32'/>}
+        <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                 onClick={handleRunCollection}
                 className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
                 size='md'/>
       </Tooltip>
       <ModalPortal id='collection-runner-results'>
-        <Modal className='overflow-y-scroll' open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
-          <Modal.Body className='overflow-y-scroll'>
+        <Modal className='max-w-full' open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
+          <Modal.Body>
             {data.collectionRuns && data.collectionRuns[0].collection.requests.length !== responses.length && (
               <p className='text-cedar-chest'>Some responses were not recorded due to errors</p>
             )}

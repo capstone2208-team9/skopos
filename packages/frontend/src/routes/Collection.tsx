@@ -32,13 +32,15 @@ export default function Collection() {
       <section className='flex gap-8 items-center mb-8'>
         <h2 className='collection-title text-3xl font-medium'>{collection?.title}</h2>
         <div className='flex items-center gap-4'>
-          <Tooltip className='text-sky-blue hover:text-cadmium-orange hover:scale-105' message='See Past Runs'>
-            <Link className='link text-inherit' to={`/collection-runs/${collectionId}`}>
-              <MdHistory size='28' className='fill-current'/>
-            </Link>
-          </Tooltip>
           {collection?._count.requests > 0 && (
-            <CollectionRunner/>
+            <>
+              <Tooltip className='text-sky-blue hover:text-cadmium-orange hover:scale-105' message='See Past Runs'>
+                <Link className='link text-inherit' to={`/collection-runs/${collectionId}`}>
+                  <MdHistory size='28' className='fill-current'/>
+                </Link>
+              </Tooltip>
+              <CollectionRunner/>
+            </>
           )}
           <Link className='btn btn-sm bg-cadmium-orange hover:bg-cadmium-orange hover:bg-opacity-80' to='requests/new'
                 state={{nextStep: collection?._count.requests + 1}}

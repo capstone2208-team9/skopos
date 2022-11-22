@@ -2,7 +2,7 @@ import {useMutation} from '@apollo/client'
 import Loader from 'components/Loader'
 import {getRequestVariables} from 'components/requests/RequestList'
 import {DeleteRequest} from 'graphql/mutations'
-import {GetRequests} from 'graphql/queries'
+import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {LegacyRef} from 'react'
 import {DraggableProvidedDraggableProps, DraggableProvidedDragHandleProps} from 'react-beautiful-dnd'
 import {Badge, Button, ButtonGroup} from 'react-daisyui'
@@ -43,6 +43,12 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
         variables,
         data: {requests: deleteRequest}
       })
+      cache.updateQuery({query: GetCollectionNames}, (data) => {
+        const id = Number(collectionId)
+        return {collections: data.collections.map(c => {
+            return c.id === id ? {...c, _count : Math.min(c._count.requests - 1, 0)} : c
+          })}
+      })
     }
   })
 
@@ -68,7 +74,7 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
                 onClick={handleClickDelete}
         >
           {deleting ? <Loader size='20'/> : <MdDelete
-            size='20' className='text-error text-xl'/>}
+            size='20' className='text-cedar-chest text-xl'/>}
         </Button>
       </ButtonGroup>
     </div>

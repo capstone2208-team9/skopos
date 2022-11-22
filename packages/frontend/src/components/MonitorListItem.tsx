@@ -109,7 +109,7 @@ export default function MonitorListItem({enabled, schedule, collections, contact
           <Link className='btn btn-ghost' to={`/monitors/${id}/edit`}>
             <MdEdit size={ICON_SIZE} className='text-sky-blue'/>
           </Link>
-          <Button startIcon={deleting ? <Loader size='sm'/> :
+          <Button startIcon={deleting ? <Loader size={ICON_SIZE} /> :
             <MdDelete size={ICON_SIZE} className='text-error'/>} color='ghost' size='md'
                   onClick={toggleDeleteModalOpen}
           />

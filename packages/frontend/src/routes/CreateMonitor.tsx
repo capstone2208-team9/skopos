@@ -88,7 +88,7 @@ export default function CreateMonitor() {
   if (loading) return <Loader size={46}/>
 
   if (collectionData && collectionData.collections.length === 0) {
-    return <Card className='grid bg-gray-50 -translate-y-1/2 z-20 m-auto bg-opacity-90 w-9/12 place-items-center gap-8 rounded shadow-xl p-4'>
+    return <Card className='grid bg-gray-50 z-20 m-auto bg-opacity-90 w-9/12 place-items-center gap-8 rounded shadow-xl p-4'>
       <Card.Title className='text-cedar-chest text-xl'>
         All collections are already assigned to a monitor.
       </Card.Title>

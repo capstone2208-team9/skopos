@@ -65,13 +65,10 @@ export default function RequestList() {
 
   if (loading) return <Loader size={48}/>
 
-  if (!data.requests.length) {
-    return <></>
-  }
 
   return (
     <div className='grid grid-rows-1 grid-cols-1 place-items-center w-full'>
-      <DragDropContext onDragEnd={handleDrag}>
+      {data.requests.length > 0 && <DragDropContext onDragEnd={handleDrag}>
         <Droppable droppableId='droppable'>
           {(provided) => (
             <ul className='col-start-1 col-span-full row-start-1 row-span-full w-9/12'
@@ -103,8 +100,8 @@ export default function RequestList() {
 
           )}
         </Droppable>
-      </DragDropContext>
-      <div className='col-start-1 col-span-full row-start-1 row-span-full z-20 w-full'>
+      </DragDropContext>}
+      <div className='outlet col-start-1 col-span-full row-start-1 row-span-full z-20 w-full'>
         <Outlet/>
       </div>
     </div>

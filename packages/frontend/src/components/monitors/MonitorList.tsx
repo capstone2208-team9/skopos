@@ -1,4 +1,4 @@
-import { Table } from "react-daisyui";
+import { Alert, Table } from "react-daisyui";
 import MonitorListItem from "components/MonitorListItem";
 import Loader from "components/Loader";
 import {GetMonitors} from 'graphql/queries'
@@ -24,7 +24,11 @@ export default function MonitorList() {
   }, [error, addToast]);
 
   if (loading) return <Loader/>
-  if (data && !data.monitors.length) return <></>
+  if (data && !data.monitors.length) return <div className='grid translate-y-32 m-auto place-items-center w-1/2'>
+    <Alert className='bg-sky-blue'>
+    <h2 className='text-2xl'>No monitors</h2>
+  </Alert>
+  </div>
 
   return (
     <div className='grid place-items-center mt-32 min-w-[768px] overflow-x-auto'>

@@ -36,6 +36,7 @@ export default function CollectionRuns() {
   } = useQuery<{ paginateCollectionRuns: { items: CollectionRun[], cursor: string, hasMore: boolean } }>(PaginateCollectionRuns,
     {
       variables: variables(collectionId),
+      notifyOnNetworkStatusChange: true
     })
 
 
@@ -54,7 +55,7 @@ export default function CollectionRuns() {
 
 
   return (
-    <div className='flex flex-col gap-4 items-start'>
+    <div className='flex flex-col gap-4 items-start mx-auto w-full'>
       <Button ref={topRef} size='sm' className='bg-sky-blue' onClick={() => refetch()}>
         {loading ? (<Loader size='20'/>) : (
           <IoMdRefresh size='24' className='text-white'/>

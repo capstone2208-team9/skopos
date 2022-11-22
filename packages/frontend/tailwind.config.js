@@ -18,8 +18,11 @@ module.exports = {
         'dark-green': '#172729',
       },
       gridTemplateRows: {
-        'layout': '80px 1fr 80px'
+        'layout': '80px 1fr 80px',
       },
+      gridTemplateColumns: {
+        'assertion-form': 'repeat(5, min-content)'
+      }
     },
   },
   plugins: [

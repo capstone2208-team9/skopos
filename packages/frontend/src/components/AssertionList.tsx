@@ -1,3 +1,4 @@
+import Loader from 'components/Loader'
 import {getRequestVariables} from 'components/requests/RequestList'
 import {DeleteOneAssertion} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
@@ -17,7 +18,7 @@ interface AssertionListProps {
 
 export default function AssertionList({assertions, setAssertions}: AssertionListProps) {
   const {collectionId} = useParams()
-  const [deleteOneAssertion] = useMutation(DeleteOneAssertion, {
+  const [deleteOneAssertion, {loading}] = useMutation(DeleteOneAssertion, {
     update(cache, {data: {deleteOneAssertion}}) {
       cache.updateQuery({ query: GetRequests, variables: getRequestVariables(collectionId) }, (data) => {
         const request = data.requests.find(r => r.assertions.find(a => a.id === deleteOneAssertion.id))
@@ -48,7 +49,9 @@ export default function AssertionList({assertions, setAssertions}: AssertionList
       {assertions.map((assertion, idx) => (
         <li className='my-1 flex gap-4 items-center' key={assertion.id ? assertion.id : uuidv4()}>
           <span className='text-sky-blue font-medium capitalize'>{assertion.property} {assertion.comparison} {assertion.expected}</span>
-         <Button size='xs' color='ghost' type="button" onClick={() => handleClickDelete(idx)}><BiTrash className='text-lg text-error'/></Button>
+         <Button size='xs' color='ghost' type="button" onClick={() => handleClickDelete(idx)}>
+           {loading ? (<Loader/>) : (<BiTrash className='text-lg text-cedar-chest'/>)}
+         </Button>
         </li>
       ))}
       </ul>
