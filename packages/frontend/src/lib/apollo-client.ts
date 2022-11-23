@@ -28,6 +28,16 @@ const client = new ApolloClient({
   link: from([errorLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
+      Request: {
+        fields: {
+          headers: {
+            read(value) { // make easier to work with formik
+              if (Array.isArray(value)) return value
+              return Object.entries(value)
+            },
+          }
+        }
+      },
       Query: {
         fields: {
           paginateCollectionRuns: {

@@ -2,7 +2,7 @@ export interface Assertion {
   __typename?: string
   id?: number;
   property: string,
-  comparison: string;
+  comparison: ComparisonType;
   expected: string | number,
   requestId?: number,
 }
@@ -42,7 +42,7 @@ export interface Request {
   method: string;
   url: string;
   body?: string;
-  headers?: Record<string, number|string>
+  headers?: [string, string|number][]
   response?: Response;
   createdAt?: Date;
   assertions: Assertion[]
@@ -101,5 +101,16 @@ export interface MonitorUpdateInput extends MonitorCreateInput {
   id: number
 }
 
+
+export const comparisonTypes = ['is equal to', 'is not equal to', 'is greater than', 'is less than',  'is null', 'is not null', 'includes', 'does not include'] as const
+
+export type ComparisonType = typeof comparisonTypes[number]
+
+export interface AssertionInput {
+  property: string
+  comparison: ComparisonType
+  expected: string|number
+  id?: number
+}
 
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import {Button} from 'react-daisyui'
 import {BiTrash} from 'react-icons/bi'
-import HeaderForm from './HeaderForm'
 
 interface HeaderListProps {
   headers: Record<string, string|number>
@@ -27,7 +26,7 @@ export default function HeaderList({headers, setHeaders}: HeaderListProps) {
         </li>
       ))}
       </ul>
-      <HeaderForm headers={headers} setHeaders={setHeaders}/>
+      {/*<HeaderFieldArray headers={headers} setHeaders={setHeaders}/>*/}
     </div>
   )
 }

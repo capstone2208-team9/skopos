@@ -1,17 +1,18 @@
 import {useMutation} from '@apollo/client'
+import AssertionFieldArray from 'components/assertions/AssertionFieldArray'
+import HeaderFieldArray from 'components/requests/HeaderFieldArray'
+import JsonEditField from 'components/requests/JsonEditField'
 import Loader from 'components/shared/Loader'
 import {getRequestVariables} from 'routes/RequestList'
 import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {CreateOneRequest, UpdateRequest } from 'graphql/mutations'
 import {useToast} from 'hooks/ToastProvider'
-import React, {useEffect, useMemo, useState} from 'react'
-import {Button, Form, Tabs} from 'react-daisyui'
+import React, {useEffect, useState} from 'react'
+import {Button, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
-import {Assertion, Request} from 'types'
-import {highlight, languages} from 'prismjs'
-import Editor from 'react-simple-code-editor'
-import AssertionList from 'components/assertions/AssertionList'
-import HeaderList from 'components/requests/HeaderList'
+import {AssertionInput, ComparisonType, Request} from 'types'
+import {Formik, Form, Field } from 'formik'
+import * as Yup from 'yup'
 
 interface Props {
   request?: Request
@@ -22,18 +23,37 @@ const initialState = {
   title: '',
   method: 'GET',
   url: '',
-  headers: {} as Record<string, string|number>,
+  headers: [] as [string, string|number][],
   body: '',
-  assertions: [],
+  assertions: [] as AssertionInput[],
 }
+
+
+const assertionSchema: Yup.SchemaOf<AssertionInput> = Yup.object({
+  id: Yup.number().optional(),
+  property: Yup.string().required('property is required'),
+  comparison: Yup.mixed<ComparisonType>().required('comparison is required'),
+  expected: Yup.mixed()
+    .when('comparison', {
+      is: (val) => ['is null', 'is not null'].includes(val),
+      then: Yup.mixed().nullable(),
+      otherwise: Yup.mixed().defined().required('please provide an expected value'),
+    })
+})
+
+const validationSchema = Yup.object({
+  title: Yup.string().required(),
+  url: Yup.string().url().required(),
+  method: Yup.mixed().oneOf(['GET', 'POST', 'PUT', 'DELETE']),
+  headers: Yup.array().of(Yup.array().length(2)).notRequired(),
+  body: Yup.string().notRequired(),
+  assertions: Yup.array().of(assertionSchema).required()
+})
 
 export default function RequestForm({request, stepNumber}: Props) {
   const {collectionId} = useParams()
   const {addToast} = useToast()
   const navigate = useNavigate()
-  const [formData, setFormData] = useState<Omit<Request, 'stepNumber'>>({
-    ...initialState,
-  })
   const [tabValue, setTabValue] = useState(0)
 
   const [createRequest, {data, error, loading}] = useMutation(CreateOneRequest, {
@@ -56,43 +76,30 @@ export default function RequestForm({request, stepNumber}: Props) {
     update(cache, {data: {updateOneRequest}}) {
       if (!updateOneRequest) return
       const variables = getRequestVariables(collectionId)
+
+      let updateRequest = updateOneRequest
+      if (updateRequest.headers) {
+        updateRequest = {...updateRequest, headers: Object.fromEntries(updateRequest.headers)}
+      }
       cache.updateQuery({ query: GetRequests, variables }, (data) => ({
-        requests: data.requests.map((request) => {
-          return request.id === updateOneRequest.id ? updateOneRequest : request
+        requests: data.requests.map((r) => {
+          return r.id === updateOneRequest.id ? updateRequest : r
         })
       }));
     },
   })
 
-  const handleSingleChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> = (e) => {
-    const {name, value} = e.target
-    setFormData({...formData, [name]: name === 'stepNumber' ? Number(value) : value})
-  }
 
-  const { title, url, assertions } = formData
-  const { length } = assertions
-
-  const isValid = useMemo(() => {
-    return Boolean(title && url && length)
-  }, [title, url, length]);
-
-  const reset = () => {
-    setFormData(initialState)
-  }
-
-  const handleSaveRequest = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {__typename, id, ...data} = formData
+  const handleSaveRequest = async (values: typeof initialState) => {
     try {
       await createRequest({
         variables: {
           data: {
-            ...data,
+            ...values,
             stepNumber: request?.stepNumber || stepNumber,
             assertions: {
               createMany: {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                data: request ? (data.assertions.map(({__typename, id, ...rest}) => rest)) : (formData.assertions)
+                data: values.assertions,
               }
             },
             collection: {
@@ -109,20 +116,20 @@ export default function RequestForm({request, stepNumber}: Props) {
     }
   }
 
-  const handleEditRequest = async () => {
+  const handleEditRequest = async (values: typeof initialState) => {
     if (!request) return
     const variables = {
       data: {
         title: {
-          set: formData.title
+          set: values.title
         },
         url: {
-          set: formData.url,
+          set: values.url,
         },
-        headers: formData.headers,
-        body: formData.body,
+        headers: values.headers.length ? Object.fromEntries(values.headers) : null,
+        body: values.body,
         assertions: {
-          upsert: formData.assertions.map(a => (
+          upsert: values.assertions.map(a => (
             {
               create: {
                 expected: a.expected,
@@ -150,41 +157,29 @@ export default function RequestForm({request, stepNumber}: Props) {
       }
     }
     await updateRequest({variables})
+
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    request ? handleSaveRequest() : handleEditRequest()
+  const handleSubmit = (values: typeof initialState) => {
+    request ? handleEditRequest(values) : handleSaveRequest(values)
   }
 
-  const handleHeaderChange = (headers: Record<string, string|number>) => {
-    setFormData({...formData, headers})
-  }
-
-  const handleAssertionChange = (assertions: Assertion[]) => {
-    setFormData({...formData, assertions})
-  }
-
-  const handleCancel = () => {
-    reset()
+  const handleCancel = (resetForm) => {
+    resetForm()
     navigate(-1)
-  }
-
-  const handleChangeBody = (body: string) => {
-    setFormData({...formData, body})
   }
 
 
   useEffect(() => {
     if (updateData || data) {
-      reset()
+      // reset()
       navigate(-1)
     }
   }, [data, updateData])
 
   useEffect(() => {
     if (request) {
-      setFormData(prev => ({...prev, ...request}))
+      // setFormData(prev => ({...prev, ...request}))
     }
   }, [request])
 
@@ -193,77 +188,71 @@ export default function RequestForm({request, stepNumber}: Props) {
     if (updateError) addToast(updateError.message, 'error')
   }, [error, updateError])
 
-  if (isValid) {
-    console.log(isValid)
-  }
-
   return (
-    <Form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-      {updateError && <p>{updateError.message}</p>}
-      <div className='flex gap-4 justify-between'>
-        <div className='form-control flex-grow'>
-          <label htmlFor='title' className='label'>
-            <input className='input input-bordered w-full' id='title' value={formData.title || ''}
-                   onChange={handleSingleChange} name='title'
-                   placeholder='request name'
-            />
-          </label>
-        </div>
-      </div>
+    <Formik
+      initialValues={request ? {...initialState, ...request} :  initialState}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        handleSubmit(values)
+      }}
+    >
+      {({isValid, dirty, resetForm}) => (
 
-      <div className='form-control'>
-        <label htmlFor='method' className='input-group'>
-          <select id='method' name='method' className='select select-bordered'
-                  value={formData.method || ''}
-                  onChange={handleSingleChange}
-          >
-            <option value='GET'>GET</option>
-            <option value='POST'>POST</option>
-            <option value='PUT'>PUT</option>
-            <option value='PATCH'>PATCH</option>
-            <option value='DELETE'>DELETE</option>
-          </select>
-          <input className='input input-bordered w-full' placeholder='endpoint url' id='url' name='url'
-                 value={formData.url} onChange={handleSingleChange}/>
-        </label>
-      </div>
-      <Tabs value={tabValue} onChange={setTabValue}>
-        <Tabs.Tab value={0} className='tab tab-bordered text-dark-green'>Headers</Tabs.Tab>
-        <Tabs.Tab value={1} className='tab tab-bordered text-dark-green'>Body</Tabs.Tab>
-        <Tabs.Tab value={2} className='tab tab-bordered text-dark-green'>Assertions</Tabs.Tab>
-      </Tabs>
-      {tabValue === 0 &&
-        <HeaderList headers={formData.headers ? formData.headers : {} as Record<string, string|number>} setHeaders={handleHeaderChange}/>}
+        <Form className='flex flex-col gap-4'>
+          {updateError && <p>{updateError.message}</p>}
+          <div className='flex gap-4 justify-between'>
+            <div className='form-control flex-grow'>
+              <label htmlFor='title' className='label'>
+                <Field className='input input-bordered w-full' id='title'
+                       name='title'
+                       placeholder='request name'
+                />
+              </label>
+            </div>
+          </div>
 
-      {tabValue === 1 &&
-        <Form.Label className='w-full' htmlFor='request-body'>
-          <Editor
-            id='request-body'
-            highlight={code => highlight(code, languages.js, 'js')}
-            value={formData.body || ''}
-            onValueChange={handleChangeBody}
-            placeholder='{}'
-            padding={10}
-            className='bg-base-100 border-2 border-base-200 w-full'
-          />
-        </Form.Label>
-      }
-      {tabValue === 2 && <AssertionList assertions={formData.assertions ? formData.assertions : []}
-                                        setAssertions={handleAssertionChange}/>}
-      {!request && <div className='flex gap-4 ml-auto'>
-        <button className='bg-sky-blue' type='submit' onClick={handleSaveRequest}
-                disabled={!isValid}
-        >{loading ? <Loader size='20'/> : 'Save'}</button>
-        <Button className='bg-cadmium-orange' type='button' onClick={reset}>Reset</Button>
-        <Button className='bg-secondary' type='button' onClick={handleCancel}>Cancel</Button>
-      </div>}
-      {request && <div className='flex gap-4 ml-auto'>
-        <Button className='bg-sky-blue' type='submit' onClick={handleEditRequest}
-                disabled={!isValid}
-        >{loading ? <Loader size='20'/> : 'Update'}</Button>
-        <Button className='bg-cadmium-orange' type='button' onClick={handleCancel}>Cancel</Button>
-      </div>}
-    </Form>
+          <div className='form-control'>
+            <label htmlFor='method' className='input-group'>
+              <Field as='select' name='method' className='select select-bordered'
+              >
+                <option value='GET'>GET</option>
+                <option value='POST'>POST</option>
+                <option value='PUT'>PUT</option>
+                <option value='PATCH'>PATCH</option>
+                <option value='DELETE'>DELETE</option>
+              </Field>
+              <Field className='input input-bordered w-full' placeholder='endpoint url' id='url' name='url'/>
+            </label>
+          </div>
+          <Tabs value={tabValue} onChange={setTabValue}>
+            <Tabs.Tab value={0} className='tab tab-bordered text-dark-green'>Headers</Tabs.Tab>
+            <Tabs.Tab value={1} className='tab tab-bordered text-dark-green'>Body</Tabs.Tab>
+            <Tabs.Tab value={2} className='tab tab-bordered text-dark-green'>Assertions</Tabs.Tab>
+          </Tabs>
+          {tabValue === 0 && <Field name='headers' component={HeaderFieldArray}/>}
+
+          {tabValue === 1 && <Field name='body' component={JsonEditField}/>}
+          {tabValue === 2 && <Field name='assertions' component={AssertionFieldArray}/>}
+          {!request && <div className='flex gap-4 ml-auto'>
+            <Button className='bg-sky-blue' type='submit'
+                    disabled={!isValid || !dirty}
+            >{loading ? <Loader size='20'/> : 'Save'}</Button>
+            <Button className='bg-cadmium-orange' type='button' onClick={() => resetForm()}>Reset</Button>
+            <Button className='bg-secondary' type='button' onClick={() => handleCancel(resetForm)}>Cancel</Button>
+          </div>}
+          {request && <div className='flex gap-4 ml-auto'>
+            <Button className='bg-sky-blue' type='submit'
+                    disabled={!isValid}
+            >{loading ? <Loader size='20'/> : 'Update'}</Button>
+            <Button className='bg-cadmium-orange' type='button' onClick={() => handleCancel(resetForm)}>Cancel</Button>
+          </div>}
+        </Form>
+
+      )}
+    </Formik>
   )
 }
+
+
+
 
