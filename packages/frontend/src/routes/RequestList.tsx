@@ -1,6 +1,6 @@
 import {useMutation, useQuery} from '@apollo/client'
 import RequestListItem from 'components/collections/RequestListItem'
-import Loader from 'components/Loader'
+import Loader from 'components/shared/Loader'
 import {ReorderRequests} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'

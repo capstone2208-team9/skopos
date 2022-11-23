@@ -1,4 +1,4 @@
-import ToggleInputField from 'components/ToggleInputField'
+import ToggleInputField from 'components/shared/ToggleInputField'
 import React, {useEffect, useState} from 'react'
 import {Button, Card, Form, Input} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
@@ -7,7 +7,7 @@ import Select from 'react-select'
 import {ICollection, Monitor, MonitorContactInfo, MonitorCreateInput, MonitorUpdateInput} from 'types'
 
 type SelectOptions = { label: string, value: string }
-const units = ['minutes', 'hours', 'days']
+const units = ['minute', 'hour', 'day']
 const unitOptions: SelectOptions[] = units.map(unit => ({value: unit, label: unit.toUpperCase()}))
 
 const defaultUnitOption = (schedule: string) => {
@@ -88,7 +88,7 @@ export default function MonitorForm({
                 defaultValue={monitor?.schedule ? defaultUnitOption(monitor.schedule) : unitOptions[0]}
                 options={unitOptions}
                 onChange={(newValue) => {
-                  setUnits(newValue?.value || 'hours')
+                  setUnits(newValue?.value || 'hour')
                 }}
               />
             </div>

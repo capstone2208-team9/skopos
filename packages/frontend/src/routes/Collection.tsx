@@ -1,4 +1,4 @@
-import CollectionRunner from 'components/CollectionRunner'
+import CollectionRunner from 'components/collectionRuns/CollectionRunner'
 import {Tooltip} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
 import {MdHistory} from 'react-icons/md'

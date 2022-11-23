@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from "@testing-library/user-event";
-import AssertionList from "components/AssertionList";
-
+import AssertionList from "components/assertions/AssertionList";
 describe("AssertionForm", function() {
   it("should have inputs for creating an assertion", async function() {
     const setAssertions = jest.fn()

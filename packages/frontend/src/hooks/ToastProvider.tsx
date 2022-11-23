@@ -1,7 +1,7 @@
 import {createCtx} from 'hooks/createCtx'
 import {v4 as uuidv4} from 'uuid'
 import React, {useCallback, useState} from 'react'
-import Toast from 'components/Toast'
+import Toast from 'components/shared/Toast'
 
 interface Context {
   toasts: IToast[]

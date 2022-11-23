@@ -1,5 +1,5 @@
-import DrawerContent from 'components/DrawerContent'
-import Landing from 'components/Landing'
+import DrawerContent from 'components/shared/DrawerContent'
+import Landing from './Landing'
 import {ToastProvider} from 'hooks/ToastProvider'
 import React, {useState} from 'react'
 import {Button, Drawer} from 'react-daisyui'

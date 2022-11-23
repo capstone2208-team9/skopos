@@ -1,6 +1,6 @@
 import { Alert, Table } from "react-daisyui";
-import MonitorListItem from "components/MonitorListItem";
-import Loader from "components/Loader";
+import MonitorListItem from "components/monitors/MonitorListItem";
+import Loader from "components/shared/Loader";
 import {GetMonitors} from 'graphql/queries'
 import { useToast } from "hooks/ToastProvider";
 import {useEffect} from 'react'

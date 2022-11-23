@@ -1,6 +1,6 @@
 export interface Assertion {
   __typename?: string
-  id?: string;
+  id?: number;
   property: string,
   comparison: string;
   expected: string | number,

@@ -1,5 +1,5 @@
 import {useMutation} from '@apollo/client'
-import ModalPortal from "components/ModalPortal";
+import ModalPortal from "components/shared/ModalPortal";
 import {UpdateCollectionTitle} from 'graphql/mutations'
 import React, {useEffect, useState} from 'react'
 import {Button, Form, Input, Modal} from 'react-daisyui'

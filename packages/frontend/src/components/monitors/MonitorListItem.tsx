@@ -1,7 +1,7 @@
 import {useMutation} from '@apollo/client'
-import ConfirmDeleteModal from 'components/ConfirmDeleteModal'
-import Loader from 'components/Loader'
-import ModalPortal from 'components/ModalPortal'
+import ConfirmDeleteModal from 'components/shared/ConfirmDeleteModal'
+import Loader from 'components/shared/Loader'
+import ModalPortal from 'components/shared/ModalPortal'
 import {DeleteOneMonitor, ToggleMonitorEnabled} from 'graphql/mutations'
 import {GetCollectionsWithoutMonitors, GetMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
@@ -78,13 +78,13 @@ export default function MonitorListItem({enabled, schedule, collections, contact
     if (toggleError) addToast(toggleError.message, 'error')
   }, [toggleError, addToast])
 
-  const info = contactInfo ? Object.keys(contactInfo).join(', ') : 'N/A'
+  const info = contactInfo ? Object.keys(contactInfo).filter(k => contactInfo[k] !== '').join(', ') : 'N/A'
 
   return (
     <>
       <Table.Row>
-        <p className='capitalize'>Running every {schedule}</p>
-        <p className='text-center truncate capitalize'>{info}</p>
+        <p className={`capitalize${!enabled ? ' text-cedar-chest' : ''}`}>Running every {schedule}</p>
+        <p className='text-center truncate capitalize'>{info || 'N/A'}</p>
         <Dropdown horizontal='center' vertical='top' hover className='group ml-auto'>
           <Dropdown.Toggle size='sm' color='secondary' className='group ml-auto'>
             <span className='text-gray-50 text-lg font-medium'>

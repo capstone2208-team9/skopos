@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
-import Loader from 'components/Loader'
-import RequestForm from 'components/RequestForm'
+import Loader from 'components/shared/Loader'
+import RequestForm from 'components/requests/RequestForm'
 import {GetRequest} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useEffect} from 'react'

@@ -20,7 +20,7 @@ export default function HeaderList({headers, setHeaders}: HeaderListProps) {
       <ul>
       {Object.keys(headers).map(key => (
         <li className='my-1 flex gap-2 pr-6' key={Math.random().toString().slice(2)}>
-          <span className='text-primary'>{key}: {headers[key]}</span>
+          <span className='text-primary truncate'>{key}: {headers[key]}</span>
          <Button color='ghost' size='xs' type="button" onClick={() => handleClickDelete(key)}>
            <BiTrash className='text-lg text-error'/>
          </Button>

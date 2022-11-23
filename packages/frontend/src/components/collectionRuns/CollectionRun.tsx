@@ -1,4 +1,4 @@
-import CollectionRunResponse from "components/CollectionRunResponse";
+import CollectionRunResponse from "components/collectionRuns/CollectionRunResponse";
 import { formatDate } from "lib/dateUtils";
 import { useState } from "react";
 import { Collapse } from "react-daisyui";

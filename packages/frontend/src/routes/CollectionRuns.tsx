@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client'
-import CollectionRunsContainer from 'components/CollectionRunsContainer'
-import Loader from 'components/Loader'
+import CollectionRunsContainer from 'components/collectionRuns/CollectionRunsContainer'
+import Loader from 'components/shared/Loader'
 import {PaginateCollectionRuns} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useEffect, useRef} from 'react'

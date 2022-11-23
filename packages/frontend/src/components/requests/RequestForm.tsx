@@ -1,6 +1,6 @@
 import {useMutation} from '@apollo/client'
-import Loader from 'components/Loader'
-import {getRequestVariables} from 'components/requests/RequestList'
+import Loader from 'components/shared/Loader'
+import {getRequestVariables} from 'routes/RequestList'
 import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {CreateOneRequest, UpdateRequest } from 'graphql/mutations'
 import {useToast} from 'hooks/ToastProvider'
@@ -10,10 +10,8 @@ import {useNavigate, useParams} from 'react-router-dom'
 import {Assertion, Request} from 'types'
 import {highlight, languages} from 'prismjs'
 import Editor from 'react-simple-code-editor'
-
-
-import AssertionList from './AssertionList'
-import HeaderList from './HeaderList'
+import AssertionList from 'components/assertions/AssertionList'
+import HeaderList from 'components/requests/HeaderList'
 
 interface Props {
   request?: Request
@@ -75,7 +73,7 @@ export default function RequestForm({request, stepNumber}: Props) {
   const { length } = assertions
 
   const isValid = useMemo(() => {
-    return title && url && length
+    return Boolean(title && url && length)
   }, [title, url, length]);
 
   const reset = () => {
@@ -195,6 +193,9 @@ export default function RequestForm({request, stepNumber}: Props) {
     if (updateError) addToast(updateError.message, 'error')
   }, [error, updateError])
 
+  if (isValid) {
+    console.log(isValid)
+  }
 
   return (
     <Form className='flex flex-col gap-4' onSubmit={handleSubmit}>
@@ -235,24 +236,29 @@ export default function RequestForm({request, stepNumber}: Props) {
         <HeaderList headers={formData.headers ? formData.headers : {} as Record<string, string|number>} setHeaders={handleHeaderChange}/>}
 
       {tabValue === 1 &&
-        <Editor
-          highlight={code => highlight(code, languages.js, 'js')}
-          value={formData.body || ''}
-          onValueChange={handleChangeBody}
-          padding={10}
-          className='bg-base-100 border-2 border-base-200'
-        />}
+        <Form.Label className='w-full' htmlFor='request-body'>
+          <Editor
+            id='request-body'
+            highlight={code => highlight(code, languages.js, 'js')}
+            value={formData.body || ''}
+            onValueChange={handleChangeBody}
+            placeholder='{}'
+            padding={10}
+            className='bg-base-100 border-2 border-base-200 w-full'
+          />
+        </Form.Label>
+      }
       {tabValue === 2 && <AssertionList assertions={formData.assertions ? formData.assertions : []}
                                         setAssertions={handleAssertionChange}/>}
       {!request && <div className='flex gap-4 ml-auto'>
-        <Button className='bg-sky-blue' type='button' onClick={handleSaveRequest}
+        <button className='bg-sky-blue' type='submit' onClick={handleSaveRequest}
                 disabled={!isValid}
-        >{loading ? <Loader size='20'/> : 'Save'}</Button>
+        >{loading ? <Loader size='20'/> : 'Save'}</button>
         <Button className='bg-cadmium-orange' type='button' onClick={reset}>Reset</Button>
         <Button className='bg-secondary' type='button' onClick={handleCancel}>Cancel</Button>
       </div>}
       {request && <div className='flex gap-4 ml-auto'>
-        <Button className='bg-sky-blue' type='button' onClick={handleEditRequest}
+        <Button className='bg-sky-blue' type='submit' onClick={handleEditRequest}
                 disabled={!isValid}
         >{loading ? <Loader size='20'/> : 'Update'}</Button>
         <Button className='bg-cadmium-orange' type='button' onClick={handleCancel}>Cancel</Button>

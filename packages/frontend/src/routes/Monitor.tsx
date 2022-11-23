@@ -1,5 +1,5 @@
 import {useQuery } from "@apollo/client";
-import Loader from "components/Loader";
+import Loader from "components/shared/Loader";
 import {GetMonitor} from 'graphql/queries'
 import { useToast } from "hooks/ToastProvider";
 import {useEffect } from 'react'

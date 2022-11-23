@@ -1,5 +1,5 @@
 import { CollectionRun as CollectionRunType } from "types"
-import CollectionRun from 'components/CollectionRun'
+import CollectionRun from 'components/collectionRuns/CollectionRun'
 import {ReactComponent as SVGComponent } from 'assets/undraw_not_found_re_44w9.svg'
 
 interface Props {

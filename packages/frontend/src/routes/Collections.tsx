@@ -1,7 +1,7 @@
 import AddCollection from 'components/collections/AddCollection'
 import CollectionForm from 'components/collections/CollectionForm'
 import CollectionNav from 'components/collections/CollectionNav'
-import Loader from 'components/Loader'
+import Loader from 'components/shared/Loader'
 import {GetCollectionNames} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {useEffect, useState} from 'react'

@@ -1,6 +1,6 @@
 import {useMutation} from '@apollo/client'
-import Loader from 'components/Loader'
-import {getRequestVariables} from 'components/requests/RequestList'
+import Loader from 'components/shared/Loader'
+import {getRequestVariables} from 'routes/RequestList'
 import {DeleteRequest} from 'graphql/mutations'
 import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {LegacyRef} from 'react'

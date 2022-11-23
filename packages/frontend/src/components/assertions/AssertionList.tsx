@@ -1,5 +1,5 @@
-import Loader from 'components/Loader'
-import {getRequestVariables} from 'components/requests/RequestList'
+import Loader from 'components/shared/Loader'
+import {getRequestVariables} from 'routes/RequestList'
 import {DeleteOneAssertion} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
 import {v4 as uuidv4} from 'uuid'
