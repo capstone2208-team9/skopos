@@ -1,14 +1,15 @@
 import {useQuery, useMutation} from '@apollo/client'
 import AddCollection from 'components/collections/AddCollection'
 import Loader from 'components/shared/Loader'
-import MonitorForm from 'components/monitors/MonitorForm'
+import MonitorForm, {MonitorFormValues} from 'components/monitors/MonitorForm'
 import {CreateOneMonitor} from 'graphql/mutations'
 import {GetCollectionsWithoutMonitors, GetMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
+import {createSchedule} from 'lib/createSchedule'
 import {useEffect} from 'react'
 import { Button, Card } from 'react-daisyui'
 import {useNavigate} from 'react-router-dom'
-import {MonitorContactInfo, MonitorCreateInput} from 'types'
+import {MonitorContactInfo} from 'types'
 import {FiAlertCircle} from 'react-icons/fi'
 
 export const whereMonitorNullVariables = {
@@ -46,7 +47,8 @@ export default function CreateMonitor() {
       cache.updateQuery({
         query: GetMonitors, variables: whereMonitorNotNullVariables
       }, (data) => {
-        return {monitors: [...data.monitors, createOneMonitor]}
+        const {monitors = []} = data
+        return {monitors: [...monitors, createOneMonitor]}
       })
 
       cache.updateQuery({
@@ -58,10 +60,10 @@ export default function CreateMonitor() {
     }
   })
 
-  const handleSave = async ({contactInfo, value, units, collections}: MonitorCreateInput) => {
+  const handleSave = async ({contactInfo, value, units, collections}: MonitorFormValues) => {
     const variables: CreateMonitorInput = {
       data: {
-        schedule: `${value} ${+value > 1 ? units : units.slice(0, -1)}`,
+        schedule: createSchedule(units, String(value)),
         collections: {
           connect: collections.map(id => ({id}))
         }
@@ -88,7 +90,7 @@ export default function CreateMonitor() {
   if (loading) return <Loader size={46}/>
 
   if (collectionData && collectionData.collections.length === 0) {
-    return <Card className='grid bg-gray-50 z-20 m-auto bg-opacity-90 w-9/12 place-items-center gap-8 rounded shadow-xl p-4'>
+    return <Card className='z-50 grid bg-gray-50 m-auto bg-opacity-90 w-9/12 place-items-center gap-8 rounded shadow-xl p-4'>
       <Card.Title className='text-cedar-chest text-xl'>
         All collections are already assigned to a monitor.
       </Card.Title>

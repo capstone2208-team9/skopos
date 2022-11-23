@@ -1,10 +1,12 @@
 import { useMutation } from '@apollo/client'
+import ConfirmDeleteModal from 'components/shared/ConfirmDeleteModal'
 import Loader from 'components/shared/Loader'
 import SelectField from 'components/shared/SelectField'
 import TextInput from 'components/shared/TextInput'
-import {Field, FieldArray, FieldProps, FieldArrayRenderProps} from 'formik'
+import {Field, FieldArray, FieldProps, FieldArrayRenderProps, FormikProps} from 'formik'
 import {DeleteOneAssertion} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
+import {useState} from 'react'
 import {Button, Input} from 'react-daisyui'
 import {AiOutlineDelete, AiOutlinePlus} from 'react-icons/ai'
 import { useParams } from 'react-router-dom'
@@ -15,6 +17,7 @@ import {AssertionInput, comparisonTypes} from 'types'
 export default function AssertionFieldArray(props: FieldProps) {
   const {form } = props
   const {collectionId} = useParams()
+  const [modalOpen, setModalOpen] = useState(false)
   const [deleteOneAssertion, {loading}] = useMutation(DeleteOneAssertion, {
     update(cache, {data: {deleteOneAssertion}}) {
       cache.updateQuery({ query: GetRequests, variables: getRequestVariables(collectionId) }, (data) => {
@@ -40,6 +43,10 @@ export default function AssertionFieldArray(props: FieldProps) {
     } else {
       arrayHelpers.remove(index)
     }
+  }
+
+  const isNew = (form: FormikProps<any>, index: number) => {
+    return !!form.values.assertions[index].id
   }
 
   return (
@@ -100,10 +107,13 @@ export default function AssertionFieldArray(props: FieldProps) {
                           <AiOutlinePlus/></Button>
                         <Button className='bg-cedar-chest w-12' type='button'
                                   // onClick={() => arrayHelpers.remove(index)}
-                          onClick={() => handleRemove(form.values.assertions, index, arrayHelpers)}
+                          onClick={() => isNew(form, index) ? setModalOpen(true) : arrayHelpers.remove(index)}
                         >
                           <span className='sr-only'>Delete</span>
                           {loading ? <Loader size='16'/> : <AiOutlineDelete/>}</Button>
+                        <ConfirmDeleteModal onDelete={() => handleRemove(form.values.assertions, index, arrayHelpers)}
+                                            onCancel={() => setModalOpen(false)} open={modalOpen}
+                        />
                       </div>
                     </div>
                   </div>

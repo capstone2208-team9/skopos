@@ -35,8 +35,9 @@ export default function CollectionRuns() {
     fetchMore,
   } = useQuery<{ paginateCollectionRuns: { items: CollectionRun[], cursor: string, hasMore: boolean } }>(PaginateCollectionRuns,
     {
+      notifyOnNetworkStatusChange: true,
       variables: variables(collectionId),
-      notifyOnNetworkStatusChange: true
+      fetchPolicy: 'network-only'
     })
 
 
@@ -46,13 +47,12 @@ export default function CollectionRuns() {
 
   useEffect(() => {
     if (!data) return
-    bottomRef.current?.scrollIntoView({behavior: 'smooth'})
+    data.paginateCollectionRuns.items.length && bottomRef.current?.scrollIntoView({behavior: 'smooth'})
   }, [bottomRef, data])
 
 
   if (loading) return <Loader/>
   if (!data) return <></>
-
 
   return (
     <div className='flex flex-col gap-4 items-start mx-auto w-full'>

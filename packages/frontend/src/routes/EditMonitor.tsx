@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import Loader from "components/shared/Loader";
-import MonitorForm from "components/monitors/MonitorForm";
+import MonitorForm, {MonitorFormValues} from 'components/monitors/MonitorForm'
 import {
   GetEditMonitor,
 } from "graphql/queries";
@@ -11,7 +11,6 @@ import { useToast } from "hooks/ToastProvider";
 import {createSchedule} from 'lib/createSchedule'
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MonitorUpdateInput } from "types";
 
 export default function EditMonitor() {
   const {id} = useParams()
@@ -33,11 +32,11 @@ export default function EditMonitor() {
     }
   }, [addToast, data, error, navigate])
 
-  const handleUpdate = async ({units, value, contactInfo, id}: MonitorUpdateInput) => {
+  const handleUpdate = async ({units, value, contactInfo, id}: MonitorFormValues) => {
     const variables: any = {
       data: {
         schedule: {
-          set: createSchedule(units, value)
+          set: createSchedule(units, String(value))
         },
       },
       where: {

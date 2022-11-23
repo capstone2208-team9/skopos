@@ -28,11 +28,11 @@ export default function Monitor() {
     if (error) addToast(error.message, 'error')
   }, [data])
 
-  useEffect(() => {
-    if (data) {
-      navigate(`${data.monitor.collections[0].id}`)
-    }
-  }, [data])
+  // useEffect(() => {
+  //   if (data) {
+  //     navigate(`${data.monitor.collections[0].id}`)
+  //   }
+  // }, [data])
 
 
   if (loading) return <Loader/>
@@ -48,7 +48,7 @@ export default function Monitor() {
         <ul >
           {data.monitor.collections.map(c => (
             <li key={c.id}>
-              <Link className='btn-link text-sky-blue' to={`${c.id}`}>{c.title}</Link>
+              <Link className='btn-link text-sky-blue' to={`/collection-runs/${c.id}`}>{c.title}</Link>
             </li>
           ))}
         </ul>

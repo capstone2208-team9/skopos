@@ -1,23 +1,15 @@
 import {useState} from 'react'
 import { Form, Input, Toggle } from "react-daisyui";
+import {FieldProps} from 'formik'
 
-interface Props {
-  name: string
+type Props = FieldProps & {
   placeholder?: string
-  value: string
-  onChangeValue: (name: string, value: string) => void
 }
 
-export default function ToggleInputField({name, placeholder = '', value, onChangeValue}: Props) {
-  const [checked, setChecked] = useState(Boolean(value))
-  const type = name === 'email' ? 'email' : 'text'
-
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    onChangeValue(name, e.target.value)
-  }
+export default function ToggleInputField({field, placeholder, meta}: Props) {
+  const [checked, setChecked] = useState(false)
 
   const handleToggle = () => {
-    onChangeValue(name, '')
     setChecked(prev => !prev)
   }
 
@@ -28,10 +20,12 @@ export default function ToggleInputField({name, placeholder = '', value, onChang
                 onChange={handleToggle}
                 className="m-2 bg-sky-blue" />
         {checked ? (
-          <Input type={type} name={name} value={value || ''}
-                 onChange={handleChange} placeholder={placeholder} />
+          <div className='flex flex-col relative'>
+            <Input {...field} placeholder={placeholder} />
+            {meta && meta.error && <span className='text-cedar-chest'>{meta.error}</span>}
+          </div>
         ) : (
-          <Form.Label htmlFor={name} title={name.toUpperCase()}/>
+          <Form.Label htmlFor={field.name} title={field.name.split('.').at(-1)?.toUpperCase()}/>
         )}
       </div>
     </div>

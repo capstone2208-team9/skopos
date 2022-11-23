@@ -9,7 +9,7 @@ import {useModal} from 'hooks/useModal'
 import {useEffect} from 'react'
 import {Button, Dropdown, Form, Table, Toggle, Tooltip} from 'react-daisyui'
 import {MdDelete, MdEdit, MdHistory, MdMoreVert} from 'react-icons/md'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {whereMonitorNotNullVariables} from 'routes/CreateMonitor'
 import {ICollection, MonitorContactInfo} from 'types'
 
@@ -34,7 +34,6 @@ const whereMonitorNullVariables = {
 export default function MonitorListItem({enabled, schedule, collections, contactInfo, id}: Props) {
   const [deleteModalOpen, toggleDeleteModalOpen] = useModal()
   const {addToast} = useToast()
-  const navigate = useNavigate()
   const [toggleMonitorEnabled, {loading: toggling, error: toggleError}] = useMutation(ToggleMonitorEnabled)
   const [deleteMonitor, {loading: deleting, error: deleteError}] = useMutation(DeleteOneMonitor, {
     update(cache, {data: {deleteOneMonitor}}) {
@@ -82,35 +81,38 @@ export default function MonitorListItem({enabled, schedule, collections, contact
 
   return (
     <>
-      <Table.Row>
+      <Table.Row >
         <p className={`capitalize${!enabled ? ' text-cedar-chest' : ''}`}>Running every {schedule}</p>
         <p className='text-center truncate capitalize'>{info || 'N/A'}</p>
-        <Dropdown horizontal='center' vertical='top' hover className='group ml-auto'>
+        <Dropdown horizontal='right' vertical='end' hover className='z-auto group ml-auto'>
           <Dropdown.Toggle size='sm' color='secondary' className='group ml-auto'>
             <span className='text-gray-50 text-lg font-medium'>
               {collections.length} collection{`${collections.length > 1 ? 's' : ''}`}
             </span>
             <MdMoreVert size='20' className='group-hover:fill-cadmium-orange  fill-gray-50 ml-2'/>
           </Dropdown.Toggle>
-          <Dropdown.Menu className='shadow-xl bg-base-100'>
+          <Dropdown.Menu className='shadow-xl bg-sky-50'>
             {collections.map(col => (
               <Dropdown.Item key={col.id}
-                             className='text-secondary font-medium text-lg'
-                             onClick={() => navigate(`/collections/${col.id}/requests`)}>{col.title}</Dropdown.Item>
+                             className='bg-sky-50 text-dark-green hover:text-sky-blue font-medium text-lg'>
+                <Tooltip message='View History'>
+                  <Link className='text-inherit' to={`/collection-runs/${col.id}`}>
+                    <div className='flex gap-2 items-center'>
+                      <span>{col.title}</span>
+                      <MdHistory size={ICON_SIZE} className='fill-current'/>
+                    </div>
+                  </Link>
+                </Tooltip>
+                </Dropdown.Item>
             ))}
           </Dropdown.Menu>
         </Dropdown>
         <div className='flex items-center'>
-          <Tooltip message='View History'>
-            <Link className='btn btn-ghost' to={`/monitors/${id}`}>
-              <MdHistory size={ICON_SIZE} className='text-accent'/>
-            </Link>
-          </Tooltip>
-          <Link className='btn btn-ghost' to={`/monitors/${id}/edit`}>
+          <Link className='btn btn-link hover:opacity-75 hover:scale-110' to={`/monitors/${id}/edit`}>
             <MdEdit size={ICON_SIZE} className='text-sky-blue'/>
           </Link>
-          <Button startIcon={deleting ? <Loader size={ICON_SIZE} /> :
-            <MdDelete size={ICON_SIZE} className='text-error'/>} color='ghost' size='md'
+          <Button className='btn btn-link hover:opacity-75 hover:scale-110' startIcon={deleting ? <Loader size={ICON_SIZE} /> :
+            <MdDelete size={ICON_SIZE} className='text-error'/>} size='md'
                   onClick={toggleDeleteModalOpen}
           />
           {toggling ? (<Loader size={ICON_SIZE}/>) : (

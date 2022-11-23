@@ -9,7 +9,6 @@ import CreateMonitor from './CreateMonitor'
 import CreateRequest from './CreateRequest'
 import EditMonitor from './EditMonitor'
 import EditRequest from './EditRequest'
-import Monitor from './Monitor'
 import Monitors from './Monitors'
 import Root from './Root'
 
@@ -56,16 +55,6 @@ const router = createBrowserRouter([
           {
             path: ':id/edit',
             element: <EditMonitor/>,
-          },
-          {
-            path: ':id',
-            element: <Monitor/>,
-            children: [
-              {
-                path: ':collectionId',
-                element: <CollectionRuns/>
-              },
-            ],
           },
         ]
       },

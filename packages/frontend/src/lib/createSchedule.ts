@@ -1,5 +1,5 @@
 export function createSchedule(units: string, value: string) {
-  let unit = ''
+  let unit = units
   if (value === '1' && units.endsWith('s')) {
     unit =  units.slice(0,  -1)
   }
