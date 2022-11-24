@@ -38,13 +38,17 @@ export type MonitorFormValues = Yup.InferType<typeof validationSchema>
 const initialValues: MonitorFormValues = {
   id: undefined,
   collections: [] as number[],
-  contactInfo: {},
+  contactInfo: {
+    email: '',
+    slack: '',
+    pagerDuty: '',
+  },
   units: 'day',
   value: 1,
 }
 
 interface Props {
-  availableCollections?: ICollection[];
+  availableCollections?: Pick<ICollection, 'id' | 'title'>[];
   loading: boolean;
   monitor?: Monitor;
   onSave?: (input: MonitorFormValues) => void;
@@ -68,7 +72,7 @@ export default function MonitorForm({
     }
   }
 
-  const collectionOptions = availableCollections?.map(({id, title}: ICollection) => ({value: id, label: title}))
+  const collectionOptions = availableCollections?.map(({id, title}: Partial<ICollection>) => ({value: id, label: title}))
 
   return (
     <Card className='p-4 rounded bg-sky-50 bg-opacity-95 shadow-xl'>
@@ -90,7 +94,7 @@ export default function MonitorForm({
         >
           {({isValid, dirty, values}) => (
             <Form id='add-monitor'>
-              <div className='flex gap-4 items-center'>
+              <div className='flex gap-4 items-end'>
                 <TextInput wrapperClassName='w-20' label='Run every' name='value'/>
                 <Field name='units'>
                   {(props) => (

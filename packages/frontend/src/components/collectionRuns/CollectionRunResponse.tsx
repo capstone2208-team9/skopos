@@ -11,7 +11,7 @@ export default function CollectionRunResponse({ response }: Props) {
   return (
     <div className='flex flex-col min-w-max'>
       <h2 className='text-xl font-medium my-4'>{response.request.title} Results</h2>
-      <Table>
+      <Table className='overflow-x-scroll'>
         <Table.Head>
           <span>Property</span>
           <span>Expected</span>

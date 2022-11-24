@@ -26,9 +26,11 @@ export default function SelectField({field, options, meta, form, isMulti, defaul
 
     return (
       <div className='form-control relative'>
-        <Form.Label className='capitalize' htmlFor={field.name} title={field.name.split('.').at(-1)}/>
+        <Form.Label id={`select-${field.name}`} className='pb-0.5 gap-1.5 flex flex-col items-start capitalize' htmlFor={field.name} title={field.name.split('.').at(-1)}>
         <Select
-          
+          aria-labelledby={`select-${field.name}`}
+          inputId={field.name}
+          placeholder={`select ${field.name}`}
           options={options}
           onChange={handleChange}
           defaultValue={defaultValue ? defaultValue : {label: field.value, value: field.value}}
@@ -42,6 +44,7 @@ export default function SelectField({field, options, meta, form, isMulti, defaul
             })
           }}
         />
+        </Form.Label>
         {meta.touched && meta.error ? (
           <p className='text-cedar-chest'>{meta.error}</p>
         ) : (<></>)}

@@ -13,8 +13,8 @@ export default function TextInput ({ wrapperClassName='', label, ...props }: Pro
   const [field, meta] = useField(props.name)
   return (
     <div className={`form-control relative${wrapperClassName ? ` ${wrapperClassName}` : ''}`}>
-      <Form.Label className='capitalize' title={label || ''}/>
-      <Input {...field} {...props}/>
+      <Form.Label htmlFor={field.name} className='capitalize' title={label || ''}/>
+      <Input className='h-12' id={field.name} {...field} {...props}/>
       {meta.touched && meta.error ? (
         <p className='absolute -bottom-5 text-xs text-cedar-chest'>{meta.error}</p>
       ) : (<></>)}
