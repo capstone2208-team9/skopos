@@ -32,7 +32,7 @@ export default function SelectField({field, options, meta, form, isMulti, defaul
           inputId={field.name}
           options={options}
           onChange={handleChange}
-          defaultValue={defaultValue ? defaultValue : undefined}
+          defaultValue={defaultValue || undefined}
           onBlur={field.onBlur}
           classNamePrefix='select'
           isMulti={isMulti}

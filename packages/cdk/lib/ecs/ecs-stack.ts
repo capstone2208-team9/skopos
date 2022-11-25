@@ -89,7 +89,7 @@ export class EcsStack extends cdk.Stack {
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/graphql-server:1.3'),
-          image: ContainerImage.fromRegistry('kat201/skopos-graphql:1.2'),
+          image: ContainerImage.fromRegistry('kat201/skopos-graphql:1.3'),
           containerPort: 3001,
           containerName: 'BackendContainer',
           enableLogging: true,
@@ -153,7 +153,7 @@ export class EcsStack extends cdk.Stack {
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/collection-runner:1.0'),
-          image: ContainerImage.fromRegistry('kat201/skopos-collection-runner:1.2'),
+          image: ContainerImage.fromRegistry('kat201/skopos-collection-runner:1.3'),
           containerPort: 3003,
           containerName: 'CollectionRunnerContainer',
           enableLogging: true,

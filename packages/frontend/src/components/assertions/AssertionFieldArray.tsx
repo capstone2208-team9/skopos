@@ -56,61 +56,75 @@ export default function AssertionFieldArray(props: FieldProps) {
         name='assertions'
         render={arrayHelpers => (
           <>
+            {form.values.assertions.map((value, index) => {
+              const assertions = form.values.assertions
+              return (
+                <div className='border-b-2 border-gray-300 pb-6' key={index}>
+                  <div
+                    className={`grid ${['body', 'headers'].includes(assertions[index]) ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
+                    <Field
+                      name={`assertions[${index}].property`}
+                    >
+                      {(props) => (
+                        <SelectField
+                          {...props}
+                          defaultValue={{
+                            label: assertions[index].property,
+                            value: assertions[index].property
+                          }}
+                          options={[
+                            {label: 'Status', value: 'status'},
+                            {label: 'Latency', value: 'latency'},
+                            {label: 'Body', value: 'body'},
+                            {label: 'Headers', value: 'headers'},
+                          ]}/>
+                      )}
+
+                    </Field>
+                    <Field name={`assertions[${index}].comparison`}>
+                      {props => (
+                        <SelectField
+                          defaultValue={assertions[index].comparison ? {
+                            label: assertions[index].comparison,
+                            value: assertions[index].comparison
+                          } : undefined}
+                          {...props}
+                          options={comparisonTypes.map(c => ({
+                            label: c, value: c
+                          }))}/>
+                      )}
+                    </Field>
+                  </div>
+                  <div className='flex gap-4 items-end w-full'>
+                    {assertions[index].property === 'body' && (
+                      <TextInput prefix='body.' label='path' name={`assertions[${index}].path`} placeholder='body.'/>
+                    )}
+                    {assertions[index].property === 'headers' && (
+                      <TextInput prefix='headers.' label='path' name={`assertions[${index}].path`}
+                                 placeholder='headers.'/>
+                    )}
+                    {!['is null', 'is not null'].includes(assertions[index].comparison) && (
+                      <TextInput label='expected' name={`assertions[${index}].expected`}/>
+                    )}
+                    <Button className='bg-cedar-chest w-12' type='button'
+                            onClick={() => isNew(form, index) ? setModalOpen(true) : arrayHelpers.remove(index)}
+                    >
+                      <span className='sr-only'>Delete</span>
+                      {loading ? <Loader size='16'/> : <AiOutlineDelete/>}</Button>
+                    <ConfirmDeleteModal onDelete={() => handleRemove(assertions, index, arrayHelpers)}
+                                        onCancel={() => setModalOpen(false)} open={modalOpen}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+
             <Button size='sm' startIcon={<AiOutlinePlus/>} className='bg-viridian-green m-auto w-1/2' type='button'
                     onClick={() => arrayHelpers.push({
                       property: 'status', expected: '', comparison: 'is not equal to'
                     })}>
               <span>Add Assertion</span>
             </Button>
-            {form.values.assertions.map((value, index) => (
-              <div className='border-b-2 border-gray-300 pb-6' key={index}>
-                <div className={`grid ${['body', 'headers'].includes(form.values.assertions[index]) ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
-                  <Field
-                    name={`assertions[${index}].property`}
-                  >
-                    {(props) => (
-                      <SelectField
-                        {...props}
-                        options={[
-                          {label: 'Status', value: 'status'},
-                          {label: 'Latency', value: 'latency'},
-                          {label: 'Body', value: 'body'},
-                          {label: 'Headers', value: 'headers'},
-                        ]}/>
-                    )}
-
-                  </Field>
-                  <Field name={`assertions[${index}].comparison`}>
-                    {props => (
-                      <SelectField
-                        {...props}
-                        options={comparisonTypes.map(c => ({
-                          label: c, value: c
-                        }))}/>
-                    )}
-                  </Field>
-                </div>
-                <div className='flex gap-4 items-end w-full'>
-                  {form.values.assertions[index].property === 'body' && (
-                    <TextInput prefix='body.' label='path' name={`assertions[${index}].path`} placeholder='body.'/>
-                  )}
-                  {form.values.assertions[index].property === 'headers' && (
-                    <TextInput prefix='headers.' label='path' name={`assertions[${index}].path`} placeholder='headers.'/>
-                  )}
-                  {!['is null', 'is not null'].includes(form.values.assertions[index].comparison) && (
-                    <TextInput label='expected' name={`assertions[${index}].expected`}/>
-                  )}
-                  <Button className='bg-cedar-chest w-12' type='button'
-                          onClick={() => isNew(form, index) ? setModalOpen(true) : arrayHelpers.remove(index)}
-                  >
-                    <span className='sr-only'>Delete</span>
-                    {loading ? <Loader size='16'/> : <AiOutlineDelete/>}</Button>
-                  <ConfirmDeleteModal onDelete={() => handleRemove(form.values.assertions, index, arrayHelpers)}
-                                      onCancel={() => setModalOpen(false)} open={modalOpen}
-                  />
-                </div>
-              </div>
-            ))}
           </>
         )}
       />

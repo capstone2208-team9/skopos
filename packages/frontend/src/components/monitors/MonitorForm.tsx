@@ -24,7 +24,12 @@ const unitOptions: SelectOptions[] = units.map(unit => ({value: unit, label: uni
 
 const validationSchema = Yup.object({
   id: Yup.number().nullable(),
-  collections: Yup.array().of(Yup.number().required()).default([]),
+  collections: Yup.array().of(Yup.number())
+    .when('id', {
+      is: undefined,
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.required(),
+    }).default([]),
   value: Yup.number().required(),
   units: Yup.string().oneOf([...units, ...units.map(u => u + 's')]).required(),
   contactInfo: Yup.object().shape({
@@ -147,7 +152,7 @@ export default function MonitorForm({
               </fieldset>
               <div className='w-full text-right'>
                 <Button form='add-monitor' type='submit' className='bg-sky-blue mr-4'
-                        disabled={!isValid || !dirty}
+                        disabled={monitor ? !isValid : !isValid || !dirty}
                 >
                   {loading ? <FaSpinner className='animate-spin mr-1'/> : 'Save'}
                 </Button>

@@ -85,9 +85,10 @@ export interface MonitorContactInfo {
 export interface Monitor {
   id: number
   schedule: string
-  contactInfo: MonitorContactInfo
+  contactInfo?: MonitorContactInfo
   collections: ICollection[]
   enabled: boolean
+  createdAt: string
 }
 
 export interface MonitorCreateInput {

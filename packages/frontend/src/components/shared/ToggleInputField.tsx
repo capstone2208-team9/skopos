@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import { Form, Input, Toggle } from "react-daisyui";
 import {FieldProps} from 'formik'
 
@@ -18,7 +18,13 @@ export default function ToggleInputField({field, form, placeholder, meta}: Props
   }
 
   const title = field.name.split('.').at(-1)?.toUpperCase()
+  const {value} = field
 
+  useEffect(() => {
+    if (value && !checked) {
+      setChecked(true)
+    }
+  }, [value, checked])
   return (
     <div className='flex items-center justify-between my-2'>
       <div className='flex items-center gap-4'>

@@ -16,7 +16,7 @@ import {ICollection, MonitorContactInfo} from 'types'
 interface Props {
   schedule: string;
   collections: ICollection[];
-  contactInfo: MonitorContactInfo;
+  contactInfo?: MonitorContactInfo;
   enabled: boolean;
   id: number;
 }

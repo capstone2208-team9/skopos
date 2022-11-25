@@ -85,7 +85,7 @@ export default function RequestForm({request, stepNumber}: Props) {
   const navigate = useNavigate()
   const [tabValue, setTabValue] = useState(0)
 
-  const [createRequest, {data, error, loading}] = useMutation(CreateOneRequest, {
+  const [createRequest, {error, loading}] = useMutation(CreateOneRequest, {
     update(cache, {data: {createOneRequest}}) {
       if (!createOneRequest) return
       const variables = getRequestVariables(collectionId)
@@ -103,7 +103,7 @@ export default function RequestForm({request, stepNumber}: Props) {
     },
   })
 
-  const [updateRequest, {data: updateData, error: updateError}] = useMutation(UpdateRequest, {
+  const [updateRequest, {error: updateError}] = useMutation(UpdateRequest, {
     update(cache, {data: {updateOneRequest}}) {
       if (!updateOneRequest) return
       const variables = getRequestVariables(collectionId)
@@ -122,7 +122,8 @@ export default function RequestForm({request, stepNumber}: Props) {
 
   const handleSaveRequest = async (values: typeof initialState) => {
     try {
-      return await createRequest({
+      return createRequest({
+        notifyOnNetworkStatusChange: true,
         variables: {
           data: {
             ...values,
@@ -161,7 +162,7 @@ export default function RequestForm({request, stepNumber}: Props) {
         method: {
           set: values.method,
         },
-        headers: values.headers.length ? Object.fromEntries(values.headers) : null,
+        headers: values.headers.length ? Object.fromEntries(values.headers) : {},
         body: values.body,
         assertions: {
           upsert: values.assertions.map(a => (
@@ -191,7 +192,7 @@ export default function RequestForm({request, stepNumber}: Props) {
         id: request.id
       }
     }
-    return await updateRequest({variables})
+    return updateRequest({variables})
   }
 
   const handleSubmit = async (values: typeof initialState) => {
@@ -204,18 +205,9 @@ export default function RequestForm({request, stepNumber}: Props) {
   }
 
   useEffect(() => {
-    if (updateData || data) {
-      // reset()
-      addToast(updateData ? 'Request updated' : 'Request saved', 'success')
-      navigate(-1)
-    }
-  }, [data, updateData])
-
-
-  useEffect(() => {
     if (error) addToast(error.message, 'error')
     if (updateError) addToast(updateError.message, 'error')
-  }, [error, updateError])
+  }, [error, updateError, addToast])
 
   return (
     <Formik
@@ -225,7 +217,10 @@ export default function RequestForm({request, stepNumber}: Props) {
         const result = await handleSubmit(values)
         if (result && !result?.errors){
           resetForm()
+          addToast(request? 'Request Updated' : 'Request Saved', 'success')
           navigate(`/collections/${collectionId}/requests`)
+        } else if (result && result.errors) {
+          addToast(request? 'Update request failed' : 'Save request failed', 'error')
         }
       }}
     >

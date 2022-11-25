@@ -70,7 +70,7 @@ export default function CreateMonitor() {
       }
     }
     // only add contactInfo if values provided
-    if (contactInfo && Object.keys(contactInfo).length > 0) {
+    if (contactInfo && Object.values(contactInfo).some(Boolean)) {
       variables.data.contactInfo = contactInfo
     }
     return await addMonitor({variables})
