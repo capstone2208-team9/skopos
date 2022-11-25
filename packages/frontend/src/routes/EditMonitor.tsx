@@ -46,7 +46,7 @@ export default function EditMonitor() {
     if (contactInfo && Object.keys(contactInfo).length > 0) {
       variables.data.contactInfo = contactInfo
     }
-    await updateMonitor(
+    return await updateMonitor(
       { variables }
     );
   };

@@ -1,3 +1,4 @@
+import { FetchResult } from '@apollo/client'
 import SelectField from 'components/shared/SelectField'
 import TextInput from 'components/shared/TextInput'
 import ToggleInputField from 'components/shared/ToggleInputField'
@@ -51,8 +52,8 @@ interface Props {
   availableCollections?: Pick<ICollection, 'id' | 'title'>[];
   loading: boolean;
   monitor?: Monitor;
-  onSave?: (input: MonitorFormValues) => void;
-  onUpdate?: (input: MonitorFormValues) => void;
+  onSave?: (input: MonitorFormValues) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>;
+  onUpdate?: (input: MonitorFormValues) => Promise<FetchResult<any, Record<string, any>, Record<string, any>>>;
 }
 
 
@@ -66,9 +67,11 @@ export default function MonitorForm({
 
   const handleSubmit = async (values: MonitorFormValues) => {
     if (monitor) {
-      onUpdate && onUpdate(values)
+      if (!onUpdate) throw new Error('onUpdate not not provided')
+      return onUpdate(values)
     } else {
-      onSave && onSave(values)
+      if (!onSave) throw new Error('onSave not not provided')
+      return onSave(values)
     }
   }
 
@@ -88,8 +91,10 @@ export default function MonitorForm({
           } : initialValues}
           validationSchema={validationSchema}
           onSubmit={async (values, {resetForm}) => {
-            await handleSubmit(values as MonitorFormValues)
-            resetForm()
+            const result = await handleSubmit(values as MonitorFormValues)
+            if (!result.errors) {
+              resetForm()
+            }
           }}
         >
           {({isValid, dirty, values}) => (
@@ -110,7 +115,6 @@ export default function MonitorForm({
                   <Field name='collections' multiple={true}>
                     {(props) => (
                       <SelectField
-                        defaultValue={collectionOptions.at(0)}
                         isMulti={true}
                         {...props}
                         options={collectionOptions}

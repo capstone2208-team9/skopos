@@ -73,7 +73,7 @@ export default function CreateMonitor() {
     if (contactInfo && Object.keys(contactInfo).length > 0) {
       variables.data.contactInfo = contactInfo
     }
-    await addMonitor({variables})
+    return await addMonitor({variables})
   }
 
   useEffect(() => {

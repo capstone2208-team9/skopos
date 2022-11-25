@@ -9,7 +9,7 @@ import {useModal} from 'hooks/useModal'
 import {useEffect} from 'react'
 import {Button, Dropdown, Form, Table, Toggle, Tooltip} from 'react-daisyui'
 import {MdDelete, MdEdit, MdHistory, MdMoreVert} from 'react-icons/md'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {whereMonitorNotNullVariables} from 'routes/CreateMonitor'
 import {ICollection, MonitorContactInfo} from 'types'
 
@@ -32,6 +32,7 @@ const whereMonitorNullVariables = {
 }
 
 export default function MonitorListItem({enabled, schedule, collections, contactInfo, id}: Props) {
+  const navigate = useNavigate()
   const [deleteModalOpen, toggleDeleteModalOpen] = useModal()
   const {addToast} = useToast()
   const [toggleMonitorEnabled, {loading: toggling, error: toggleError}] = useMutation(ToggleMonitorEnabled)
@@ -96,12 +97,14 @@ export default function MonitorListItem({enabled, schedule, collections, contact
               <Dropdown.Item key={col.id}
                              className='bg-sky-50 text-dark-green hover:text-sky-blue font-medium text-lg'>
                 <Tooltip message='View History'>
-                  <Link className='text-inherit' to={`/collection-runs/${col.id}`}>
+                  <Button size='sm' className='text-inherit btn-link'
+                          onClick={() => navigate(`/collection-runs/${col.id}`)}
+                  >
                     <div className='flex gap-2 items-center'>
                       <span>{col.title}</span>
                       <MdHistory size={ICON_SIZE} className='fill-current'/>
                     </div>
-                  </Link>
+                  </Button>
                 </Tooltip>
                 </Dropdown.Item>
             ))}

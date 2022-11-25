@@ -60,16 +60,21 @@ export default function CollectionRuns() {
 
   if (loading) return <Loader/>
   if (!data) return <></>
+  
+  const title = data.paginateCollectionRuns.items[0].collection?.title
 
   return (
     <div className='flex flex-col gap-4 items-start mx-auto w-full'>
-      <Button ref={topRef} size='sm' className='bg-sky-blue' onClick={() => refetch({
-        variables: variables(collectionId, data.paginateCollectionRuns.cursor)
-      })}>
-        {loading ? (<Loader size='20'/>) : (
-          <IoMdRefresh size='24' className='text-white'/>
-        )}
-      </Button>
+      <div className='flex gap-4 items-center'>
+        <Button ref={topRef} size='sm' className='bg-sky-blue' onClick={() => refetch({
+          variables: variables(collectionId, data.paginateCollectionRuns.cursor)
+        })}>
+          {loading ? (<Loader size='20'/>) : (
+            <IoMdRefresh size='24' className='text-white'/>
+          )}
+        </Button>
+        {title && <h2 className='font-medium text-2xl'>History for {title}</h2>}
+      </div>
       <CollectionRunsContainer collectionRuns={data.paginateCollectionRuns.items}/>
       <ButtonGroup className='gap-4 items-end'>
         <Button size='md' disabled={!data.paginateCollectionRuns.hasMore}

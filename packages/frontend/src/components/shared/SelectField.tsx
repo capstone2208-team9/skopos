@@ -30,10 +30,9 @@ export default function SelectField({field, options, meta, form, isMulti, defaul
         <Select
           aria-labelledby={`select-${field.name}`}
           inputId={field.name}
-          // placeholder={`select ${field.name}`}
           options={options}
           onChange={handleChange}
-          defaultValue={defaultValue ? defaultValue : {label: field.value, value: field.value}}
+          defaultValue={defaultValue ? defaultValue : undefined}
           onBlur={field.onBlur}
           classNamePrefix='select'
           isMulti={isMulti}
