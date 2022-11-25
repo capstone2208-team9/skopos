@@ -7,7 +7,7 @@ import {Field, FieldArray, FieldProps, FieldArrayRenderProps, FormikProps} from 
 import {DeleteOneAssertion} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
 import {useState} from 'react'
-import {Button, Input} from 'react-daisyui'
+import {Button} from 'react-daisyui'
 import {AiOutlineDelete, AiOutlinePlus} from 'react-icons/ai'
 import { useParams } from 'react-router-dom'
 import {getRequestVariables} from 'routes/RequestList'
@@ -15,7 +15,7 @@ import {AssertionInput, comparisonTypes} from 'types'
 
 
 export default function AssertionFieldArray(props: FieldProps) {
-  const {form } = props
+  const {form} = props
   const {collectionId} = useParams()
   const [modalOpen, setModalOpen] = useState(false)
   const [deleteOneAssertion, {loading}] = useMutation(DeleteOneAssertion, {
@@ -43,6 +43,7 @@ export default function AssertionFieldArray(props: FieldProps) {
     } else {
       arrayHelpers.remove(index)
     }
+    setModalOpen(false)
   }
 
   const isNew = (form: FormikProps<any>, index: number) => {
@@ -55,81 +56,62 @@ export default function AssertionFieldArray(props: FieldProps) {
         name='assertions'
         render={arrayHelpers => (
           <>
-            {form.values.assertions.length > 0 ? (
-              <>
-                {form.values.assertions.map((value, index) => (
-                  <div key={index}>
-                    <div className={`grid ${['body', 'headers'].includes(form.values.assertions[index]) ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
-                      <Field
-                        name={`assertions[${index}].property`}
-                      >
-                        {(props) => (
-                          <SelectField
-                            {...props}
-                            options={[
-                              {label: 'Status', value: 'status'},
-                              {label: 'Latency', value: 'latency'},
-                              {label: 'Body', value: 'body'},
-                              {label: 'Headers', value: 'headers'},
-                            ]}/>
-                        )}
+            <Button size='sm' startIcon={<AiOutlinePlus/>} className='bg-viridian-green m-auto w-1/2' type='button'
+                    onClick={() => arrayHelpers.push({
+                      property: 'status', expected: '', comparison: 'is not equal to'
+                    })}>
+              <span>Add Assertion</span>
+            </Button>
+            {form.values.assertions.map((value, index) => (
+              <div className='border-b-2 border-gray-300 pb-6' key={index}>
+                <div className={`grid ${['body', 'headers'].includes(form.values.assertions[index]) ? 'grid-cols-3' : 'grid-cols-2'} gap-4`}>
+                  <Field
+                    name={`assertions[${index}].property`}
+                  >
+                    {(props) => (
+                      <SelectField
+                        {...props}
+                        options={[
+                          {label: 'Status', value: 'status'},
+                          {label: 'Latency', value: 'latency'},
+                          {label: 'Body', value: 'body'},
+                          {label: 'Headers', value: 'headers'},
+                        ]}/>
+                    )}
 
-                      </Field>
-                      <Field name={`assertions[${index}].comparison`}>
-                        {props => (
-                          <SelectField
-                            {...props}
-                            options={comparisonTypes.map(c => ({
-                              label: c, value: c
-                            }))}/>
-                        )}
-                      </Field>
-                      {form.values.assertions[index].property === 'body' && (
-                        <TextInput label='path' name={`assertions[${index}].property`}/>
-                      )}
-                      {form.values.assertions[index].property === 'headers' && (
-                        <div className='form-control'>
-                          <Field component={Input} name={`assertions[${index}].property`}/>
-                        </div>
-                      )}
-                    </div>
-                    <div className='grid grid-cols-3 gap-4 items-end'>
-                      {!['is null', 'is not null'].includes(form.values.assertions[index].comparison) && (
-                        <div className='form-control'>
-                          <TextInput label='expected' name={`assertions[${index}].expected`}/>
-                        </div>
-                      )}
-                      <div className='flex gap-2'>
-                        <Button className='bg-viridian-green w-12' type='button' onClick={() => arrayHelpers.push({
-                          property: 'status', expected: '', comparison: 'is not equal to'
-                        })}>
-                          <span className='sr-only'>Add</span>
-                          <AiOutlinePlus/></Button>
-                        <Button className='bg-cedar-chest w-12' type='button'
-                                  // onClick={() => arrayHelpers.remove(index)}
+                  </Field>
+                  <Field name={`assertions[${index}].comparison`}>
+                    {props => (
+                      <SelectField
+                        {...props}
+                        options={comparisonTypes.map(c => ({
+                          label: c, value: c
+                        }))}/>
+                    )}
+                  </Field>
+                </div>
+                <div className='flex gap-4 items-end w-full'>
+                  {form.values.assertions[index].property === 'body' && (
+                    <TextInput prefix='body.' label='path' name={`assertions[${index}].path`} placeholder='body.'/>
+                  )}
+                  {form.values.assertions[index].property === 'headers' && (
+                    <TextInput prefix='headers.' label='path' name={`assertions[${index}].path`} placeholder='headers.'/>
+                  )}
+                  {!['is null', 'is not null'].includes(form.values.assertions[index].comparison) && (
+                    <TextInput label='expected' name={`assertions[${index}].expected`}/>
+                  )}
+                  <Button className='bg-cedar-chest w-12' type='button'
                           onClick={() => isNew(form, index) ? setModalOpen(true) : arrayHelpers.remove(index)}
-                        >
-                          <span className='sr-only'>Delete</span>
-                          {loading ? <Loader size='16'/> : <AiOutlineDelete/>}</Button>
-                        <ConfirmDeleteModal onDelete={() => handleRemove(form.values.assertions, index, arrayHelpers)}
-                                            onCancel={() => setModalOpen(false)} open={modalOpen}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                ))}
-              </>
-            ) : (
-              <Button startIcon={<AiOutlinePlus/>} className='bg-viridian-green m-auto w-1/2' type='button'
-                      onClick={() => arrayHelpers.push({
-                        property: 'status', expected: '', comparison: 'is not equal to'
-                      })}>
-                <span>Add Assertion</span>
-              </Button>
-            )}
+                  >
+                    <span className='sr-only'>Delete</span>
+                    {loading ? <Loader size='16'/> : <AiOutlineDelete/>}</Button>
+                  <ConfirmDeleteModal onDelete={() => handleRemove(form.values.assertions, index, arrayHelpers)}
+                                      onCancel={() => setModalOpen(false)} open={modalOpen}
+                  />
+                </div>
+              </div>
+            ))}
           </>
-
         )}
       />
     </>

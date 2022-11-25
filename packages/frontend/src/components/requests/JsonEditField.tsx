@@ -8,7 +8,9 @@ export default function JsonEditField({form, field, meta }: FieldProps) {
   }
   return (
     <label className='w-full relative' htmlFor='body'>
+      <span className='sr-only'>Body</span>
       <Editor
+        textareaId='body'
         name={field.name}
         highlight={code => highlight(code, languages.js, 'js')}
         value={field.value}
@@ -17,8 +19,8 @@ export default function JsonEditField({form, field, meta }: FieldProps) {
         padding={10}
         className='bg-base-100 border-2 border-base-200 w-full'
       />
-      {meta.touched && meta.error ? (
-        <p className='absolute -bottom-5 text-xs text-cedar-chest'>{meta.error}</p>
+      {meta.error ? (
+        <span data-test-id='error-json' className='absolute right-2 top-1/2 -translate-y-1/2 text-xs text-cedar-chest'>{meta.error}</span>
       ) : (<></>)}
     </label>
   )

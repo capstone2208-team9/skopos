@@ -31,7 +31,7 @@ export default function CollectionRunResponse({ response }: Props) {
               <span>
                 {result.assertion.comparison}
               </span>
-              <span className='inline-block truncate max-w-full'>
+              <span className='max-w-[5rem] overflow-x-hidden truncate inline-block truncate max-w-full'>
                 {result.actual}
               </span>
               <span>

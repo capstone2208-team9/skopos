@@ -1,9 +1,11 @@
 import { GetCollection, GetCollectionNames } from "graphql/queries";
-import { CreateOneMonitor} from "graphql/mutations";
+import {CreateOneMonitor, CreateOneRequest} from 'graphql/mutations'
+import { Monitor} from 'types'
 import { graphql } from "msw";
 
 let lastMonitorId = 0
-const monitors: any = []
+let lastRequestId = 0
+const monitors: Monitor[] = []
 
 export const handlers = [
   graphql.query(GetCollectionNames, (req, res, ctx) =>{
@@ -28,11 +30,17 @@ export const handlers = [
   }),
 
   graphql.mutation(CreateOneMonitor, (req, res, ctx) => {
-    console.log(req.variables)
     const newMonitor = {...req.variables.data, id: lastMonitorId++, __typename: "Monitor"}
-    monitors.push()
+    monitors.push(newMonitor)
     return res(
       ctx.data(newMonitor)
+    )
+  }),
+
+  graphql.mutation(CreateOneRequest, (req, res, ctx) => {
+    const newRequest = {data: req.variables.data, id: lastRequestId++, __typename: "Request"}
+    return res(
+      ctx.data(newRequest)
     )
   })
 ]

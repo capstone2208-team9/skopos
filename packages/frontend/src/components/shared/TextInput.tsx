@@ -7,16 +7,32 @@ interface Props {
   label?: string
   name: string
   placeholder?: string
+  placeholderPosition?: 'bottom' | 'right'
+  prefix?: string
 }
 
-export default function TextInput ({ wrapperClassName='', label, ...props }: Props) {
-  const [field, meta] = useField(props.name)
+export default function TextInput ({ prefix = '',wrapperClassName='', placeholderPosition = 'right', label, ...props }: Props) {
+  const [field, meta, helpers] = useField(props.name)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {onChange, value, ...restField} = field
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const text = e.target.value
+    e.target.value = prefix + text.substring(prefix.length)
+    helpers.setValue(e.target.value)
+  }
+  const placeHolderClassName = placeholderPosition === 'right' ? '-bottom-5 ' : 'right-2 top-1/2 '
   return (
-    <div className={`form-control relative${wrapperClassName ? ` ${wrapperClassName}` : ''}`}>
+    <div className={`form-control w-full relative${wrapperClassName ? ` ${wrapperClassName}` : ''}`}>
       <Form.Label htmlFor={field.name} className='capitalize' title={label || ''}/>
-      <Input className='h-12' id={field.name} {...field} {...props}/>
+      <Input className='h-12' id={field.name} {...restField} {...props}
+        onChange={handleChange}
+             value={value || prefix}
+      />
       {meta.touched && meta.error ? (
-        <p className='absolute -bottom-5 text-xs text-cedar-chest'>{meta.error}</p>
+        <span data-testid={`errors-${field.name}`}
+           className={`${placeHolderClassName}absolute text-xs text-cedar-chest`}>
+          {meta.error}
+        </span>
       ) : (<></>)}
     </div>
   )

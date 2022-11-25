@@ -38,7 +38,7 @@ const ToastProvider = ({children}: Props) => {
     <Provider value={{toasts: Object.values(toasts), addToast, removeToast}}>
       {children}
       <>
-        {toasts.map(toast => (<Toast key={toast.id} toast={toast}/>))}
+        {toasts.map(toast => (<Toast data-testid='toast' key={toast.id} toast={toast}/>))}
       </>
     </Provider>
   )

@@ -93,7 +93,6 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
                 </Button>
                 <Button className='bg-cadmium-orange' type='button' size='md'
                         onClick={() => {
-                          console.log('clear title')
                           setTitle('')
                           setOpen(false)
                         }}

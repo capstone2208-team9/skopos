@@ -108,6 +108,7 @@ export type ComparisonType = typeof comparisonTypes[number]
 
 export interface AssertionInput {
   property: string
+  path?: string
   comparison: ComparisonType
   expected: string|number
   id?: number

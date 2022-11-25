@@ -15,6 +15,7 @@ const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 export default function CollectionRunner() {
   const {collectionId} = useParams()
   const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, {
+    notifyOnNetworkStatusChange: true,
     variables: {
       where: {
         collectionId: {
@@ -48,7 +49,6 @@ export default function CollectionRunner() {
     }
   }, [data])
 
-  if (loading) return <p>Loading...</p>
   if (!data) return <Tooltip message='Run collection'>
     <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                             onClick={handleRunCollection}

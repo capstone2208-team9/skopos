@@ -3,15 +3,17 @@ import AssertionFieldArray from 'components/assertions/AssertionFieldArray'
 import HeaderFieldArray from 'components/requests/HeaderFieldArray'
 import JsonEditField from 'components/requests/JsonEditField'
 import Loader from 'components/shared/Loader'
-import {getRequestVariables} from 'routes/RequestList'
+import TextInput from 'components/shared/TextInput'
+import {Field, Form, Formik} from 'formik'
+import {CreateOneRequest, UpdateRequest} from 'graphql/mutations'
 import {GetCollectionNames, GetRequests} from 'graphql/queries'
-import {CreateOneRequest, UpdateRequest } from 'graphql/mutations'
 import {useToast} from 'hooks/ToastProvider'
+import {requestToRequestInput} from 'lib/assertionHelpers'
 import React, {useEffect, useState} from 'react'
-import {Button, Tabs} from 'react-daisyui'
+import {Button, InputGroup, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
+import {getRequestVariables} from 'routes/RequestList'
 import {AssertionInput, ComparisonType, Request} from 'types'
-import {Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 
 interface Props {
@@ -23,7 +25,7 @@ const initialState = {
   title: '',
   method: 'GET',
   url: '',
-  headers: [] as [string, string|number][],
+  headers: [] as [string, string | number][],
   body: '',
   assertions: [] as AssertionInput[],
 }
@@ -31,14 +33,31 @@ const initialState = {
 
 const assertionSchema: Yup.SchemaOf<AssertionInput> = Yup.object({
   id: Yup.number().optional(),
-  property: Yup.string().required('property is required'),
+  property: Yup.string().oneOf(['headers', 'body', 'status', 'latency']).required(
+    'property is required'
+  ),
+  path: Yup.string()
+    .when('property', {
+      is: 'headers',
+      then(schema) {
+        return schema.required('please provide path for headers')
+      }
+    })
+    .when('property', {
+      is: 'body',
+      then: (schema) => schema.required('please provide path for body'),
+    }),
   comparison: Yup.mixed<ComparisonType>().required('comparison is required'),
   expected: Yup.mixed()
     .when('comparison', {
-      is: (val) => ['is null', 'is not null'].includes(val),
+      is: 'is null',
       then: Yup.mixed().nullable(),
-      otherwise: Yup.mixed().defined().required('please provide an expected value'),
     })
+    .when('comparison', {
+      is: 'is not null',
+      then: Yup.mixed().nullable(),
+    })
+    .required('expected is required')
 })
 
 const validationSchema = Yup.object({
@@ -46,8 +65,18 @@ const validationSchema = Yup.object({
   url: Yup.string().url().required(),
   method: Yup.mixed().oneOf(['GET', 'POST', 'PUT', 'DELETE']),
   headers: Yup.array().of(Yup.array().length(2)).notRequired(),
-  body: Yup.string().notRequired(),
-  assertions: Yup.array().of(assertionSchema).required()
+  body: Yup.string().test({
+    name: 'is-json',
+    test(value, ctx) {
+      if (!value) return true
+      try {
+        return Boolean(JSON.parse(value))
+      } catch {
+        return ctx.createError({message: 'body must be a valid json object'})
+      }
+    },
+  }),
+  assertions: Yup.array().min(1).of(assertionSchema)
 })
 
 export default function RequestForm({request, stepNumber}: Props) {
@@ -62,13 +91,15 @@ export default function RequestForm({request, stepNumber}: Props) {
       const variables = getRequestVariables(collectionId)
       cache.updateQuery({query: GetCollectionNames}, (data) => {
         const id = Number(collectionId)
-        return {collections: data.collections.map(c => {
-          return c.id === id ? {...c, _count : c._count.requests} : c
-          })}
+        return {
+          collections: data.collections.map(c => {
+            return c.id === id ? {...c, _count: c._count.requests} : c
+          })
+        }
       })
-      cache.updateQuery({ query: GetRequests, variables }, (data) => ({
+      cache.updateQuery({query: GetRequests, variables}, (data) => ({
         requests: [...data.requests, createOneRequest]
-      }));
+      }))
     },
   })
 
@@ -81,25 +112,27 @@ export default function RequestForm({request, stepNumber}: Props) {
       if (updateRequest.headers) {
         updateRequest = {...updateRequest, headers: Object.fromEntries(updateRequest.headers)}
       }
-      cache.updateQuery({ query: GetRequests, variables }, (data) => ({
+      cache.updateQuery({query: GetRequests, variables}, (data) => ({
         requests: data.requests.map((r) => {
           return r.id === updateOneRequest.id ? updateRequest : r
         })
-      }));
+      }))
     },
   })
 
-
   const handleSaveRequest = async (values: typeof initialState) => {
     try {
-      await createRequest({
+      return await createRequest({
         variables: {
           data: {
             ...values,
             stepNumber: request?.stepNumber || stepNumber,
             assertions: {
               createMany: {
-                data: values.assertions,
+                data: values.assertions.map(({property, path, ...rest}) => ({
+                  property: path || property,
+                  ...rest
+                })),
               }
             },
             collection: {
@@ -110,7 +143,6 @@ export default function RequestForm({request, stepNumber}: Props) {
           }
         }
       })
-      navigate(`/collections/${collectionId}/requests`)
     } catch (err) {
       console.log(err)
     }
@@ -126,6 +158,9 @@ export default function RequestForm({request, stepNumber}: Props) {
         url: {
           set: values.url,
         },
+        method: {
+          set: values.method,
+        },
         headers: values.headers.length ? Object.fromEntries(values.headers) : null,
         body: values.body,
         assertions: {
@@ -133,7 +168,7 @@ export default function RequestForm({request, stepNumber}: Props) {
             {
               create: {
                 expected: a.expected,
-                property: a.property,
+                property: a.path || a.property,
                 comparison: a.comparison
               },
               update: {
@@ -144,7 +179,7 @@ export default function RequestForm({request, stepNumber}: Props) {
                   set: a.expected
                 },
                 property: {
-                  set: a.property
+                  set: a.path || a.property
                 }
               },
               where: {id: a.id || -1}
@@ -156,12 +191,11 @@ export default function RequestForm({request, stepNumber}: Props) {
         id: request.id
       }
     }
-    await updateRequest({variables})
-
+    return await updateRequest({variables})
   }
 
-  const handleSubmit = (values: typeof initialState) => {
-    request ? handleEditRequest(values) : handleSaveRequest(values)
+  const handleSubmit = async (values: typeof initialState) => {
+    return request ? handleEditRequest(values) : handleSaveRequest(values)
   }
 
   const handleCancel = (resetForm) => {
@@ -169,19 +203,14 @@ export default function RequestForm({request, stepNumber}: Props) {
     navigate(-1)
   }
 
-
   useEffect(() => {
     if (updateData || data) {
       // reset()
+      addToast(updateData ? 'Request updated' : 'Request saved', 'success')
       navigate(-1)
     }
   }, [data, updateData])
 
-  useEffect(() => {
-    if (request) {
-      // setFormData(prev => ({...prev, ...request}))
-    }
-  }, [request])
 
   useEffect(() => {
     if (error) addToast(error.message, 'error')
@@ -190,48 +219,52 @@ export default function RequestForm({request, stepNumber}: Props) {
 
   return (
     <Formik
-      initialValues={request ? {...initialState, ...request} :  initialState}
+      initialValues={request ? {...initialState, ...requestToRequestInput(request)} : initialState}
       validationSchema={validationSchema}
-      onSubmit={(values) => {
-        handleSubmit(values)
+      onSubmit={async (values, {resetForm}) => {
+        const result = await handleSubmit(values)
+        if (result && !result?.errors){
+          resetForm()
+          navigate(`/collections/${collectionId}/requests`)
+        }
       }}
     >
       {({isValid, dirty, resetForm}) => (
-        <Form className='flex flex-col gap-4'>
-          {updateError && <p>{updateError.message}</p>}
-          <div className='flex gap-4 justify-between'>
-            <div className='form-control flex-grow'>
-              <label htmlFor='title' className='label'>
-                <Field className='input input-bordered w-full' id='title'
-                       name='title'
-                       placeholder='request name'
-                />
-              </label>
-            </div>
-          </div>
+        <Form className='flex flex-col gap-6'>
+          <TextInput name='title' placeholder='add a title'/>
 
-          <div className='form-control'>
-            <label htmlFor='method' className='input-group'>
-              <Field as='select' name='method' className='select select-bordered'
-              >
-                <option value='GET'>GET</option>
-                <option value='POST'>POST</option>
-                <option value='PUT'>PUT</option>
-                <option value='PATCH'>PATCH</option>
-                <option value='DELETE'>DELETE</option>
-              </Field>
-              <Field className='input input-bordered w-full' placeholder='endpoint url' id='url' name='url'/>
-            </label>
-          </div>
+          <InputGroup>
+            <Field name='method' as='select' className='select select-bordered'>
+              {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(m => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </Field>
+            <TextInput wrapperClassName='-mt-4 w-full' name='url' placeholder='https://example.com'/>
+          </InputGroup>
           <Tabs value={tabValue} onChange={setTabValue}>
-            <Tabs.Tab value={0} className='tab tab-bordered text-dark-green'>Headers</Tabs.Tab>
-            <Tabs.Tab value={1} className='tab tab-bordered text-dark-green'>Body</Tabs.Tab>
-            <Tabs.Tab value={2} className='tab tab-bordered text-dark-green'>Assertions</Tabs.Tab>
+            <Tabs.Tab value={0} className='flex-1 text-lg text-dark-green'>Headers</Tabs.Tab>
+            <Tabs.Tab value={1} className='flex-1 text-lg text-dark-green'>Body</Tabs.Tab>
+            <Tabs.Tab value={2} className='flex-1 text-lg text-dark-green'>Assertions</Tabs.Tab>
           </Tabs>
           {tabValue === 0 && <Field name='headers' component={HeaderFieldArray}/>}
 
-          {tabValue === 1 && <Field name='body' component={JsonEditField}/>}
-          {tabValue === 2 && <Field name='assertions' component={AssertionFieldArray}/>}
+          {tabValue === 1 &&
+            (<Field name='body'>
+              {(props) => (
+                <JsonEditField
+                  {...props}
+                />
+              )}
+            </Field>)
+          }
+          {tabValue === 2 && (
+            <Field name='assertions'>
+              {(props) => (
+                <AssertionFieldArray {...props}/>
+              )}
+            </Field>
+          )
+          }
           {!request && <div className='flex gap-4 ml-auto'>
             <Button className='bg-sky-blue' type='submit'
                     disabled={!isValid || !dirty}
@@ -246,7 +279,6 @@ export default function RequestForm({request, stepNumber}: Props) {
             <Button className='bg-cadmium-orange' type='button' onClick={() => handleCancel(resetForm)}>Cancel</Button>
           </div>}
         </Form>
-
       )}
     </Formik>
   )

@@ -35,7 +35,7 @@ const client = new ApolloClient({
               if (Array.isArray(value)) return value
               return Object.entries(value)
             },
-          }
+          },
         }
       },
       Query: {

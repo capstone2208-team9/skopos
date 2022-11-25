@@ -42,7 +42,6 @@ export default function CollectionRuns() {
 
   useEffect(() => {
     if (!collectionId) return
-    console.log('new collection id', collectionId)
     refetch({
       variables: variables(collectionId)
     })

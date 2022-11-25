@@ -38,7 +38,7 @@ export default function Collections() {
   return (
     <div className='grid grid-cols-12 min-w-[768px]'>
       <div className='col-span-3'>
-        <div className='flex items-center gap-4 mb-4'>
+        <div className='flex items-center gap-4 mt-24'>
           <h2 id='collection-heading' className='text-xl font-medium'>Collections</h2>
           <AddCollection buttonSize='sm' compact />
         </div>

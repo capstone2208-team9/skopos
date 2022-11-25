@@ -25,7 +25,7 @@ export default function CollectionNavListItem({collection, onDelete, onSelect}: 
         <HiOutlineFolder className='group-hover:scale-105 group-hover:text-cadmium-orange' size='26'/>
         <span className='group-hover:scale-105 group-hover:text-cadmium-orange transition-transform transition-400'>{collection.title}</span>
       </NavLink>
-      <Dropdown horizontal='right' className='group group-hover:text-cadmium-orange ml-auto'>
+      <Dropdown horizontal='right' className='group group-hover:text-cadmium-orange'>
         <Dropdown.Toggle size='xs' color='ghost' className='ml-auto group-hover:text-cadmium-orange'>
           <MdMoreVert size='20' className='fill-current'/>
         </Dropdown.Toggle>

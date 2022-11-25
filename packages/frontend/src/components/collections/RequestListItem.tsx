@@ -63,9 +63,9 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
   return (
     <div className='flex items-center justify-between'>
       <Badge className='mr-4 rounded-full w-6 h-6 bg-sky-blue'>
-        {reordering ? <Loader/> : stepNumber}
+        {reordering ? <Loader size='16'/> : stepNumber}
       </Badge>
-      {reordering ? <Loader/> : <span className='truncate'>{title}</span>}
+      {reordering ? <Loader size='16'/> : <span className='truncate'>{title}</span>}
       <ButtonGroup className='flex flex-row gap-4'>
         <Link className='btn btn-ghost' state={{nextStep}} to={`${id}/edit`}>
           <MdEdit size='20' className='text-sky-blue text-xl'/>
