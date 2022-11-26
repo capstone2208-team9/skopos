@@ -15,20 +15,22 @@ export default function HeaderFieldArray({form}: HeaderFormProps) {
           name='headers'
           render={arrayHelpers => (
             <div className='flex flex-col flex-1'>
-              <Button size='sm' startIcon={<AiOutlinePlus/>} className='bg-viridian-green m-auto w-1/2' type='button'
-                      onClick={() => arrayHelpers.push(['', ''])}
-              >Add A Header</Button>
               {
                 form.values.headers.map((_, index) => (
-                  <div key={index} className='w-full flex gap-4 items-end'>
-                    <TextInput wrapperClassName='flex-1' placeholder='key' name={`headers.${index}.0`}/>
-                    <TextInput wrapperClassName='flex-1' placeholder='value' name={`headers.${index}.1`}/>
+                  <div key={index} className='w-full flex gap-4 items-end last-of-type:mb-4'>
+                    <TextInput label='key' wrapperClassName='flex-1' placeholder='content-type' name={`headers.${index}.0`}/>
+                    <TextInput label='value' wrapperClassName='flex-1' placeholder='application/json' name={`headers.${index}.1`}/>
                     <Button className='bg-cedar-chest mt-0.5' type='button'
                             onClick={() => arrayHelpers.remove(index)}
                     ><AiOutlineDelete size={16}/></Button>
                   </div>
                 ))
               }
+
+              <Button size='sm' startIcon={<AiOutlinePlus/>}
+                      className='mt-5 bg-viridian-green m-auto w-1/2' type='button'
+                      onClick={() => arrayHelpers.push(['', ''])}
+              >Add A Header</Button>
             </div>
             )}
         />

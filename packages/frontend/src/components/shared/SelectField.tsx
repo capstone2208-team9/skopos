@@ -10,9 +10,11 @@ interface Option {
 
 type SelectFieldProps = FieldProps & SingleValueProps & MultiValueProps & {
   defaultValue?: Option
+  label?: string
+  placeholder?: string
 }
 
-export default function SelectField({field, options, meta, form, isMulti, defaultValue }: SelectFieldProps) {
+export default function SelectField({placeholder, label, field, options, meta, form, isMulti, defaultValue }: SelectFieldProps) {
   const handleChange = (newValue: unknown) => {
     const singleOption = newValue as SingleValue<Option>
     if (singleOption && 'value' in singleOption) {
@@ -26,20 +28,36 @@ export default function SelectField({field, options, meta, form, isMulti, defaul
 
     return (
       <div className='form-control relative'>
-        <Form.Label id={`select-${field.name}`} className='bg-transparent pb-0.5 gap-1.5 flex flex-col items-start capitalize' htmlFor={field.name} title={field.name.split('.').at(-1)}>
+        <Form.Label id={`select-${field.name}`}
+                    className='bg-transparent pb-0.5 gap-1.5 flex flex-col items-start capitalize'
+                    htmlFor={field.name} title={label}
+        >
         <Select
           aria-labelledby={`select-${field.name}`}
           inputId={field.name}
           options={options}
           onChange={handleChange}
+          placeholder={placeholder}
           defaultValue={defaultValue || undefined}
           onBlur={field.onBlur}
           classNamePrefix='select'
           isMulti={isMulti}
+          theme={(theme) => ({
+            ...theme,
+            colors: {
+              ...theme.colors,
+              primary: '#24C5E3',
+              primary25: '#BCE2E8',
+            }
+          })}
           styles={{
             container: (baseStyles) => ({
               ...baseStyles,
               width: '100%',
+            }),
+            input: (baseStyles) => ({
+              ...baseStyles,
+              outline: 'none',
             }),
             control: (baseStyles) => ({
               ...baseStyles,

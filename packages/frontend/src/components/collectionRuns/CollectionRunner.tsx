@@ -52,7 +52,7 @@ export default function CollectionRunner() {
   if (!data) return <Tooltip message='Run collection'>
     <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                             onClick={handleRunCollection}
-                            className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
+                            className='bg-transparent text-sky-blue hover:text-cadmium-orange hover:scale-105 hover:bg-transparent border-none'
                             size='md'/>
   </Tooltip>
   if (error) return <p>Error {error.message}</p>

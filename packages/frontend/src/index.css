@@ -36,3 +36,7 @@ main {
 .table th:first-child {
     z-index: auto;
 }
+
+textarea {
+    @apply focus-visible:outline-sky-blue
+}

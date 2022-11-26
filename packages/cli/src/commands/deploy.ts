@@ -14,7 +14,6 @@ enum CDKCommands {
 
 export default async function deploy() {
   for (const command of Object.values(CDKCommands)) {
-    console.log(command)
     await executeCommand(ROOT_PATH, command)
   }
 }

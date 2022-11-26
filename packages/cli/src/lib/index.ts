@@ -13,8 +13,8 @@ export async function executeCommand(cwd: string, command: string) {
     console.log(chalk.blueBright(data.toString())))
 
   process.stderr.on('data', (data: string) =>
-    console.log(chalk.redBright(data.toString())))
+    console.log(chalk.blue(data.toString())))
 
   process.stdout.on('exit', (code) =>
-    console.log(chalk.redBright(`process exited with code ${code.toString()}`)))
+    console.log(chalk.blue(`process exited with code ${code.toString()}`)))
 }

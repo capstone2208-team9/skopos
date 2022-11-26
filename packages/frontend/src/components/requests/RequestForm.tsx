@@ -3,6 +3,7 @@ import AssertionFieldArray from 'components/assertions/AssertionFieldArray'
 import HeaderFieldArray from 'components/requests/HeaderFieldArray'
 import JsonEditField from 'components/requests/JsonEditField'
 import Loader from 'components/shared/Loader'
+import SelectField from 'components/shared/SelectField'
 import TextInput from 'components/shared/TextInput'
 import {Field, Form, Formik} from 'formik'
 import {CreateOneRequest, UpdateRequest} from 'graphql/mutations'
@@ -10,7 +11,7 @@ import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import {requestToRequestInput} from 'lib/assertionHelpers'
 import React, {useEffect, useState} from 'react'
-import {Button, InputGroup, Tabs} from 'react-daisyui'
+import {Button, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
 import {getRequestVariables} from 'routes/RequestList'
 import {AssertionInput, ComparisonType, Request} from 'types'
@@ -228,14 +229,18 @@ export default function RequestForm({request, stepNumber}: Props) {
         <Form className='flex flex-col gap-6'>
           <TextInput name='title' placeholder='add a title'/>
 
-          <InputGroup>
-            <Field name='method' as='select' className='select select-bordered'>
-              {['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(m => (
-                <option key={m} value={m}>{m}</option>
-              ))}
+          <div className='grid grid-cols-4'>
+            <Field className='cols-span-1' name='method'>
+              {(props) => (
+                <SelectField placeholder='Method' {...props}
+                  options={['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(v=> ({
+                    label: v, value: v
+                  }))}
+                />
+              )}
             </Field>
-            <TextInput wrapperClassName='-mt-4 w-full' name='url' placeholder='https://example.com'/>
-          </InputGroup>
+            <TextInput wrapperClassName='col-span-3 -ml-1 -mt-0.5 w-full' name='url' placeholder='https://example.com'/>
+          </div>
           <Tabs value={tabValue} onChange={setTabValue}>
             <Tabs.Tab value={0} className='flex-1 text-lg text-dark-green'>Headers</Tabs.Tab>
             <Tabs.Tab value={1} className='flex-1 text-lg text-dark-green'>Body</Tabs.Tab>

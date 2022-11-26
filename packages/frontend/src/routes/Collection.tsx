@@ -42,7 +42,7 @@ export default function Collection() {
               <CollectionRunner/>
             </>
           )}
-          <Link className='btn btn-sm bg-cadmium-orange hover:bg-cadmium-orange hover:bg-opacity-80' to='requests/new'
+          <Link className='btn btn-sm bg-cadmium-orange hover:bg-opacity-80' to='requests/new'
                 state={{nextStep: collection?._count.requests + 1}}
           >Add Request</Link>
         </div>
