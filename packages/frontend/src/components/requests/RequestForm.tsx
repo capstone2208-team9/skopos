@@ -14,7 +14,7 @@ import React, {useEffect, useState} from 'react'
 import {Button, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
 import {getRequestVariables} from 'routes/RequestList'
-import {AssertionInput, ComparisonType, Request} from 'types'
+import {AssertionInput, ComparisonType, Request, RequestType} from 'types'
 import * as Yup from 'yup'
 
 interface Props {
@@ -63,8 +63,8 @@ const assertionSchema: Yup.SchemaOf<AssertionInput> = Yup.object({
 
 const validationSchema = Yup.object({
   title: Yup.string().required(),
-  url: Yup.string().url().required(),
-  method: Yup.mixed().oneOf(['GET', 'POST', 'PUT', 'DELETE']),
+  url: Yup.string().url().required('please provide a valid url'),
+  method: Yup.mixed<RequestType>().required('request method is required'),
   headers: Yup.array().of(Yup.array().length(2)).notRequired(),
   body: Yup.string().test({
     name: 'is-json',
@@ -90,7 +90,7 @@ export default function RequestForm({request, stepNumber}: Props) {
     update(cache, {data: {createOneRequest}}) {
       if (!createOneRequest) return
       const variables = getRequestVariables(collectionId)
-      cache.updateQuery({query: GetCollectionNames}, (data) => {
+      cache.updateQuery({query: GetCollectionNames, variables: {orderBy: [{title: 'asc'}]}}, (data) => {
         const id = Number(collectionId)
         return {
           collections: data.collections.map(c => {
@@ -233,6 +233,7 @@ export default function RequestForm({request, stepNumber}: Props) {
             <Field className='cols-span-1' name='method'>
               {(props) => (
                 <SelectField placeholder='Method' {...props}
+                  defaultValue={request? {label: request.method, value: request.method} : undefined}
                   options={['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(v=> ({
                     label: v, value: v
                   }))}

@@ -26,7 +26,9 @@ export default function Collections() {
   const {pathname} = useLocation()
   const {addToast} = useToast()
   const [editCollection, setEditCollection] = useState<Pick<ICollection, 'id' | 'title'> | null>(null)
-  const {loading, data, error} = useQuery<{ collections: Collection[] }>(GetCollectionNames)
+  const {loading, data, error} = useQuery<{ collections: Collection[] }>(GetCollectionNames, {
+    variables: {orderBy: [{title: 'asc'}]}
+  })
 
 
   useEffect(() => {

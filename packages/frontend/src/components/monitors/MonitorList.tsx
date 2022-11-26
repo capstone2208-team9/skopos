@@ -32,7 +32,7 @@ export default function MonitorList() {
 
   return (
     <div className='grid place-items-center mt-32 min-w-[768px]'>
-      <Table className='shadow-xl'>
+      <Table compact className='shadow-xl'>
         <Table.Head className='text-center'>
           <span>Schedule</span>
           <span>On Error Contact</span>

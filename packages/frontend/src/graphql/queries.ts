@@ -11,10 +11,10 @@ export const CreateCollection = gql`
 `
 
 export const GetCollectionNames = gql`
-    query Query {
-        collections {
+    query Collections($orderBy: [CollectionOrderByWithRelationInput!]) {
+        collections(orderBy: $orderBy) {
             _count {
-                requests
+              requests
             }
             id
             title

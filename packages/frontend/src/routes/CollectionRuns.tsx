@@ -7,7 +7,7 @@ import {useEffect, useRef} from 'react'
 import {Button, ButtonGroup} from 'react-daisyui'
 import {AiOutlineToTop} from 'react-icons/ai'
 import {IoMdRefresh} from 'react-icons/io'
-import {useParams} from 'react-router-dom'
+import {Link, useParams} from 'react-router-dom'
 import {CollectionRun} from 'types'
 
 const variables = (collectionId?: string, cursor = '') => {
@@ -64,7 +64,7 @@ export default function CollectionRuns() {
   const title = data.paginateCollectionRuns.items[0].collection?.title
 
   return (
-    <div className='flex flex-col gap-4 items-start mx-auto w-full'>
+    <div className='m-auto flex flex-col gap-4 items-start w-full'>
       <div className='flex gap-4 items-center'>
         <Button ref={topRef} size='sm' className='bg-sky-blue' onClick={() => refetch({
           variables: variables(collectionId, data.paginateCollectionRuns.cursor)
@@ -73,7 +73,9 @@ export default function CollectionRuns() {
             <IoMdRefresh size='24' className='text-white'/>
           )}
         </Button>
-        {title && <h2 className='font-medium text-2xl'>History for {title}</h2>}
+        {title && <h2 className='flex items-center gap-2 font-medium text-2xl'>History for
+          <Link className='text-sky-blue hover:text-cadmium-orange' to={`/collections/${collectionId}`}>{title}</Link>
+        </h2>}
       </div>
       <CollectionRunsContainer collectionRuns={data.paginateCollectionRuns.items}/>
       <ButtonGroup className='gap-4 items-end'>

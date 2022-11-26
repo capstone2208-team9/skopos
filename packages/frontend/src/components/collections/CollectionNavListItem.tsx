@@ -1,4 +1,4 @@
-import {NavLink} from 'react-router-dom'
+import {Link, useParams} from 'react-router-dom'
 import {Dropdown } from 'react-daisyui'
 import {HiOutlineFolder} from 'react-icons/hi'
 import {MdDelete, MdEdit} from 'react-icons/md'
@@ -12,21 +12,18 @@ interface Props {
 }
 
 export default function CollectionNavListItem({collection, onDelete, onSelect}: Props) {
-  const className = (isActive: boolean): string => {
-    return [
-      `group-active:text-cadmium-orange flex text-dark-green items-center gap-2`,
-      isActive ? `text-cadmium-orange font-medium` : null
-    ].filter(Boolean).join(' ')
-  }
+  const {collectionId} = useParams()
+
+  const activeClassName = String(collection.id) === collectionId ? 'text-sky-blue font-medium' : 'text-dark-green'
 
   return (
-    <li className='group flex items-center text-lg whitespace-nowrap leading-5 my-4' key={collection.id}>
-      <NavLink to={`${collection.id.toString()}/requests`} className={({isActive}) => className(isActive)}>
-        <HiOutlineFolder className='group-hover:scale-105 group-hover:text-cadmium-orange' size='26'/>
-        <span className='group-hover:scale-105 group-hover:text-cadmium-orange transition-transform transition-400'>{collection.title}</span>
-      </NavLink>
-      <Dropdown horizontal='right' className='group group-hover:text-cadmium-orange'>
-        <Dropdown.Toggle size='xs' color='ghost' className='ml-auto group-hover:text-cadmium-orange'>
+    <li className={`${activeClassName} group flex items-center text-lg whitespace-nowrap leading-5 my-4`} key={collection.id}>
+      <Link to={`${collection.id.toString()}/requests`} className='flex items-center gap-2'>
+        <HiOutlineFolder className='group-hover:scale-105 group-hover:text-sky-blue' size='26'/>
+        <span className='group-hover:scale-105 group-hover:text-sky-blue transition-transform transition-400'>{collection.title}</span>
+      </Link>
+      <Dropdown horizontal='right' className='group group-hover:text-sky-blue'>
+        <Dropdown.Toggle size='xs' color='ghost' className='ml-auto group-hover:text-sky-blue'>
           <MdMoreVert size='20' className='fill-current'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='shadow-xl bg-base-100'>

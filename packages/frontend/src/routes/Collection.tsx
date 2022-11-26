@@ -55,7 +55,9 @@ export default function Collection() {
           {pathname.includes('requests') ? (
             <Outlet context={{ numRequests: collection?._count.requests}}/>
           ) : (
-            <Link className='btn btn-lg bg-sky-blue' to='requests'>View Requests</Link>
+            <div className='text-center w-full'>
+              <Link className='mt-24 btn btn-lg bg-sky-blue' to='requests'>View Requests</Link>
+            </div>
           )}
 
         </div>

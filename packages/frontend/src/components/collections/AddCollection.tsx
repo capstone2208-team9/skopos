@@ -1,6 +1,7 @@
 import {useMutation} from '@apollo/client'
 import {CreateCollection, GetCollectionNames} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
+import sortCollectionsByTitle from 'lib/sortCollectionsByTitle'
 import React, {useEffect, useState} from 'react'
 import {Button, ButtonGroup, Form, Modal, Tooltip} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
@@ -23,9 +24,12 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
       update(cache, {data: {createOneCollection}}) {
         cache.updateQuery({
           query: GetCollectionNames,
+          variables: {orderBy: [{title: 'asc'}]}
         }, (data) => {
+          const collections = [...data.collections, {...createOneCollection, _count: {requests: 0}}]
+          sortCollectionsByTitle(collections)
           return data
-            ? {collections: [...data.collections, {...createOneCollection, _count: {requests: 0}}]}
+            ? {collections }
             : {collections: [{...createOneCollection, _count: {requests: 0}}]}
         })
       },

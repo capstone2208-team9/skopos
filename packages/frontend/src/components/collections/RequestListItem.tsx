@@ -43,7 +43,7 @@ const RequestCard = ({title, stepNumber, id, reordering, nextStep }: RequestCard
         variables,
         data: {requests: deleteRequest}
       })
-      cache.updateQuery({query: GetCollectionNames}, (data) => {
+      cache.updateQuery({query: GetCollectionNames, variables: {orderBy: [{title: 'asc'}]}  }, (data) => {
         const id = Number(collectionId)
         return {collections: data.collections.map(c => {
             return c.id === id ? {...c, _count : Math.min(c._count.requests - 1, 0)} : c

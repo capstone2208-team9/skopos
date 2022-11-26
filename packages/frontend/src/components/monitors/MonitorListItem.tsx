@@ -82,8 +82,8 @@ export default function MonitorListItem({enabled, schedule, collections, contact
 
   return (
     <>
-      <Table.Row >
-        <p className={`capitalize${!enabled ? ' text-cedar-chest' : ''}`}>Running every {schedule}</p>
+      <Table.Row>
+        <p className={`capitalize${!enabled ? ' text-cedar-chest' : ''}`}>every {schedule}</p>
         <p className='text-center truncate capitalize'>{info || 'N/A'}</p>
         <Dropdown horizontal='right' vertical='end' hover className='z-auto group ml-auto'>
           <Dropdown.Toggle size='sm' color='secondary' className='group ml-auto'>
@@ -111,10 +111,10 @@ export default function MonitorListItem({enabled, schedule, collections, contact
           </Dropdown.Menu>
         </Dropdown>
         <div className='flex items-center'>
-          <Link className='btn btn-link hover:opacity-75 hover:scale-110' to={`/monitors/${id}/edit`}>
+          <Link className='px-0 btn btn-link btn-sm hover:opacity-75 hover:scale-110' to={`/monitors/${id}/edit`}>
             <MdEdit size={ICON_SIZE} className='text-sky-blue'/>
           </Link>
-          <Button className='btn btn-link hover:opacity-75 hover:scale-110' startIcon={deleting ? <Loader size={ICON_SIZE} /> :
+          <Button className=' px-1 btn btn-link btn-sm hover:opacity-75 hover:scale-110' startIcon={deleting ? <Loader size={ICON_SIZE} /> :
             <MdDelete size={ICON_SIZE} className='text-error'/>} size='md'
                   onClick={toggleDeleteModalOpen}
           />

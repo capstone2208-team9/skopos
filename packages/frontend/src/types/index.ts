@@ -63,9 +63,9 @@ export interface Response {
 
 export interface CollectionRun {
   id: number;
-  collectionId?: number;
-  collection?: ICollection
-  createdAt?: string
+  collectionId: number;
+  collection: ICollection
+  createdAt: string
   responses: Response[]
 }
 
@@ -106,6 +106,10 @@ export interface MonitorUpdateInput extends MonitorCreateInput {
 export const comparisonTypes = ['is equal to', 'is not equal to', 'is greater than', 'is less than',  'is null', 'is not null', 'includes', 'does not include'] as const
 
 export type ComparisonType = typeof comparisonTypes[number]
+
+export const requestTypes = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
+
+export type RequestType = typeof requestTypes[number]
 
 export interface AssertionInput {
   property: string

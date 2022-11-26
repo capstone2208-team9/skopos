@@ -9,7 +9,6 @@ const monitors: Monitor[] = []
 
 export const handlers = [
   graphql.query(GetCollectionNames, (req, res, ctx) =>{
-    console.log('mock')
     return res(
       ctx.data({
         collections: [

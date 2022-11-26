@@ -2,15 +2,20 @@ import { Table } from "react-daisyui";
 import { BsPatchExclamation } from "react-icons/bs";
 import { BiBadgeCheck } from "react-icons/bi";
 import { Response } from "types";
+import {Link, useParams } from "react-router-dom";
 
 interface Props {
   response: Response;
 }
 
 export default function CollectionRunResponse({ response }: Props) {
+  const {collectionId} = useParams()
+
   return (
     <div className='flex flex-col min-w-max'>
-      <h2 className='text-xl font-medium my-4'>{response.request.title} Results</h2>
+      <h2 className='text-xl font-medium my-4 text-sky-blue hover:text-cadmium-orange'>
+        <Link to={`/collections/${collectionId}/requests/${response.request.id}/edit`}>{response.request.title} Results</Link>
+      </h2>
       <Table className='overflow-x-scroll'>
         <Table.Head>
           <span>Property</span>

@@ -16,7 +16,7 @@ export default function CollectionRun({collectionRun}: Props) {
   const toggle = () => setExpanded(prev => !prev)
   const date = formatDate(collectionRun.createdAt)
 
-  const notRun = (collectionRun.collection?.requests.length || 0) - collectionRun.responses.length
+  const notRun = (collectionRun.collection.requests.length || 0) - collectionRun.responses.length
   return (
     <Collapse key={uuid()}
               checkbox
