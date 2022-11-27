@@ -109,6 +109,7 @@ export default function MonitorForm({
                 <Field name='units'>
                   {(props) => (
                     <SelectField
+                      label='Units'
                       defaultValue={{label: String(values.units).toUpperCase(), value: String(values.units)}}
                       {...props}
                       options={unitOptions}
@@ -120,6 +121,7 @@ export default function MonitorForm({
                   <Field name='collections' multiple={true}>
                     {(props) => (
                       <SelectField
+                        label='Collections'
                         isMulti={true}
                         {...props}
                         options={collectionOptions}

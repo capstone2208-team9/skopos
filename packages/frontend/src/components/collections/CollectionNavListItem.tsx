@@ -17,18 +17,18 @@ export default function CollectionNavListItem({collection, onDelete, onSelect}: 
   const activeClassName = String(collection.id) === collectionId ? 'text-sky-blue font-medium' : 'text-dark-green'
 
   return (
-    <li className={`${activeClassName} group flex items-center text-lg whitespace-nowrap leading-5 my-4`} key={collection.id}>
+    <li className={`${activeClassName} group flex-1 flex items-center text-lg whitespace-nowrap leading-5 my-4`} key={collection.id}>
       <Link to={`${collection.id.toString()}/requests`} className='flex items-center gap-2'>
         <HiOutlineFolder className='group-hover:scale-105 group-hover:text-sky-blue' size='26'/>
         <span className='group-hover:scale-105 group-hover:text-sky-blue transition-transform transition-400'>{collection.title}</span>
       </Link>
-      <Dropdown horizontal='right' className='group group-hover:text-sky-blue'>
+      <Dropdown horizontal='right' className='group group-hover:text-sky-blue ml-auto'>
         <Dropdown.Toggle size='xs' color='ghost' className='ml-auto group-hover:text-sky-blue'>
           <MdMoreVert size='20' className='fill-current'/>
         </Dropdown.Toggle>
         <Dropdown.Menu className='shadow-xl bg-base-100'>
-          <Dropdown.Item className='text-sky-blue' onClick={() => onSelect(collection)}><MdEdit/> Edit</Dropdown.Item>
-          <Dropdown.Item className='text-cedar-chest' onClick={() => onDelete(collection)}><MdDelete /> Delete</Dropdown.Item>
+          <Dropdown.Item className='text-sky-blue' onClick={() => onSelect(collection)}><MdEdit/> <span>Edit</span></Dropdown.Item>
+          <Dropdown.Item className='text-cedar-chest' onClick={() => onDelete(collection)}><MdDelete /> <span>Delete</span></Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 

@@ -17,7 +17,7 @@ describe('RequestForm', () => {
     renderPage()
     const titleInput = screen.getByPlaceholderText(/add a title/i)
     expect(titleInput).toHaveValue('')
-    expect(screen.getByDisplayValue('GET')).toHaveValue('GET')
+    expect(screen.getByLabelText(/method/i)).toHaveValue('')
     const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/)
     expect(urlInput).toHaveValue('')
     expect(screen.getByRole('button', {name: /add a header/i})).toBeInTheDocument()

@@ -38,18 +38,18 @@ export default function Collections() {
   if (loading) return <Loader size={64}/>
 
   return (
-    <div className='grid grid-cols-12 min-w-[768px]'>
-      <div className='col-span-3'>
+    <div className='grid grid-cols-collections min-w-[768px]'>
+      <div className='max-w-[15rem]'>
         <div className='flex items-center gap-4 mt-24'>
           <h2 id='collection-heading' className='text-xl font-medium'>Collections</h2>
           <AddCollection buttonSize='sm' compact />
         </div>
-        <CollectionNav onSelect={setEditCollection} pathname={pathname}
+        <CollectionNav onSelect={setEditCollection}
                        collections={data?.collections} loading={loading}
         />
       </div>
 
-      <div className='col-span-9 self-center ml-4'>
+      <div className='self-center ml-4'>
         {pathname === '/collections' ? (
           <CollectionImage className='max-w-full'/>
         ) : (<Outlet context={{collections: data?.collections || []}} />)}

@@ -10,6 +10,15 @@ export const DeleteOneAssertion = gql`
     }
 `
 
+export const CreateCollection = gql`
+    mutation Mutation($data: CollectionCreateInput!) {
+        createOneCollection(data: $data) {
+            id
+            title
+        }
+    }
+`
+
 export const UpdateCollectionTitle = gql`
     mutation Mutation($data: CollectionUpdateInput!, $where: CollectionWhereUniqueInput!) {
         updateOneCollection(data: $data, where: $where) {

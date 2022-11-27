@@ -41,12 +41,14 @@ export default function MonitorListItem({enabled, schedule, collections, contact
       cache.updateQuery({
         query: GetMonitors, variables: whereMonitorNotNullVariables
       }, (data) => {
-        return {monitors: data.monitors.filter(m => m.id !== deleteOneMonitor.id)}
+        if (!data) return {monitors: []}
+        return {monitors: data.monitors?.filter(m => m.id !== deleteOneMonitor.id) || []}
       },)
 
       cache.updateQuery({
         query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables,
       }, (data) => {
+        if (!data) return {collections: []}
         return data
           ? {collections: [...data.collections, ...collections]}
           : {collections}
@@ -56,7 +58,8 @@ export default function MonitorListItem({enabled, schedule, collections, contact
 
   const handleDelete = async () => {
     toggleDeleteModalOpen()
-    await deleteMonitor({variables: {where: {id}}})
+    const result = await deleteMonitor({variables: {where: {id}}})
+    if (!result.errors) addToast('Monitor deleted', 'success')
   }
 
   const toggleEnabled = () => {
@@ -85,12 +88,12 @@ export default function MonitorListItem({enabled, schedule, collections, contact
       <Table.Row>
         <p className={`capitalize${!enabled ? ' text-cedar-chest' : ''}`}>every {schedule}</p>
         <p className='text-center truncate capitalize'>{info || 'N/A'}</p>
-        <Dropdown horizontal='right' vertical='end' hover className='z-auto group ml-auto'>
-          <Dropdown.Toggle size='sm' color='secondary' className='group ml-auto'>
+        <Dropdown horizontal='right' vertical='end' hover className='text-center w-full text-dark-green monitor-dropdown z-auto group'>
+          <Dropdown.Toggle size='sm' className='text-inherit group ml-auto'>
             <span className='text-gray-50 text-lg font-medium'>
               {collections.length} collection{`${collections.length > 1 ? 's' : ''}`}
             </span>
-            <MdMoreVert size='20' className='group-hover:fill-cadmium-orange  fill-gray-50 ml-2'/>
+            <MdMoreVert size='20' className='group-hover:fill-cadmium-orange  fill-current ml-2'/>
           </Dropdown.Toggle>
           <Dropdown.Menu className='shadow-xl bg-sky-50'>
             {collections.map(col => (
@@ -110,23 +113,27 @@ export default function MonitorListItem({enabled, schedule, collections, contact
             ))}
           </Dropdown.Menu>
         </Dropdown>
-        <div className='flex items-center'>
-          <Link className='px-0 btn btn-link btn-sm hover:opacity-75 hover:scale-110' to={`/monitors/${id}/edit`}>
-            <MdEdit size={ICON_SIZE} className='text-sky-blue'/>
-          </Link>
-          <Button className=' px-1 btn btn-link btn-sm hover:opacity-75 hover:scale-110' startIcon={deleting ? <Loader size={ICON_SIZE} /> :
-            <MdDelete size={ICON_SIZE} className='text-error'/>} size='md'
-                  onClick={toggleDeleteModalOpen}
-          />
+        <div className='flex items-center gap-1'>
           {toggling ? (<Loader size={ICON_SIZE}/>) : (
             <Form>
-              <Tooltip className='ml-1 pt-[5px]' message={`Monitor is ${enabled ? 'ON' : 'OFF'}`}>
+              <Tooltip className='mr-2 pt-[5px]' message={`Monitor is ${enabled ? 'ON' : 'OFF'}`}>
                 <Toggle size='sm' className="bg-sky-blue"
                         onChange={toggleEnabled} checked={enabled}
                 ></Toggle>
               </Tooltip>
             </Form>
           )}
+          <Link className='px-0 btn btn-link btn-sm text-sky-blue hover:text-cadmium-orange hover:opacity-75 hover:scale-110' to={`/monitors/${id}/edit`}>
+            <span className='sr-only'>Edit</span>
+            <MdEdit size={ICON_SIZE} className='fill-current'/>
+          </Link>
+          <Button className=' px-1 btn btn-link btn-sm hover:opacity-75 hover:scale-110' startIcon={deleting ? <Loader size={ICON_SIZE} /> :
+            (<>
+              <span className='sr-only'>Delete</span>
+              <MdDelete size={ICON_SIZE} className='text-error'/>
+            </>)} size='md'
+                  onClick={toggleDeleteModalOpen}
+          />
         </div>
       </Table.Row>
       <ModalPortal id='confirm-delete-modal'>

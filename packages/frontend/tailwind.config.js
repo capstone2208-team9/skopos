@@ -21,7 +21,8 @@ module.exports = {
         'layout': '80px 1fr 80px',
       },
       gridTemplateColumns: {
-        'assertion-form': 'repeat(5, min-content)'
+        'assertion-form': 'repeat(5, min-content)',
+        'collections': '210px 1fr'
       }
     },
   },

@@ -14,6 +14,7 @@ const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 
 export default function CollectionRunner() {
   const {collectionId} = useParams()
+  const [modalOpen, setModalOpen] = useState(false)
   const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, {
     notifyOnNetworkStatusChange: true,
     variables: {
@@ -49,6 +50,10 @@ export default function CollectionRunner() {
     }
   }, [data])
 
+  useEffect(() => {
+    setModalOpen(Boolean(responses.length))
+  }, [responses])
+
   if (!data) return <Tooltip message='Run collection'>
     <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                             onClick={handleRunCollection}
@@ -66,13 +71,13 @@ export default function CollectionRunner() {
                 size='md'/>
       </Tooltip>
       <ModalPortal id='collection-runner-results'>
-        <Modal className='max-w-full' open={responses.length > 0} onClickBackdrop={() => setResponses([])}>
+        <Modal className='max-w-full' open={modalOpen} onClickBackdrop={() => setResponses([])}>
           <Modal.Body>
             {data.collectionRuns && data.collectionRuns[0].collection.requests.length !== responses.length && (
               <p className='text-cedar-chest'>Some responses were not recorded due to errors</p>
             )}
             {responses.map(response => (
-              <CollectionRunResponse key={response.id} response={response}/>
+              <CollectionRunResponse onSelect={() => setModalOpen(false)} key={response.id} response={response}/>
             ))}
           </Modal.Body>
         </Modal>

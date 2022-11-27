@@ -1,15 +1,6 @@
 import {gql} from '@apollo/client'
 import {CollectionRunResponses, RequestDefinitionFragment} from 'graphql/fragments'
 
-export const CreateCollection = gql`
-    mutation Mutation($data: CollectionCreateInput!) {
-        createOneCollection(data: $data) {
-            id
-            title
-        }
-    }
-`
-
 export const GetCollectionNames = gql`
     query Collections($orderBy: [CollectionOrderByWithRelationInput!]) {
         collections(orderBy: $orderBy) {
@@ -104,6 +95,7 @@ export const PaginateCollectionRuns = gql`
     }
     ${CollectionRunResponses}
 `
+
 export const GetMonitor = gql`
     query Query($where: MonitorWhereUniqueInput!, $orderBy: [CollectionOrderByWithRelationInput!]) {
         monitor(where: $where) {

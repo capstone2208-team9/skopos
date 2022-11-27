@@ -40,3 +40,11 @@ main {
 textarea {
     @apply focus-visible:outline-sky-blue
 }
+
+.dropdown.monitor-dropdown button {
+    @apply border-none bg-transparent text-inherit
+}
+
+.dropdown.monitor-dropdown button span {
+    @apply text-inherit
+}

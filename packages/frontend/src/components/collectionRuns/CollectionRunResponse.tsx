@@ -6,15 +6,18 @@ import {Link, useParams } from "react-router-dom";
 
 interface Props {
   response: Response;
+  onSelect?: () => void
 }
 
-export default function CollectionRunResponse({ response }: Props) {
+export default function CollectionRunResponse({ onSelect, response }: Props) {
   const {collectionId} = useParams()
 
   return (
     <div className='flex flex-col min-w-max'>
       <h2 className='text-xl font-medium my-4 text-sky-blue hover:text-cadmium-orange'>
-        <Link to={`/collections/${collectionId}/requests/${response.request.id}/edit`}>{response.request.title} Results</Link>
+        <Link to={`/collections/${collectionId}/requests/${response.request.id}/edit`}
+              onClick={() => onSelect && onSelect()}
+        >{response.request.title} Results</Link>
       </h2>
       <Table className='overflow-x-scroll'>
         <Table.Head>

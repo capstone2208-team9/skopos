@@ -29,6 +29,7 @@ export interface ICollection {
   title: string;
   requests: Request[];
   collectionRuns: CollectionRun[]
+  createdAt?: string
   monitorId?: number
   monitor?: Monitor
 }

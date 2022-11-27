@@ -1,5 +1,6 @@
 import {useMutation} from '@apollo/client'
-import {CreateCollection, GetCollectionNames} from 'graphql/queries'
+import {CreateCollection} from 'graphql/mutations'
+import {GetCollectionNames} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import sortCollectionsByTitle from 'lib/sortCollectionsByTitle'
 import React, {useEffect, useState} from 'react'
@@ -33,6 +34,7 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
             : {collections: [{...createOneCollection, _count: {requests: 0}}]}
         })
       },
+
     });
 
 

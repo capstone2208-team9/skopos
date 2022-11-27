@@ -67,6 +67,7 @@ export default function AssertionFieldArray(props: FieldProps) {
                     >
                       {(props) => (
                         <SelectField
+                          label='Property'
                           {...props}
                           defaultValue={{
                             label: assertions[index].property,

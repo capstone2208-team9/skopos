@@ -12,7 +12,7 @@ import EditRequest from './EditRequest'
 import Monitors from './Monitors'
 import Root from './Root'
 
-const router = createBrowserRouter([
+export const routes= [
   {
     'path': '/',
     element: <Root/>,
@@ -66,6 +66,8 @@ const router = createBrowserRouter([
       },
     ]
   }
-])
+]
+
+const router = createBrowserRouter(routes)
 
 export default router

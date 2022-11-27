@@ -8,10 +8,12 @@ export default function Monitors() {
   return (
     <div className='m-auto grid grid-rows-1 grid-cols-1 relative max-w-2xl'>
       <section className="flex flex-col row-span-full row-start-1 col-span-full my-4">
-        <h2 className="text-2xl font-medium">Monitors</h2>
-        <AddMonitor/>
-        <div className='self-center max-h-[500px]'>
-          <MonitorSVG className="w-full max-w-xl opacity-50" />
+        <div className='flex'>
+          <h2 className="text-2xl font-medium">Monitors</h2>
+          <AddMonitor/>
+        </div>
+        <div className='absolute -top-12 left-1/2 -translate-x-1/2'>
+          <MonitorSVG className="opacity-50" />
         </div>
       </section>
       <div className='row-span-full row-start-1 col-span-full'>

@@ -14,7 +14,7 @@ export default function ConfirmDeleteModal({open, onDelete, onCancel}: Props) {
       </Modal.Header>
       <Modal.Body className='text-center'>
         <div className='text-center'>
-          <Button type='button' className='mr-4 bg-cadmium-orange' onClick={onDelete}>Delete</Button>
+          <Button data-testid='confirm-delete' type='button' className='mr-4 bg-cadmium-orange' onClick={onDelete}>Delete</Button>
           <Button type='button' onClick={onCancel} className='bg-sky-blue'>Cancel</Button>
         </div>
       </Modal.Body>

@@ -1,23 +1,23 @@
 import {useMutation} from '@apollo/client'
 import CollectionNavListItem from 'components/collections/CollectionNavListItem'
+import Loader from 'components/shared/Loader'
 import {DeleteCollection} from 'graphql/mutations'
 import {GetCollectionNames} from 'graphql/queries'
 import sortCollectionsByTitle from 'lib/sortCollectionsByTitle'
 import {useEffect} from 'react'
-import {FaSpinner} from 'react-icons/fa'
-import {useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router-dom'
 import {ICollection} from 'types'
 
 type Collection = Pick<ICollection, 'id' | 'title'>
 
 interface Props {
   onSelect: (collection: Collection) => void
-  pathname: string
   collections?: Pick<ICollection, 'id' | 'title'>[]
   loading: boolean
 }
 
-export default function CollectionNav({collections, loading, pathname, onSelect}: Props) {
+export default function CollectionNav({collections, loading, onSelect}: Props) {
+  const {pathname} = useLocation()
   const navigate = useNavigate()
   const [deleteCollection, {data: deleteData}] = useMutation(DeleteCollection, {
     update(cache, {data: {deleteOneCollection}}) {
@@ -50,7 +50,7 @@ export default function CollectionNav({collections, loading, pathname, onSelect}
 
       return (
         <ul aria-labelledby='collection-heading' className='my-4'>
-          {loading && <><span className='sr-only'>Loading</span><FaSpinner/></>}
+          {loading && <Loader/>}
           {collections && collections.map(collection => (
             <CollectionNavListItem key={collection.id}
                                    collection={collection}

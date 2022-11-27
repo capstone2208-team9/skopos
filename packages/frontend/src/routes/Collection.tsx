@@ -47,10 +47,7 @@ export default function Collection() {
           >Add Request</Link>
         </div>
       </section>
-      <div className='grid grid-rows-1 grid-cols-1 w-full'>
-        <div className='col-span-full row-span-full col-start-1 row-start-1'>
-          <CollectionImage className='max-w-full opacity-50'/>
-        </div>
+      <div className='grid grid-rows-1 grid-cols-1 w-full relative'>
         <div className='col-span-full row-span-full col-start-1 row-start-1 z-10'>
           {pathname.includes('requests') ? (
             <Outlet context={{ numRequests: collection?._count.requests}}/>
@@ -60,6 +57,9 @@ export default function Collection() {
             </div>
           )}
 
+        </div>
+        <div className='absolute -top-8'>
+          <CollectionImage className='max-w-full opacity-50'/>
         </div>
       </div>
     </div>
