@@ -36,7 +36,6 @@ type CreateMonitorInput = {
 
 
 export default function CreateMonitor() {
-  console.log('create monitor')
   const {addToast} = useToast()
   const navigate = useNavigate()
   const {data: collectionData, loading} = useQuery(GetCollectionsWithoutMonitors, {

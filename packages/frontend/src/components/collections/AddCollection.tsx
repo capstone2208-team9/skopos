@@ -28,20 +28,17 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
           query: GetCollectionNames,
           variables: {orderBy: [{title: 'asc'}]}
         }, (data) => {
-          if (!data || !data.collections) return {collections: []}
-          const collections = [...data.collections, {...createOneCollection, _count: {requests: 0}}]
-          sortCollectionsByTitle(collections)
-          return data
-            ? {collections }
-            : {collections: [{...createOneCollection, _count: {requests: 0}}]}
+          if (!data) return
+          const collections = sortCollectionsByTitle([...data.collections, {...createOneCollection, _count: {requests: 0}}])
+          return {collections}
         })
 
         cache.updateQuery({
           query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables,
         }, (data) => {
-          if (!data || !data.collections) return {collections: []}
-          const collections = [...data.collections, createOneCollection]
-          return {collections}
+          if (!data) return
+          const {collections = []} = data
+          return {collections: [...collections, createOneCollection]}
         })
       },
 
