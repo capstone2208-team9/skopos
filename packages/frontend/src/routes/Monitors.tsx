@@ -12,7 +12,7 @@ export default function Monitors() {
           <h2 className="text-2xl font-medium">Monitors</h2>
           <AddMonitor/>
         </div>
-        <div className='absolute -top-12 left-1/2 -translate-x-1/2'>
+        <div className='absolute -top-12 left-1/2 -translate-x-1/2 -z-10'>
           <MonitorSVG className="opacity-50" />
         </div>
       </section>
