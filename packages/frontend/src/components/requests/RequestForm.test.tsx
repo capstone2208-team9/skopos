@@ -171,11 +171,41 @@ describe('RequestForm', () => {
     expect(await screen.findByTestId('errors-url')).toBeInTheDocument()
   })
 
-  it('should have validation error if json body not valid', async function () {
+  it('should have validation error if url is not provided', async function () {
     const renderPage = customRender(<RequestForm stepNumber={1}/>)
     renderPage()
-    const titleInput = screen.getByPlaceholderText(/https:\/\/example.com/i)
-    fireEvent.blur(titleInput)
+    const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/i)
+    fireEvent.blur(urlInput)
     expect(await screen.findByTestId('errors-url')).toBeInTheDocument()
+  })
+
+  it('should allow adding variables in the url', async function () {
+    customRender(<RequestForm stepNumber={1}/>)()
+    const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/i)
+    await act(async () => {
+      userEvent.type(urlInput, '@{{step1.body.url}}')
+      fireEvent.blur(urlInput)
+    })
+    expect(screen.queryByTestId('errors-url')).not.toBeInTheDocument()
+  })
+
+  it('should not show error if valid url provided', async function () {
+    customRender(<RequestForm stepNumber={1}/>)()
+    const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/i)
+    await act(async () => {
+      userEvent.type(urlInput, 'https://example.com')
+      fireEvent.blur(urlInput)
+    })
+    expect(screen.queryByTestId('errors-url')).not.toBeInTheDocument()
+  })
+
+  it('should show error if not url and no variablesprovided', async function () {
+    customRender(<RequestForm stepNumber={1}/>)()
+    const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/i)
+    await act(async () => {
+      userEvent.type(urlInput, 'foo')
+      fireEvent.blur(urlInput)
+    })
+    expect(screen.queryByTestId('errors-url')).toBeInTheDocument()
   })
 })

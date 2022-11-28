@@ -1,12 +1,12 @@
 import {Assertion, AssertionInput, Request} from 'types'
 
 export function assertionToAssertionInput(assertion: Assertion): AssertionInput {
-  const [property, path] = assertion.property.split('.')
+  const [property, ...path] = assertion.property.split('.')
   if (path === undefined) return assertion
   return {
     ...assertion,
     property,
-    path: `${property}.${path}` || '',
+    path: `${property}.${path.join('')}` || '',
   }
 }
 

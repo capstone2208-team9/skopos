@@ -17,7 +17,7 @@ export default function CollectionRunner() {
   const {collectionId} = useParams()
   const {addToast} = useToast()
   const [modalOpen, setModalOpen] = useState(false)
-  const [callingCollectionRunner, setCallingCollectionRunner] =useState(false)
+  const [callingCollectionRunner, setCallingCollectionRunner] = useState(false)
   const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun)
   const [responses, setResponses] = useState<Response[]>([])
 
@@ -27,20 +27,21 @@ export default function CollectionRunner() {
     try {
       await axios.post(url)
       await getLastCollectionRun({
-    variables: {
-      where: {
-        collectionId: {
-          equals: Number(collectionId)
+        fetchPolicy: 'no-cache',
+        variables: {
+          where: {
+            collectionId: {
+              equals: Number(collectionId)
+            }
+          },
+          orderBy: [
+            {
+              createdAt: 'desc'
+            }
+          ],
+          take: 1
         }
-      },
-      orderBy: [
-        {
-          createdAt: 'desc'
-        }
-      ],
-      take: 1
-    }
-  })
+      })
     } catch (err) {
       console.log(err)
     } finally {
@@ -63,14 +64,14 @@ export default function CollectionRunner() {
     if (error) addToast(error.message, 'error')
   }, [addToast, error])
 
-  console.log('loading', loading)
-
-  if (!data) return <Tooltip message='Run collection'>
-    <Button startIcon={loading || callingCollectionRunner ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
-                            onClick={handleRunCollection}
-                            className='bg-transparent text-sky-blue hover:text-cadmium-orange hover:scale-105 hover:bg-transparent border-none'
-                            size='md'/>
-  </Tooltip>
+  if (!data) return (
+    <Tooltip message='Run collection'>
+      <Button startIcon={loading || callingCollectionRunner ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
+              onClick={handleRunCollection}
+              className='bg-transparent text-sky-blue hover:text-cadmium-orange hover:scale-105 hover:bg-transparent border-none'
+              size='md'/>
+    </Tooltip>
+  )
   return (
     <div>
       <Tooltip message='Run collection'>

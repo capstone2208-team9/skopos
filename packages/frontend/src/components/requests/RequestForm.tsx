@@ -38,6 +38,7 @@ const assertionSchema: Yup.SchemaOf<AssertionInput> = Yup.object({
     'property is required'
   ),
   path: Yup.string()
+    .trim()
     .when('property', {
       is: 'headers',
       then(schema) {
@@ -61,9 +62,21 @@ const assertionSchema: Yup.SchemaOf<AssertionInput> = Yup.object({
     .required('expected is required')
 })
 
+const urlRegex = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/
+const pathRegex = /.*@{{.*}}.*/ig
 const validationSchema = Yup.object({
-  title: Yup.string().required(),
-  url: Yup.string().url().required('please provide a valid url'),
+  title: Yup.string().trim()
+    .required('title is required'),
+  url: Yup.string().trim()
+    .test(
+      'is-valid-url',
+      (d) => `${d.path} is not a valid url`,
+      (value) => {
+        if (!value) return false
+        return urlRegex.test(value) || pathRegex.test(value)
+      }
+    )
+    .required('please provide a valid url'),
   method: Yup.mixed<RequestType>().required('request method is required'),
   headers: Yup.array().of(Yup.array().length(2)).notRequired(),
   body: Yup.string().test({
@@ -122,10 +135,7 @@ export default function RequestForm({request, stepNumber}: Props) {
   })
 
   const handleSaveRequest = async (values: typeof initialState) => {
-    try {
-      return createRequest({
-        notifyOnNetworkStatusChange: true,
-        variables: {
+    const variables = {
           data: {
             ...values,
             stepNumber: request?.stepNumber || stepNumber,
@@ -144,7 +154,10 @@ export default function RequestForm({request, stepNumber}: Props) {
             }
           }
         }
-      })
+    try {
+      return createRequest({
+        notifyOnNetworkStatusChange: true,
+        variables})
     } catch (err) {
       console.log(err)
     }
@@ -216,12 +229,12 @@ export default function RequestForm({request, stepNumber}: Props) {
       validationSchema={validationSchema}
       onSubmit={async (values, {resetForm}) => {
         const result = await handleSubmit(values)
-        if (result && !result?.errors){
+        if (result && !result?.errors) {
           resetForm()
-          addToast(request? 'Request Updated' : 'Request Saved', 'success')
+          addToast(request ? 'Request Updated' : 'Request Saved', 'success')
           navigate(`/collections/${collectionId}/requests`)
         } else if (result && result.errors) {
-          addToast(request? 'Update request failed' : 'Save request failed', 'error')
+          addToast(request ? 'Update request failed' : 'Save request failed', 'error')
         }
       }}
     >
@@ -233,10 +246,10 @@ export default function RequestForm({request, stepNumber}: Props) {
             <Field className='cols-span-1' name='method'>
               {(props) => (
                 <SelectField placeholder='Method' {...props}
-                  defaultValue={request? {label: request.method, value: request.method} : undefined}
-                  options={['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(v=> ({
-                    label: v, value: v
-                  }))}
+                             defaultValue={request ? {label: request.method, value: request.method} : undefined}
+                             options={['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(v => ({
+                               label: v, value: v
+                             }))}
                 />
               )}
             </Field>
