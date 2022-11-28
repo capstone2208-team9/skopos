@@ -47,8 +47,8 @@ export default function Collection() {
           >Add Request</Link>
         </div>
       </section>
-      <div className='grid grid-rows-1 grid-cols-1 w-full relative'>
-        <div className='col-span-full row-span-full col-start-1 row-start-1 z-10'>
+      <div className='grid w-full relative'>
+        <div className=''>
           {pathname.includes('requests') ? (
             <Outlet context={{ numRequests: collection?._count.requests}}/>
           ) : (
@@ -56,10 +56,9 @@ export default function Collection() {
               <Link className='mt-24 btn btn-lg bg-sky-blue' to='requests'>View Requests</Link>
             </div>
           )}
-
         </div>
-        <div className='absolute -top-8'>
-          <CollectionImage className='max-w-full opacity-50'/>
+        <div className='fixed top-24  -z-10'>
+          <CollectionImage className='w-full opacity-40'/>
         </div>
       </div>
     </div>

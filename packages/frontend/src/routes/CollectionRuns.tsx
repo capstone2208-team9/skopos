@@ -1,4 +1,4 @@
-import {useLazyQuery} from '@apollo/client'
+import {useQuery } from '@apollo/client'
 import CollectionRunsContainer from 'components/collectionRuns/CollectionRunsContainer'
 import Loader from 'components/shared/Loader'
 import {PaginateCollectionRuns} from 'graphql/queries'
@@ -10,11 +10,15 @@ import {IoMdRefresh} from 'react-icons/io'
 import {Link, useParams} from 'react-router-dom'
 import {CollectionRun} from 'types'
 
+interface PaginateCollectionRunsResponse {
+  paginateCollectionRuns: { items: CollectionRun[], cursor: string, hasMore: boolean }
+}
+
 const variables = (collectionId?: string, cursor = '') => {
   return (
     {
       data: {
-        collectionIds: [Number(collectionId)],
+        collectionId: Number(collectionId),
         cursor,
         take: 4,
       }
@@ -27,25 +31,19 @@ export default function CollectionRuns() {
   const {addToast} = useToast()
   const bottomRef = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLButtonElement>(null)
-  const [,
+  const
     {
       data,
       error,
       loading,
       refetch,
       fetchMore,
-    }] = useLazyQuery<{ paginateCollectionRuns: { items: CollectionRun[], cursor: string, hasMore: boolean } }>(PaginateCollectionRuns,
+    } = useQuery<PaginateCollectionRunsResponse>(PaginateCollectionRuns,
     {
-      notifyOnNetworkStatusChange: true,
+      initialFetchPolicy: 'cache-and-network',
+      nextFetchPolicy: 'cache-first',
       variables: variables(collectionId),
     })
-
-  useEffect(() => {
-    if (!collectionId) return
-    refetch({
-      variables: variables(collectionId)
-    })
-  }, [collectionId])
 
 
   useEffect(() => {
@@ -60,8 +58,8 @@ export default function CollectionRuns() {
 
   if (loading) return <Loader/>
   if (!data) return <></>
-  
-  const title = data.paginateCollectionRuns.items[0].collection?.title
+
+  const title = data.paginateCollectionRuns.items.at(0)?.collection?.title
 
   return (
     <div className='m-auto flex flex-col gap-4 items-start w-full'>

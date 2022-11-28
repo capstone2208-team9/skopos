@@ -4,6 +4,7 @@ import CollectionRunResponse from 'components/collectionRuns/CollectionRunRespon
 import Loader from 'components/shared/Loader'
 import ModalPortal from 'components/shared/ModalPortal'
 import {GetLastCollectionRun} from 'graphql/queries'
+import {useToast} from 'hooks/ToastProvider'
 import {useEffect, useState} from 'react'
 import {Button, Modal, Tooltip} from 'react-daisyui'
 import {BsCollectionPlayFill} from 'react-icons/bs'
@@ -14,9 +15,18 @@ const BACKEND_SERVER = process.env.REACT_APP_BACKEND_URL
 
 export default function CollectionRunner() {
   const {collectionId} = useParams()
+  const {addToast} = useToast()
   const [modalOpen, setModalOpen] = useState(false)
-  const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun, {
-    notifyOnNetworkStatusChange: true,
+  const [callingCollectionRunner, setCallingCollectionRunner] =useState(false)
+  const [getLastCollectionRun, {loading, data, error}] = useLazyQuery(GetLastCollectionRun)
+  const [responses, setResponses] = useState<Response[]>([])
+
+  const handleRunCollection = async () => {
+    const url = `${BACKEND_SERVER}/${collectionId}`
+    setCallingCollectionRunner(true)
+    try {
+      await axios.post(url)
+      await getLastCollectionRun({
     variables: {
       where: {
         collectionId: {
@@ -29,17 +39,12 @@ export default function CollectionRunner() {
         }
       ],
       take: 1
-    }, fetchPolicy: 'network-only'
+    }
   })
-  const [responses, setResponses] = useState<Response[]>([])
-
-  const handleRunCollection = async () => {
-    const url = `${BACKEND_SERVER}/${collectionId}`
-    try {
-      await axios.post(url)
-      await getLastCollectionRun()
     } catch (err) {
       console.log(err)
+    } finally {
+      setCallingCollectionRunner(false)
     }
   }
 
@@ -54,18 +59,22 @@ export default function CollectionRunner() {
     setModalOpen(Boolean(responses.length))
   }, [responses])
 
+  useEffect(() => {
+    if (error) addToast(error.message, 'error')
+  }, [addToast, error])
+
+  console.log('loading', loading)
+
   if (!data) return <Tooltip message='Run collection'>
-    <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
+    <Button startIcon={loading || callingCollectionRunner ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                             onClick={handleRunCollection}
                             className='bg-transparent text-sky-blue hover:text-cadmium-orange hover:scale-105 hover:bg-transparent border-none'
                             size='md'/>
   </Tooltip>
-  if (error) return <p>Error {error.message}</p>
-
   return (
     <div>
       <Tooltip message='Run collection'>
-        <Button startIcon={loading ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
+        <Button startIcon={loading || callingCollectionRunner ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                 onClick={handleRunCollection}
                 className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
                 size='md'/>

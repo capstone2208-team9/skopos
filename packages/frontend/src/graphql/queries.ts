@@ -51,6 +51,7 @@ export const GetLastCollectionRun = gql`
         $take: Int) {
         collectionRuns(where: $where, orderBy: $orderBy, take: $take) {
             collection {
+                id
                 requests {
                     id
                 }
