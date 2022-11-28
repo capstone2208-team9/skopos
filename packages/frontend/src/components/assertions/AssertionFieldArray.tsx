@@ -85,6 +85,7 @@ export default function AssertionFieldArray(props: FieldProps) {
                     <Field name={`assertions[${index}].comparison`}>
                       {props => (
                         <SelectField
+                          label='Comparison'
                           defaultValue={assertions[index].comparison ? {
                             label: assertions[index].comparison,
                             value: assertions[index].comparison

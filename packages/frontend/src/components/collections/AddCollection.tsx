@@ -1,6 +1,6 @@
 import {useMutation} from '@apollo/client'
 import {CreateCollection} from 'graphql/mutations'
-import {GetCollectionNames} from 'graphql/queries'
+import {GetCollectionNames, GetCollectionsWithoutMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import sortCollectionsByTitle from 'lib/sortCollectionsByTitle'
 import React, {useEffect, useState} from 'react'
@@ -8,6 +8,7 @@ import {Button, ButtonGroup, Form, Modal, Tooltip} from 'react-daisyui'
 import {FaSpinner} from 'react-icons/fa'
 import {useNavigate} from 'react-router-dom'
 import {HiOutlineFolderAdd} from 'react-icons/hi'
+import {whereMonitorNullVariables} from 'routes/CreateMonitor'
 
 interface Props {
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg'
@@ -27,16 +28,26 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
           query: GetCollectionNames,
           variables: {orderBy: [{title: 'asc'}]}
         }, (data) => {
+          if (!data || !data.collections) return {collections: []}
           const collections = [...data.collections, {...createOneCollection, _count: {requests: 0}}]
           sortCollectionsByTitle(collections)
           return data
             ? {collections }
             : {collections: [{...createOneCollection, _count: {requests: 0}}]}
         })
+
+        cache.updateQuery({
+          query: GetCollectionsWithoutMonitors, variables: whereMonitorNullVariables,
+        }, (data) => {
+          if (!data || !data.collections) return {collections: []}
+          const collections = [...data.collections, createOneCollection]
+          return {collections}
+        })
       },
 
-    });
 
+
+    });
 
   const handleAddCollection: React.FormEventHandler = async (e) => {
     e.preventDefault()

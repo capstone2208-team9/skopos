@@ -1,12 +1,18 @@
 import {GetCollection, GetCollectionNames, GetCollectionsWithoutMonitors, GetMonitors} from 'graphql/queries'
-import {CreateOneMonitor, CreateOneRequest, DeleteOneMonitor, UpdateCollectionTitle} from 'graphql/mutations'
+import {
+  CreateCollection,
+  CreateOneMonitor,
+  CreateOneRequest,
+  DeleteOneMonitor,
+  UpdateCollectionTitle
+} from 'graphql/mutations'
 import { graphql } from "msw";
 import monitors from "mocks/mock_data/monitors"
 import collections from 'mocks/mock_data/collections'
 
 let lastMonitorId = 0
 let lastRequestId = 0
-// const monitors: Monitor[] = []
+let lastCollectionId = 20
 
 
 export const handlers = [
@@ -57,8 +63,6 @@ export const handlers = [
     )
   }),
 
-
-
   graphql.mutation(DeleteOneMonitor, (req, res, ctx) => {
     return res(
       ctx.data({deleteOneMonitor: {id: req.variables.where}})
@@ -69,6 +73,13 @@ export const handlers = [
     const newRequest = {data: req.variables.data, id: lastRequestId++, __typename: "Request"}
     return res(
       ctx.data(newRequest)
+    )
+  }),
+
+  graphql.mutation(CreateCollection, (req, res, ctx) => {
+    const newCollection = {data: req.variables.data, id: lastCollectionId++, __typename: "Collection"}
+    return res(
+      ctx.data(newCollection)
     )
   })
 ]

@@ -62,5 +62,4 @@ describe('MonitorListItem', function () {
     render()
     expect(screen.getByText(/2 collections/i)).toBeInTheDocument()
   })
-
 })

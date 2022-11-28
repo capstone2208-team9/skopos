@@ -1,4 +1,4 @@
-import {useQuery } from '@apollo/client'
+import {useLazyQuery } from '@apollo/client'
 import CollectionRunsContainer from 'components/collectionRuns/CollectionRunsContainer'
 import Loader from 'components/shared/Loader'
 import {PaginateCollectionRuns} from 'graphql/queries'
@@ -32,19 +32,20 @@ export default function CollectionRuns() {
   const bottomRef = useRef<HTMLButtonElement>(null)
   const topRef = useRef<HTMLButtonElement>(null)
   const
-    {
+    [,{
       data,
       error,
       loading,
       refetch,
       fetchMore,
-    } = useQuery<PaginateCollectionRunsResponse>(PaginateCollectionRuns,
+    }] = useLazyQuery<PaginateCollectionRunsResponse>(PaginateCollectionRuns,
     {
-      initialFetchPolicy: 'cache-and-network',
-      nextFetchPolicy: 'cache-first',
       variables: variables(collectionId),
     })
 
+  useEffect(() => {
+    refetch({variables: variables(collectionId)})
+  }, [collectionId])
 
   useEffect(() => {
     if (error) addToast(error.message, 'error')

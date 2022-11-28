@@ -122,6 +122,5 @@ describe('MonitorForm', function () {
       loading={false}/>, {wrapper: BrowserRouter})
     const email = screen.getByPlaceholderText('your contact email')
     expect(email).toHaveValue('user@example.com')
-
   })
 })
