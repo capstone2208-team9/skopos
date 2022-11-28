@@ -50,16 +50,16 @@ export default function SelectField({placeholder, label, field, options, meta, f
               primary25: '#BCE2E8',
             }
           })}
-          // styles={{
-          //   container: (baseStyles) => ({
-          //     ...baseStyles,
-          //     width: '100%',
-          //   }),
+          styles={{
+            container: (baseStyles) => ({
+              ...baseStyles,
+              minWidth: '100%',
+            }),
           //   control: (baseStyles) => ({
           //     ...baseStyles,
           //     height: '3rem',
           //   })
-          // }}
+          }}
           //
         />
         </Form.Label>

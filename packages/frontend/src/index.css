@@ -48,3 +48,7 @@ textarea {
 .dropdown.monitor-dropdown button span {
     @apply text-inherit
 }
+
+.btn.btn-sm {
+    @apply h-10
+}
