@@ -9,7 +9,7 @@ import {Field, Form, Formik} from 'formik'
 import {CreateOneRequest, UpdateRequest} from 'graphql/mutations'
 import {GetCollectionNames, GetRequests} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
-import {requestToRequestInput} from 'lib/assertionHelpers'
+import {getProperty, requestToRequestInput} from 'lib/assertionHelpers'
 import React, {useEffect, useState} from 'react'
 import {Button, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
@@ -48,6 +48,13 @@ const assertionSchema: Yup.SchemaOf<AssertionInput> = Yup.object({
     .when('property', {
       is: 'body',
       then: (schema) => schema.required('please provide path for body'),
+    })
+    .when('property', {
+      is: ['latency', 'status'],
+      then: (schema) => schema.transform((val) => {
+        console.log(val)
+        return ''
+      })
     }),
   comparison: Yup.mixed<ComparisonType>().required('comparison is required'),
   expected: Yup.mixed()
@@ -184,7 +191,7 @@ export default function RequestForm({request, stepNumber}: Props) {
             {
               create: {
                 expected: a.expected,
-                property: a.path || a.property,
+                property: getProperty(a),
                 comparison: a.comparison
               },
               update: {
@@ -195,7 +202,7 @@ export default function RequestForm({request, stepNumber}: Props) {
                   set: a.expected
                 },
                 property: {
-                  set: a.path || a.property
+                  set: getProperty(a)
                 }
               },
               where: {id: a.id || -1}
@@ -247,7 +254,9 @@ export default function RequestForm({request, stepNumber}: Props) {
             <Field className='cols-span-1' name='method'>
               {(props) => (
                 <SelectField placeholder='Method' {...props}
-                             defaultValue={request ? {label: request.method, value: request.method} : undefined}
+                             defaultValue={request ? {label: request.method, value: request.method} : {
+                               label: 'GET', value: 'GET'
+                             }}
                              options={requestTypes.map(v => ({
                                label: v, value: v
                              }))}

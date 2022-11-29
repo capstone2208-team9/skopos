@@ -33,13 +33,13 @@ export default function CollectionRunResponse({ onSelect, response }: Props) {
               <span>
                 {result.assertion.property}
               </span>
-              <span>
+              <span className='max-w-[7rem] truncate inline-block'>
                 {result.assertion.expected}
               </span>
               <span>
                 {result.assertion.comparison}
               </span>
-              <span className='max-w-[5rem] overflow-x-hidden truncate inline-block truncate max-w-full'>
+              <span className='max-w-[7rem] inline-block truncate'>
                 {result.actual}
               </span>
               <span>

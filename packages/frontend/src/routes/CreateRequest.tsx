@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 export default function CreateRequest() {
   const { state } = useLocation()
   return (
-    <Card className='create-request bg-sky-50 p-4 rounded shadow-xl'>
+    <Card className='max-w-4xl m-auto bg-sky-50 p-4 rounded shadow-xl'>
       <Card.Title>
         <h3>
           Add Request

@@ -24,7 +24,7 @@ export default function TextInput ({ prefix = '',wrapperClassName='', placeholde
   return (
     <div className={`form-control w-full relative${wrapperClassName ? ` ${wrapperClassName}` : ''}`}>
       <Form.Label htmlFor={field.name} className='capitalize' title={label || ''}/>
-      <Input className={`${meta.error ? 'outline outline-cedar-chest ' : ''} h-10 focus:outline-offset-0 focus:outline-1 focus:outline-sky-blue`} id={field.name} {...restField} {...props}
+      <Input className={`${meta.error && meta.touched ? 'outline outline-1 outline-cedar-chest ' : ''} h-10 focus:outline-offset-0 focus:outline-1 focus:outline-sky-blue`} id={field.name} {...restField} {...props}
         onChange={handleChange}
              value={value || prefix}
       />

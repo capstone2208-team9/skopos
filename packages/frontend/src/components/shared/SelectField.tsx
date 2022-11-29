@@ -55,12 +55,11 @@ export default function SelectField({placeholder, label, field, options, meta, f
               ...baseStyles,
               minWidth: '100%',
             }),
-          //   control: (baseStyles) => ({
-          //     ...baseStyles,
-          //     height: '3rem',
-          //   })
+            control: (baseStyles) => ({
+              ...baseStyles,
+              minHeight: '2.5rem',
+            })
           }}
-          //
         />
         </Form.Label>
         {meta.touched && meta.error ? (

@@ -17,7 +17,7 @@ describe('RequestForm', () => {
     renderPage()
     const titleInput = screen.getByPlaceholderText(/add a title/i)
     expect(titleInput).toHaveValue('')
-    expect(screen.getByLabelText(/method/i)).toHaveValue('')
+    screen.getByLabelText(/get/i)
     const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/)
     expect(urlInput).toHaveValue('')
     expect(screen.getByRole('button', {name: /add a header/i})).toBeInTheDocument()
@@ -91,7 +91,7 @@ describe('RequestForm', () => {
     expect(screen.getByDisplayValue(jsonText)).toBeInTheDocument() // this fails
   })
 
-  it('should prefix assertion body input with "body."', async function () {
+  it('should prefix assertion body input with "body"', async function () {
     const renderPage = customRender(<RequestForm stepNumber={1}/>)
     renderPage()
     userEvent.click(screen.getByRole('tab', {name: /assertions/i}))
@@ -105,12 +105,12 @@ describe('RequestForm', () => {
       selectEvent.select(propertySelect, 'Body')
     })
     await act(async() => {
-      userEvent.type(screen.getByLabelText(/path/i), 'title')
+      userEvent.type(screen.getByLabelText(/path/i), '.title')
     })
     expect(screen.getByLabelText(/path/i)).toHaveValue('body.title')
   })
 
-  it('should prefix assertion header input with "headers."', async function () {
+  it('should prefix assertion header input with "headers"', async function () {
     const renderPage = customRender(<RequestForm stepNumber={1}/>)
     renderPage()
     userEvent.click(screen.getByRole('tab', {name: /assertions/i}))
@@ -124,7 +124,7 @@ describe('RequestForm', () => {
       selectEvent.select(propertySelect, 'Headers')
     })
     await act(async() => {
-      userEvent.type(screen.getByLabelText(/path/i), 'Content-Type')
+      userEvent.type(screen.getByLabelText(/path/i), '.Content-Type')
     })
     expect(screen.getByLabelText(/path/i)).toHaveValue('headers.Content-Type')
   })
@@ -199,7 +199,7 @@ describe('RequestForm', () => {
     expect(screen.queryByTestId('errors-url')).not.toBeInTheDocument()
   })
 
-  it('should show error if not url and no variablesprovided', async function () {
+  it('should show error if not url and no variables provided', async function () {
     customRender(<RequestForm stepNumber={1}/>)()
     const urlInput = screen.getByPlaceholderText(/https:\/\/example.com/i)
     await act(async () => {

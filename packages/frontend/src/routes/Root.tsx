@@ -23,7 +23,7 @@ export default function Root() {
             <Link to='/' className='pt-2'>
               <Logo height={60} width={60}/>
             </Link>
-            <h1 className='tracking-wide text-5xl font-bold self-center m-auto'>Skopos</h1>
+            <h1 className='drop-shadow-lg shadow-sky-blue tracking-wide text-5xl font-bold self-center m-auto'>Skopos</h1>
           </header>
           <main className="min-w-[680px] w-full">
             {location.pathname === '/' ? (<Landing/>) : (<Outlet/>)}

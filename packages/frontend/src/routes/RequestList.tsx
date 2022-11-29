@@ -67,7 +67,7 @@ export default function RequestList() {
 
 
   return (
-    <div className='grid grid-rows-1 grid-cols-1 place-items-center w-full'>
+    <div className='max-w-4xl m-auto grid grid-rows-1 grid-cols-1 place-items-center w-full'>
       {data.requests.length > 0 && <DragDropContext onDragEnd={handleDrag}>
         <Droppable droppableId='droppable'>
           {(provided) => (

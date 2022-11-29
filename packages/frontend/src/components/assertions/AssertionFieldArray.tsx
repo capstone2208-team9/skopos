@@ -99,11 +99,11 @@ export default function AssertionFieldArray(props: FieldProps) {
                   </div>
                   <div className='flex gap-4 items-end w-full'>
                     {assertions[index].property === 'body' && (
-                      <TextInput prefix='body.' label='path' name={`assertions[${index}].path`} placeholder='body.'/>
+                      <TextInput prefix='body' label='path' name={`assertions[${index}].path`} placeholder='body. or body[0]'/>
                     )}
                     {assertions[index].property === 'headers' && (
-                      <TextInput prefix='headers.' label='path' name={`assertions[${index}].path`}
-                                 placeholder='headers.'/>
+                      <TextInput prefix='headers' label='path' name={`assertions[${index}].path`}
+                                 placeholder='headers. or headers[content-type]'/>
                     )}
                     {!['is null', 'is not null'].includes(assertions[index].comparison) && (
                       <TextInput label='expected' name={`assertions[${index}].expected`}/>
