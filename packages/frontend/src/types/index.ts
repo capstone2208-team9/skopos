@@ -108,9 +108,9 @@ export const comparisonTypes = ['is equal to', 'is not equal to', 'is greater th
 
 export type ComparisonType = typeof comparisonTypes[number]
 
-export const requestTypes = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
+export const requestTypes = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
-export type RequestType = typeof requestTypes[number]
+// export type RequestType = typeof requestTypes[number]
 
 export interface AssertionInput {
   property: string

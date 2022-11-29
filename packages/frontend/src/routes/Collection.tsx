@@ -57,7 +57,7 @@ export default function Collection() {
             </div>
           )}
         </div>
-        <div className='fixed top-24  -z-10'>
+        <div className='fixed bottom-1/2 translate-y-1/2 -z-10'>
           <CollectionImage className='w-full opacity-40'/>
         </div>
       </div>

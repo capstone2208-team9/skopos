@@ -14,7 +14,7 @@ import React, {useEffect, useState} from 'react'
 import {Button, Tabs} from 'react-daisyui'
 import {useNavigate, useParams} from 'react-router-dom'
 import {getRequestVariables} from 'routes/RequestList'
-import {AssertionInput, ComparisonType, Request, RequestType} from 'types'
+import {AssertionInput, ComparisonType, Request, requestTypes} from 'types'
 import * as Yup from 'yup'
 
 interface Props {
@@ -77,7 +77,8 @@ const validationSchema = Yup.object({
       }
     )
     .required('please provide a valid url'),
-  method: Yup.mixed<RequestType>().required('request method is required'),
+  // method: Yup.mixed<RequestType>().required('request method is required'),
+  method: Yup.string().trim().oneOf(requestTypes).required('request method is required'),
   headers: Yup.array().of(Yup.array().length(2)).notRequired(),
   body: Yup.string().test({
     name: 'is-json',
@@ -247,7 +248,7 @@ export default function RequestForm({request, stepNumber}: Props) {
               {(props) => (
                 <SelectField placeholder='Method' {...props}
                              defaultValue={request ? {label: request.method, value: request.method} : undefined}
-                             options={['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].map(v => ({
+                             options={requestTypes.map(v => ({
                                label: v, value: v
                              }))}
                 />

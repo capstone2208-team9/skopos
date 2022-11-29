@@ -38,9 +38,9 @@ export default function Collections() {
   if (loading) return <Loader size={64}/>
 
   return (
-    <div className='grid grid-cols-collections min-w-[768px]'>
+    <div className='grid grid-cols-collections min-w-[768px] mt-24'>
       <div className='max-w-[15rem]'>
-        <div className='flex items-center gap-4 mt-24'>
+        <div className='flex items-center gap-4'>
           <h2 id='collection-heading' className='text-xl font-medium'>Collections</h2>
           <AddCollection buttonSize='sm' compact />
         </div>

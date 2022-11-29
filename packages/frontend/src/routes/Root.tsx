@@ -5,7 +5,7 @@ import React, {useState} from 'react'
 import {Button, Drawer} from 'react-daisyui'
 import {RiMenu3Line} from 'react-icons/ri'
 import {Link, Outlet, useLocation} from 'react-router-dom'
-import {ReactComponent as Logo} from "assets/SVGs/Skopos_Branding_Final Logo_SKOPOS_logo_inverted.svg";
+import {ReactComponent as Logo} from "assets/SVGs/Skopos_Branding_Final Logo_Favicon_with circle.svg";
 
 export default function Root() {
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -21,8 +21,9 @@ export default function Root() {
               <RiMenu3Line size={28}/>
             </Button>
             <Link to='/' className='pt-2'>
-              <Logo height={80} width={80}/>
+              <Logo height={60} width={60}/>
             </Link>
+            <h1 className='tracking-wide text-5xl font-bold self-center m-auto'>Skopos</h1>
           </header>
           <main className="min-w-[680px] w-full">
             {location.pathname === '/' ? (<Landing/>) : (<Outlet/>)}

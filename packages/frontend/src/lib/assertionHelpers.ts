@@ -6,7 +6,7 @@ export function assertionToAssertionInput(assertion: Assertion): AssertionInput 
   return {
     ...assertion,
     property,
-    path: `${property}.${path.join('')}` || '',
+    path: `${property}.${path.join('.')}` || '',
   }
 }
 
