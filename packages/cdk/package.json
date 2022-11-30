@@ -1,7 +1,6 @@
 {
   "name": "cdk",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
     "watch": "tsc -w",
     "test": "jest",
