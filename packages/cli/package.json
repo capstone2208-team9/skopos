@@ -1,6 +1,6 @@
 {
   "name": "skopos",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Skopos CLI Tool",
   "main": "src/index.js",
   "type": "module",
