@@ -1,6 +1,6 @@
 {
   "name": "cdk",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "watch": "tsc -w",
@@ -29,5 +29,19 @@
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "source-map-support": "^0.5.21"
-  }
+  },
+  "contributors": [
+    {
+      "name": "Nykaela Dodson"
+    },
+    {
+      "name": "Katherine Ebel"
+    },
+    {
+      "name": "Hans Elde"
+    },
+    {
+      "name": "Gagan Sapkota"
+    }
+  ]
 }

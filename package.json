@@ -1,8 +1,9 @@
 {
-  "name": "skopos-cloud",
-  "version": "0.1.0",
-  "private": true,
+  "name": "root",
+  "version": "0.0.0",
+  "private": "true",
   "scripts": {
+    "build": "npm run build --workspaces --if-present",
     "dev:frontend": "npm run start -w packages/frontend",
     "test": "npm run test --workspaces --if-present",
     "bootstrap": "npm run bootstrap --workspaces --if-present",
@@ -11,5 +12,22 @@
   },
   "workspaces": [
     "./packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^6.1.0"
+  },
+  "contributors": [
+    {
+      "name": "Nykaela Dodson"
+    },
+    {
+      "name": "Katherine Ebel"
+    },
+    {
+      "name": "Hans Elde"
+    },
+    {
+      "name": "Gagan Sapkota"
+    }
   ]
 }

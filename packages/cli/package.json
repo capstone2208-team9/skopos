@@ -1,6 +1,6 @@
 {
-  "name": "cli",
-  "version": "1.0.0",
+  "name": "skopos",
+  "version": "0.0.0",
   "description": "Skopos CLI Tool",
   "main": "src/index.js",
   "type": "module",
@@ -14,14 +14,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/capstone2208-team9/skopos-cloud.git"
+    "url": "git+https://github.com/capstone2208-team9/skopos.git"
   },
-  "author": "Katherine Ebel <kathyebel@icloud.com> (http://example.com/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/capstone2208-team9/skopos-cloud/issues"
   },
   "homepage": "https://github.com/capstone2208-team9/skopos-cloud#readme",
+  "contributors": [
+    {
+      "name": "Nykaela Dodson"
+    },
+    {
+      "name": "Katherine Ebel"
+    },
+    {
+      "name": "Hans Elde"
+    },
+    {
+      "name": "Gagan Sapkota"
+    }
+  ],
   "dependencies": {
     "chalk": "^5.1.2",
     "clear": "^0.1.0",

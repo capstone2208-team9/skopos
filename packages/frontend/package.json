@@ -1,6 +1,6 @@
 {
-  "name": "@skopos/frontend",
-  "version": "0.1.0",
+  "name": "frontend",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.0",
@@ -74,5 +74,19 @@
   },
   "msw": {
     "workerDirectory": "public"
-  }
+  },
+  "contributors": [
+    {
+      "name": "Nykaela Dodson"
+    },
+    {
+      "name": "Katherine Ebel"
+    },
+    {
+      "name": "Hans Elde"
+    },
+    {
+      "name": "Gagan Sapkota"
+    }
+  ]
 }

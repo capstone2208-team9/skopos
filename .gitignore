@@ -4,3 +4,4 @@ build
 .env.*
 .swc
 .tool-versions
+.npmrc

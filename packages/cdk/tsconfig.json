@@ -5,6 +5,8 @@
     "lib": [
       "es2018"
     ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "declaration": true,
     "strict": true,
     "noUnusedLocals": false,
@@ -20,6 +22,7 @@
   },
   "exclude": [
     "node_modules",
-    "cdk.out"
+    "cdk.out",
+    "node_modules/@types/prismjs/index.d.ts"
   ]
 }
