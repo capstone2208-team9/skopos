@@ -88,7 +88,7 @@ export default function MonitorListItem({enabled, schedule, collections, contact
       <Table.Row>
         <p className={`capitalize${!enabled ? ' text-cedar-chest' : ''}`}>every {schedule}</p>
         <p className='text-center truncate capitalize'>{info || 'N/A'}</p>
-        <Dropdown horizontal='right' vertical='end' hover className='text-center w-full text-dark-green monitor-dropdown z-auto group'>
+        <Dropdown horizontal='center' vertical='top' hover className='text-center w-full text-dark-green monitor-dropdown z-auto group'>
           <Dropdown.Toggle size='sm' className='text-inherit group ml-auto'>
             <span className='text-gray-50 text-lg font-medium'>
               {collections.length} collection{`${collections.length > 1 ? 's' : ''}`}
@@ -100,7 +100,7 @@ export default function MonitorListItem({enabled, schedule, collections, contact
               <Dropdown.Item key={col.id}
                              className='bg-sky-50 text-dark-green hover:text-sky-blue font-medium text-lg'>
                 <Tooltip message='View History'>
-                  <Button size='sm' className='text-inherit btn-link'
+                  <Button size='sm' className='text-inherit'
                           onClick={() => navigate(`/collection-runs/${col.id}`)}
                   >
                     <div className='flex gap-2 items-center'>

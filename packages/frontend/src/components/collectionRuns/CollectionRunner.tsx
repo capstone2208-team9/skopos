@@ -77,7 +77,7 @@ export default function CollectionRunner() {
       <Tooltip message='Run collection'>
         <Button startIcon={loading || callingCollectionRunner ? <Loader size='32'/> : <BsCollectionPlayFill size='32'/>}
                 onClick={handleRunCollection}
-                className='bg-transparent text-sky-blue hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
+                className='bg-transparent text-sky-600 hover:scale-105 hover:bg-transparent hover:text-sky-300 border-none'
                 size='md'/>
       </Tooltip>
       <ModalPortal id='collection-runner-results'>

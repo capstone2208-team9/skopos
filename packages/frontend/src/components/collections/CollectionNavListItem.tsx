@@ -22,7 +22,7 @@ export default function CollectionNavListItem({collection, onDelete, onSelect}: 
         <HiOutlineFolder className='group-hover:scale-105 group-hover:text-sky-blue' size='26'/>
         <span className='group-hover:scale-105 group-hover:text-sky-blue transition-transform transition-400'>{collection.title}</span>
       </Link>
-      <Dropdown horizontal='right' className='group group-hover:text-sky-blue ml-auto'>
+      <Dropdown hover horizontal='right' className='group group-hover:text-sky-blue ml-auto'>
         <Dropdown.Toggle size='xs' color='ghost' className='ml-auto group-hover:text-sky-blue'>
           <MdMoreVert size='20' className='fill-current'/>
         </Dropdown.Toggle>

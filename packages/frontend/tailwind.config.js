@@ -8,6 +8,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        collection: 'url(assets/SVGs/Skopos_Branding_Final Logo_SKOPOS_graphic_inverted.svg)'
+      },
       colors: {
         'powder-blue': '#BCE2E8',
         'powder-blue-lt': 'rgb(191,237,244)',

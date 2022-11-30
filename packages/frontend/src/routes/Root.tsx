@@ -15,7 +15,7 @@ export default function Root() {
   return (
     <ToastProvider>
       <Drawer side={<DrawerContent onToggleDrawer={toggleDrawer}/>} open={drawerOpen} onClickOverlay={() => setDrawerOpen(!drawerOpen)} >
-        <div className='grid grid-rows-layout p-4 w-full h-full'>
+        <div className='grid grid-rows-layout p-4 w-full h-full m-auto max-w-7xl'>
           <header className='flex items-center'>
             <Button size='sm' className='bg-transparent border-none text-dark-green hover:scale-110 hover:bg-transparent hover:text-cadmium-orange' onClick={() => setDrawerOpen(!drawerOpen)}>
               <RiMenu3Line size={28}/>
@@ -23,7 +23,7 @@ export default function Root() {
             <Link to='/' className='pt-2'>
               <Logo height={60} width={60}/>
             </Link>
-            <h1 className='drop-shadow-lg shadow-sky-blue tracking-wide text-5xl font-bold self-center m-auto'>Skopos</h1>
+            {location.pathname !== '/' && <h1 className='-translate-x-1/2 drop-shadow shadow-sky-blue text-5xl font-bold m-auto'>Skopos</h1> }
           </header>
           <main className="min-w-[680px] w-full">
             {location.pathname === '/' ? (<Landing/>) : (<Outlet/>)}

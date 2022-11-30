@@ -12,7 +12,7 @@ export default function Landing() {
         <AddCollection/>
       </ButtonGroup>
       <SkoposLargeLogo className='max-w-md'/>
-      <h2 className='text-3xl font-medium my-4'>Monitor critical API workflows</h2>
+      <h2 className='capitalize text-3xl font-medium my-4'>Monitor critical API workflows</h2>
     </div>
   )
 }

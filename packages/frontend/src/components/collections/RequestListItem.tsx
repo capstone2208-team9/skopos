@@ -103,7 +103,7 @@ export default function RequestListItem({
 
   return (
     <li key={request.id}
-        className={`border bg-base-100 border-gray-300 rounded w-full p-4 mb-2 text-xl${dragClass}`}
+        className={`border-2 bg-base-100 border-gray-300 shadow rounded w-full p-4 mb-2 text-xl${dragClass}`}
         ref={innerRef}
         {...handleProps} {...dragProviderProps}
     >

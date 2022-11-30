@@ -50,6 +50,10 @@ export default function AssertionFieldArray(props: FieldProps) {
     return !!form.values.assertions[index].id
   }
 
+  const comparisonOptions = comparisonTypes.map(c => ({
+                            label: c, value: c
+                          }))
+
   return (
     <>
       <FieldArray
@@ -89,11 +93,9 @@ export default function AssertionFieldArray(props: FieldProps) {
                           defaultValue={assertions[index].comparison ? {
                             label: assertions[index].comparison,
                             value: assertions[index].comparison
-                          } : undefined}
+                          } : comparisonOptions[0]}
                           {...props}
-                          options={comparisonTypes.map(c => ({
-                            label: c, value: c
-                          }))}/>
+                          options={comparisonOptions}/>
                       )}
                     </Field>
                   </div>

@@ -25,8 +25,8 @@ export default function MonitorList() {
 
   if (loading) return <Loader/>
   if (data && !data.monitors.length) return <div className='grid translate-y-32 m-auto place-items-center w-1/2'>
-    <Alert className='bg-sky-blue'>
-    <h2 className='text-2xl'>No monitors</h2>
+    <Alert className='bg-sky-blue bg-opacity-80'>
+    <h2 className='text-2xl m-auto'>No monitors</h2>
   </Alert>
   </div>
 

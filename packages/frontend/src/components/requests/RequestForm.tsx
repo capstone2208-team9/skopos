@@ -250,7 +250,7 @@ export default function RequestForm({request, stepNumber}: Props) {
         <Form className='flex flex-col gap-6'>
           <TextInput name='title' placeholder='add a title'/>
 
-          <div className='grid grid-cols-4'>
+          <div className='grid gap-2 grid-cols-4'>
             <Field className='cols-span-1' name='method'>
               {(props) => (
                 <SelectField placeholder='Method' {...props}

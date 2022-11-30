@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:frontend": "npm run start -w packages/frontend"
+    "dev:frontend": "npm run start -w packages/frontend",
+    "test": "npm run test --workspaces --if-present",
+    "bootstrap": "npm run bootstrap --workspaces --if-present",
+    "deploy:all": "npm run deploy --workspaces --if-present",
+    "destroy:all": "npm run destroy --workspaces --if-present"
   },
   "workspaces": [
     "./packages/*"
