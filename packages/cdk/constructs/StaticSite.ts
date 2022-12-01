@@ -1,4 +1,4 @@
-import * as chalk from "chalk";
+import chalk from "chalk";
 import * as path from "path";
 import * as fs from "fs-extra";
 import * as crypto from "crypto";
@@ -405,7 +405,7 @@ export class StaticSite extends Construct {
     // build
     if (buildCommand) {
       try {
-        console.log(chalk.grey(`Building static site ${sitePath}`));
+        console.log(chalk.gray(`Building static site ${sitePath}`));
         execSync(buildCommand, {
           cwd:  sitePath,
           stdio: "inherit",

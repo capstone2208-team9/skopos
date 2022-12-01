@@ -23,6 +23,5 @@
   "exclude": [
     "node_modules",
     "cdk.out",
-    "node_modules/@types/prismjs/index.d.ts"
   ]
 }

@@ -1,10 +1,18 @@
-import * as url from 'url'
 import chalk from 'chalk'
 import {exec} from 'child_process'
 import * as path from 'path'
+import * as url from 'url'
+
 const __dirname = url.fileURLToPath(import.meta.url)
 
-export const ROOT_PATH = path.join(__dirname, '../../../../../')
+export const ROOT_PATH = path.join(__dirname, '../../../../cdk')
+
+export enum CDKCommands {
+  build = 'npm run build',
+  bootstrap = 'npm run bootstrap',
+  deploy = 'npm run deploy',
+  destroy = 'npm run deploy'
+}
 
 export async function executeCommand(cwd: string, command: string) {
   const process = exec(command, {cwd})

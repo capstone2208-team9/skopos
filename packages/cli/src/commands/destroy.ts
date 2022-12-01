@@ -1,7 +1,11 @@
-import {executeCommand, ROOT_PATH} from '../lib/index.js'
+import path from 'path'
+import url from 'url'
+import {CDKCommands, executeCommand} from '../lib/index.js'
+
+const __dirname = url.fileURLToPath(import.meta.url)
+export const ROOT_PATH = path.join(__dirname, '../../../../cdk')
 
 export default async function destroy() {
-  const command = 'npm run destroy --workspaces --if-present'
-  await executeCommand(ROOT_PATH, command)
+  await executeCommand(ROOT_PATH, CDKCommands.destroy)
 }
 

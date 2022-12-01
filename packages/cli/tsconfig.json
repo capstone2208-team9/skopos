@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "lib": ["ESNext"],
     "module": "ESNext",
     "target": "ESNext",
     "sourceMap": true,
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "rootDir": "src"
   },
   "ts-node": {
     "esm": true

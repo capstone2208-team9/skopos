@@ -1,9 +1,10 @@
 {
   "name": "root",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": "true",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "prepublish": "npm run build",
     "dev:frontend": "npm run start -w packages/frontend",
     "test": "npm run test --workspaces --if-present",
     "bootstrap": "npm run bootstrap --workspaces --if-present",
@@ -13,9 +14,6 @@
   "workspaces": [
     "./packages/*"
   ],
-  "devDependencies": {
-    "lerna": "^6.1.0"
-  },
   "contributors": [
     {
       "name": "Nykaela Dodson"
@@ -29,5 +27,8 @@
     {
       "name": "Gagan Sapkota"
     }
-  ]
+  ],
+  "devDependencies": {
+    "lerna": "^6.1.0"
+  }
 }
