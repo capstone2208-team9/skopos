@@ -20,7 +20,9 @@
   "bugs": {
     "url": "https://github.com/capstone2208-team9/skopos-cloud/issues"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "homepage": "https://github.com/capstone2208-team9/skopos-cloud#readme",
   "contributors": [
     {
