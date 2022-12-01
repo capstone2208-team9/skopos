@@ -19,8 +19,6 @@ const {backendURI, collectionRunnerURI} = new EcsStack(app, 'EcsStack', {
   dbCredentials: rds.credentials,
 })
 
-// change lambda env variable for pointing to ecs collection runner
-
 new ReactStack(app, 'ReactStack', {
   backendURI, collectionRunnerURI
 })

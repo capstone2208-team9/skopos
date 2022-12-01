@@ -5,6 +5,7 @@
     "lib": [
       "es2018"
     ],
+    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "declaration": true,
@@ -18,10 +19,13 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "outDir": "dist",
+    "rootDir": "."
   },
   "exclude": [
     "node_modules",
     "cdk.out",
+    "dist/**/*"
   ]
 }

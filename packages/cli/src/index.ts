@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import clear from 'clear'
 import {program} from 'commander'
 import figlet from 'figlet'
-import bootstrap from './commands/bootstrap'
+import bootstrap from './commands/bootstrap.js'
 import destroy from './commands/destroy.js'
 import deploy from './commands/deploy.js'
 

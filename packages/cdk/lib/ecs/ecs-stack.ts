@@ -64,7 +64,7 @@ export class EcsStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(5),
       handler: 'index.collectionRunner',
       code: lambda.Code.fromAsset(
-        path.join(__dirname, './../../src/lambda-function')
+        path.join(__dirname, './../../lib/lambda-function')
       ),
       environment: {
         REGION: cdk.Stack.of(this).region,

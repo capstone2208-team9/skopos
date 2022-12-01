@@ -2,6 +2,9 @@
   "name": "frontend",
   "version": "0.0.3",
   "private": true,
+  "publishConfig": {
+    "directory": "."
+  },
   "dependencies": {
     "@apollo/client": "^3.7.0",
     "@testing-library/jest-dom": "^5.16.5",

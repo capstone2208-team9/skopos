@@ -8,10 +8,9 @@ const __dirname = url.fileURLToPath(import.meta.url)
 export const ROOT_PATH = path.join(__dirname, '../../../../cdk')
 
 export enum CDKCommands {
-  build = 'npm run build',
   bootstrap = 'npm run bootstrap',
-  deploy = 'npm run deploy',
-  destroy = 'npm run deploy'
+  deploy = 'npm run deploy --require-approval never',
+  destroy = 'npm run destroy --force'
 }
 
 export async function executeCommand(cwd: string, command: string) {

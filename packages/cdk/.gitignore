@@ -1,5 +1,5 @@
 *.js
-!src/lambda-function/*.js
+!lib/lambda-function/*.js
 !jest.config.js
 
 *.d.ts
@@ -10,3 +10,4 @@ node_modules
 cdk.out
 
 constructs/siteBuildDir
+dist

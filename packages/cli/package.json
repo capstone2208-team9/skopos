@@ -39,6 +39,7 @@
     }
   ],
   "dependencies": {
+    "cdk": "^0.0.3",
     "chalk": "^5.1.2",
     "clear": "^0.1.0",
     "commander": "^9.4.1",
