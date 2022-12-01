@@ -1,6 +1,11 @@
-# Welcome to your CDK TypeScript project
+# Deploy Skopos to your AWS account using AWS Cloud Development Kit
 
-This is a blank project for CDK development with TypeScript.
+
+#### Prerequisites
+
+- AWS account
+- AWS CLI installed and configured
+- npm installed
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 

@@ -2,6 +2,17 @@
 
 Monitor Multi-step API interactions
 
+This project will deploy Skopos to your AWS account
+
+Skopos consists of a React frontend which is hosted on S3, as well as all the backend infrastructure to get started monitoring APIs.  
+After deploying the url for the React app will be provided in the command line output (ReactStack.ReactSiteURL).  
+
+## Getting Started
+
+1. Clone this repository
+2. install [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_prerequisites)
+3. have your AWS account configured (Skopos uses the locally configured AWS account)
+
 
 ## Tech/Frameworks
 

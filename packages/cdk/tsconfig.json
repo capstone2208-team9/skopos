@@ -5,6 +5,7 @@
     "lib": [
       "es2018"
     ],
+    "skipLibCheck": true,
     "declaration": true,
     "strict": true,
     "noUnusedLocals": false,

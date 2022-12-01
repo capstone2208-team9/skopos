@@ -2,6 +2,9 @@
   "name": "cdk",
   "version": "0.1.0",
   "private": true,
+  "bin": {
+    "skopos-cloud": "bin/skopos-cloud.js"
+  },
   "scripts": {
     "watch": "tsc -w",
     "test": "jest",
