@@ -5,3 +5,4 @@ build
 .swc
 .tool-versions
 .npmrc
+lerna-debug.log

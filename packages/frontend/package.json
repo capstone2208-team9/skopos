@@ -2,7 +2,8 @@
   "name": "skopos-frontend",
   "version": "0.0.5",
   "publishConfig": {
-    "directory": "."
+    "directory": ".",
+    "registry": "http://localhost:4873"
   },
   "dependencies": {
     "@apollo/client": "^3.7.0",
@@ -90,5 +91,6 @@
     {
       "name": "Gagan Sapkota"
     }
-  ]
+  ],
+  "gitHead": "4a032c87b6183b0f3dd0baaaf6da23388b6cbc95"
 }

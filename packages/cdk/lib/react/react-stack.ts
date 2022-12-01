@@ -12,7 +12,7 @@ export class ReactStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ReactStackProps) {
     super(scope, id, props)
     const site = new ReactStaticSite(this, 'SkoposFrontend', {
-      path: 'node_modules/frontend',
+      path: 'node_modules/skopos-frontend',
       environment: {
         REACT_APP_GRAPHQL_URL: `http://${props.backendURI}/graphql`,
         REACT_APP_BACKEND_URL: `http://${props.collectionRunnerURI}`
