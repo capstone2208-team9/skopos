@@ -1,6 +1,6 @@
 {
   "name": "skopos-cdk",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publishConfig": {
     "directory": "dist",
     "registry": "http://localhost:4873"
@@ -32,7 +32,7 @@
     "constructs": "^10.0.0",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
-    "skopos-frontend": "^0.0.5",
+    "skopos-frontend": "^0.0.6",
     "source-map-support": "^0.5.21"
   },
   "contributors": [

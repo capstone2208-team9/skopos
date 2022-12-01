@@ -1,6 +1,6 @@
 {
   "name": "skopos",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Skopos API Monitoring",
   "main": "dist/index.js",
   "type": "module",
@@ -43,7 +43,7 @@
     "clear": "^0.1.0",
     "commander": "^9.4.1",
     "figlet": "^1.5.2",
-    "skopos-cdk": "^0.0.5"
+    "skopos-cdk": "^0.0.6"
   },
   "devDependencies": {
     "@types/clear": "^0.1.2",
