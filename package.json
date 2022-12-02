@@ -8,7 +8,7 @@
   "type": "module",
   "main": "./src/index.js",
   "bin": {
-    "skopos": "src/index.js"
+    "skopos": "./src/index.js"
   },
   "scripts": {
     "lint": "eslint",
