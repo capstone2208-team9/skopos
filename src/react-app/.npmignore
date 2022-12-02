@@ -1,0 +1,5 @@
+build
+src/mocks
+*.test.tsx
+src/test-utils.tsx
+src/setupTests.ts

@@ -1,0 +1,12 @@
+*.js
+!lib/lambda-function/index.js
+!assets/BaseSite/archiver.js
+*.d.ts
+*.test.ts
+constructs/siteBuildDir
+
+
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out

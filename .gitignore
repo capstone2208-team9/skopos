@@ -1,6 +1,4 @@
-node_modules
 .idea
-build
-.env.*
-.swc
-.tool-versions
+node_modules
+src/commands/*.js
+src/index.ts
