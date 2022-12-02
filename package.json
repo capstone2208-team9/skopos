@@ -6,9 +6,8 @@
     "node": ">=14.16"
   },
   "type": "module",
-  "main": "./src/index.js",
   "bin": {
-    "skopos": "./src/index.js"
+    "skopos": "./bin/index.js"
   },
   "scripts": {
     "lint": "eslint",

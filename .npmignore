@@ -4,3 +4,5 @@ src/react-app/src/mocks
 src/react-app/src/setupTests.ts
 node_modules
 .eslintrc
+bin/index.ts
+bin/index.js.map

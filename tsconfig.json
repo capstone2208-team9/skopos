@@ -12,7 +12,7 @@
     "esm": true
   },
   "include": [
-    "./src/index.ts",
+    "./bin/index.ts",
     "./src/commands",
   ],
   "exclude": [
