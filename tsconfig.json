@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "target": "ESNext",
+    "sourceMap": true,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": [
+    "./src/index.ts",
+    "./src/commands",
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+}

@@ -1,0 +1,12 @@
+*.js
+!lib/lambda-function/*.js
+!jest.config.js
+!assets/BaseSite/archiver.js
+
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+
+constructs/siteBuildDir
