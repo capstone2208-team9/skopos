@@ -1,6 +1,6 @@
 {
   "name": "skopos",
-  "version": "0.0.6-1",
+  "version": "0.0.6-2",
   "description": "Skopos API Monitoring",
   "engines": {
     "node": ">=14.16"
