@@ -1,28 +1,26 @@
 import chalk from 'chalk';
-import { exec } from 'child_process';
+import { execaCommand } from 'execa';
 import ora from 'ora';
-import * as path from 'path';
-import * as url from 'url';
-const __dirname = url.fileURLToPath(import.meta.url);
-const cwd = path.join(__dirname, '..', '..', 'cdk');
+import { cdkDirectoryPath } from './index.js';
+import { validateEnvironment } from '../lib/helpers.js';
 export default async function bootstrap() {
+    let spinner;
+    validateEnvironment();
     try {
-        const spinner = ora(chalk.blueBright('Preparing your AWS account...')).start();
-        const { stderr, stdout } = exec('cdk bootstrap', { cwd });
-        stderr.on('data', (data) => {
+        spinner = ora(chalk.blueBright('Bootstrapping your AWS account...')).start();
+        const subProcess = execaCommand('cdk bootstrap', { cwd: cdkDirectoryPath });
+        subProcess.stderr.on('data', (data) => {
             const value = data.toString();
             const shouldPrint = value.includes('Bootstrapping') || value.includes('Environment');
             shouldPrint && console.log('\n', chalk.blueBright(value));
         });
-        stdout.on('end', () => {
-            spinner.succeed(chalk.greenBright('Ready to deploy!!'));
-        });
-        stdout.on('error', (err) => {
-            spinner.succeed(chalk.red(`An error occurred ${err.message}`));
-        });
+        await subProcess;
+        if (subProcess.exitCode === 0) {
+            spinner.succeed(chalk.greenBright('Skopos ready to deploy'));
+        }
     }
     catch (e) {
-        console.log(chalk.red(`An error occurred ${e.message}`));
+        spinner.fail(`An error occurred: ${e.message}`);
     }
 }
 //# sourceMappingURL=bootstrap.js.map

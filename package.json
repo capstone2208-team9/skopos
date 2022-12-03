@@ -11,7 +11,7 @@
   },
   "scripts": {
     "lint": "eslint",
-    "prepublish": "npm run tsc",
+    "version": "npm run tsc",
     "test": "cd src/react-app && npm run test:ci",
     "tsc": "tsc",
     "start:react": "cd src/react-app && npm run start",
