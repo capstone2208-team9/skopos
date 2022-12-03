@@ -16,7 +16,7 @@
     "tsc": "tsc",
     "start:react": "cd src/react-app && npm run start",
     "test:react": "cd src/react-app && npm run test",
-    "skopos": "node --loader ts-node/esm src/index.ts"
+    "skopos": "ts-node --prefer-ts-exts bin/index.ts"
   },
   "keywords": [
     "AWS",
@@ -33,7 +33,7 @@
     "@types/chalk": "^2.2.0",
     "@types/clear": "^0.1.2",
     "@types/fs-extra": "^9.0.13",
-    "@types/node": "^16.11.66",
+    "@types/node": "^18.11.10",
     "@types/prismjs": "^1.26.0",
     "@types/react": "^18.0.25",
     "@types/react-beautiful-dnd": "^13.1.2",
