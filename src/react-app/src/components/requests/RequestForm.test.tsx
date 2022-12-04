@@ -6,6 +6,9 @@ import {customRender, fireEvent, screen, waitFor} from 'test-utils'
 import RequestForm from './RequestForm'
 
 describe('RequestForm', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = () => undefined
+  })
   it('should have disabled save button when first rendered', function () {
     const renderPage = customRender(<RequestForm stepNumber={1}/>)
     renderPage()

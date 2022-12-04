@@ -29,7 +29,6 @@ export default function Root() {
             {location.pathname === '/' ? (<Landing/>) : (<Outlet/>)}
           </main>
           <footer className='w-full text-center self-center'>
-            <p>Illustrations by <a className='text-cadmium-orange font-medium' href='https://undraw.co'>unDraw</a></p>
             <p>Logo Design by Maria Alejandra Bazante</p>
           </footer>
         </div>

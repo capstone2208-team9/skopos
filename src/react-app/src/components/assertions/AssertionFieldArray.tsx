@@ -1,15 +1,15 @@
-import { useMutation } from '@apollo/client'
+import {useMutation} from '@apollo/client'
 import ConfirmDeleteModal from 'components/shared/ConfirmDeleteModal'
 import Loader from 'components/shared/Loader'
 import SelectField from 'components/shared/SelectField'
 import TextInput from 'components/shared/TextInput'
-import {Field, FieldArray, FieldProps, FieldArrayRenderProps, FormikProps} from 'formik'
+import {Field, FieldArray, FieldArrayRenderProps, FieldProps, FormikProps} from 'formik'
 import {DeleteOneAssertion} from 'graphql/mutations'
 import {GetRequests} from 'graphql/queries'
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {Button} from 'react-daisyui'
 import {AiOutlineDelete, AiOutlinePlus} from 'react-icons/ai'
-import { useParams } from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {getRequestVariables} from 'routes/RequestList'
 import {AssertionInput, comparisonTypes} from 'types'
 
@@ -18,25 +18,35 @@ export default function AssertionFieldArray(props: FieldProps) {
   const {form} = props
   const {collectionId} = useParams()
   const [modalOpen, setModalOpen] = useState(false)
+  const ref = useRef<HTMLButtonElement>(null)
   const [deleteOneAssertion, {loading}] = useMutation(DeleteOneAssertion, {
     update(cache, {data: {deleteOneAssertion}}) {
-      cache.updateQuery({ query: GetRequests, variables: getRequestVariables(collectionId) }, (data) => {
+      cache.updateQuery({query: GetRequests, variables: getRequestVariables(collectionId)}, (data) => {
         const request = data.requests.find(r => r.assertions.find(a => a.id === deleteOneAssertion.id))
-        return {requests: data.requests.map(r=> {
+        return {
+          requests: data.requests.map(r => {
             return r.id === request.id ? (
               {...r, assertions: r.assertions.filter(a => a.id !== deleteOneAssertion.id)}
             ) : r
-          })}
-      });
+          })
+        }
+      })
     },
   })
+
+  const handleAddHeader = (arrayHelpers: { push: (obj: any) => void }) => {
+    arrayHelpers.push({
+      property: 'status', expected: '', comparison: 'is not equal to'
+    })
+    ref.current?.scrollIntoView({behavior: 'smooth'})
+  }
 
   async function handleRemove(assertions: AssertionInput[], index: number, arrayHelpers: FieldArrayRenderProps) {
     const assertion = assertions[index]
     if (assertion.id) {
       await deleteOneAssertion({
         variables: {
-          where: { id: assertion.id}
+          where: {id: assertion.id}
         }
       })
       arrayHelpers.remove(index)
@@ -51,8 +61,12 @@ export default function AssertionFieldArray(props: FieldProps) {
   }
 
   const comparisonOptions = comparisonTypes.map(c => ({
-                            label: c, value: c
-                          }))
+    label: c, value: c
+  }))
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({behavior: 'smooth'})
+  }, [ref])
 
   return (
     <>
@@ -101,7 +115,8 @@ export default function AssertionFieldArray(props: FieldProps) {
                   </div>
                   <div className='flex gap-4 items-end w-full'>
                     {assertions[index].property === 'body' && (
-                      <TextInput prefix='body' label='path' name={`assertions[${index}].path`} placeholder='body. or body[0]'/>
+                      <TextInput prefix='body' label='path' name={`assertions[${index}].path`}
+                                 placeholder='body. or body[0]'/>
                     )}
                     {assertions[index].property === 'headers' && (
                       <TextInput prefix='headers' label='path' name={`assertions[${index}].path`}
@@ -123,10 +138,10 @@ export default function AssertionFieldArray(props: FieldProps) {
               )
             })}
 
-            <Button size='sm' startIcon={<AiOutlinePlus/>} className='bg-viridian-green m-auto w-1/2' type='button'
-                    onClick={() => arrayHelpers.push({
-                      property: 'status', expected: '', comparison: 'is not equal to'
-                    })}>
+            <Button
+              ref={ref} size='sm'
+              startIcon={<AiOutlinePlus/>} className='bg-viridian-green m-auto w-1/2' type='button'
+              onClick={() => handleAddHeader(arrayHelpers)}>
               <span>Add Assertion</span>
             </Button>
           </>

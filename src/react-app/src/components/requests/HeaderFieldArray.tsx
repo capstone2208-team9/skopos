@@ -1,6 +1,6 @@
 import TextInput from 'components/shared/TextInput'
 import {FieldArray, FieldProps} from 'formik'
-import React from 'react'
+import React, {useEffect, useRef} from 'react'
 import {Button} from 'react-daisyui'
 import {AiOutlineDelete, AiOutlinePlus} from 'react-icons/ai'
 
@@ -8,6 +8,16 @@ import {AiOutlineDelete, AiOutlinePlus} from 'react-icons/ai'
 type HeaderFormProps = FieldProps
 
 export default function HeaderFieldArray({form}: HeaderFormProps) {
+  const ref = useRef<HTMLButtonElement>(null)
+  const handleAddHeader = (arrayHelpers: {push: (obj: any) => void}) => {
+    arrayHelpers.push(['', ''])
+    ref.current?.scrollIntoView({behavior: 'smooth'})
+  }
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({behavior: 'smooth'})
+  }, [ref])
+
   return (
     <div>
       <div className='flex gap-4 items-center'>
@@ -27,9 +37,9 @@ export default function HeaderFieldArray({form}: HeaderFormProps) {
                 ))
               }
 
-              <Button size='sm' startIcon={<AiOutlinePlus/>}
+              <Button ref={ref} size='sm' startIcon={<AiOutlinePlus/>}
                       className='mt-5 bg-viridian-green m-auto w-1/2' type='button'
-                      onClick={() => arrayHelpers.push(['', ''])}
+                      onClick={() => handleAddHeader(arrayHelpers)}
               >Add A Header</Button>
             </div>
             )}

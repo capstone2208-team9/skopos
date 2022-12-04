@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import {execaSync} from 'execa'
 import ora from 'ora'
 
-export const stackOptions = ['VpcStack', 'RDSStack', 'EcsStack', 'ReactStack'] as const
+export const stackOptions = ['VpcStack', 'RdsStack', 'EcsStack', 'ReactStack'] as const
 
 export type StackType = typeof stackOptions[number]
 

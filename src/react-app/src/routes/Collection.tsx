@@ -26,8 +26,8 @@ export default function Collection() {
     </div>
   )
   return (
-    <div className="flex flex-col gap-4 relative items-center min-h-screen w-full">
-      <CollectionImage className='-z-10 opacity-20 absolute left-0 -top-36 lg:-top-48 max-w-full w-full h-auto'/>
+    <div className="flex flex-col gap-4 relative items-center w-full">
+      <CollectionImage className='-z-10 opacity-20 absolute -top-8 transform-x-1/2 w-auto max-h-[75vh]'/>
       <header className='flex gap-8 items-center mb-8'>
         <h2 className='collection-title text-3xl font-medium'>{collection?.title}</h2>
         <div className='flex items-center gap-4'>

@@ -21,7 +21,8 @@ module.exports = {
         'dark-green': '#172729',
       },
       gridTemplateRows: {
-        'layout': '80px 1fr 80px',
+        'layout': 'min-content 1fr min-content',
+        'error-page': 'repeat(3, min-content) 1fr'
       },
       gridTemplateColumns: {
         'assertion-form': 'repeat(5, min-content)',

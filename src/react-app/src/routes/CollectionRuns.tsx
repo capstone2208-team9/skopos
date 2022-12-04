@@ -73,7 +73,7 @@ export default function CollectionRuns() {
           )}
         </Button>
         {title && <h2 className='flex items-center gap-2 font-medium text-2xl'>History for
-          <Link className='text-sky-blue hover:text-cadmium-orange' to={`/collections/${collectionId}`}>{title}</Link>
+          <Link className='text-sky-blue hover:text-cadmium-orange' to={`/collections/${collectionId}/requests`}>{title}</Link>
         </h2>}
       </div>
       <CollectionRunsContainer collectionRuns={data.paginateCollectionRuns.items}/>
