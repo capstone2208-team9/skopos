@@ -1,10 +1,10 @@
 import CollectionRunner from 'components/collectionRuns/CollectionRunner'
 import {Tooltip} from 'react-daisyui'
-import {FaSpinner} from 'react-icons/fa'
 import {MdHistory} from 'react-icons/md'
 import {Link, Outlet, useLocation, useOutletContext, useParams} from 'react-router-dom'
 import {useCollections} from 'routes/Collections'
 import {ReactComponent as CollectionImage} from 'assets/SVGs/Skopos_Branding_Final Logo_Favicon_without circle.svg'
+import Loader from 'components/shared/Loader'
 type Context = {
   numRequests: number
 }
@@ -22,7 +22,7 @@ export default function Collection() {
 
   if (loading || !collection) return (
     <div className='grid place-items-center'>
-      <FaSpinner size={48} className='animate-spin text-2xl'/>
+      <Loader size={48} />
     </div>
   )
   return (

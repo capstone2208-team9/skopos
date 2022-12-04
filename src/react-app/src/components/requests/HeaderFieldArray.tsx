@@ -30,7 +30,7 @@ export default function HeaderFieldArray({form}: HeaderFormProps) {
                   <div key={index} className='w-full flex gap-4 items-end last-of-type:mb-4'>
                     <TextInput label='key' wrapperClassName='flex-1' placeholder='content-type' name={`headers.${index}.0`}/>
                     <TextInput label='value' wrapperClassName='flex-1' placeholder='application/json' name={`headers.${index}.1`}/>
-                    <Button size='sm' className='bg-cedar-chest mt-0.5' type='button'
+                    <Button className='bg-cedar-chest mt-0.5' type='button'
                             onClick={() => arrayHelpers.remove(index)}
                     ><AiOutlineDelete size={16}/></Button>
                   </div>

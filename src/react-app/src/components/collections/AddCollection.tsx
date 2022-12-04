@@ -1,11 +1,11 @@
 import {useMutation} from '@apollo/client'
+import Loader from 'components/shared/Loader'
 import {CreateCollection} from 'graphql/mutations'
 import {GetCollectionNames, GetCollectionsWithoutMonitors} from 'graphql/queries'
 import {useToast} from 'hooks/ToastProvider'
 import sortCollectionsByTitle from 'lib/sortCollectionsByTitle'
 import React, {useEffect, useState} from 'react'
-import {Button, ButtonGroup, Form, Modal, Tooltip} from 'react-daisyui'
-import {FaSpinner} from 'react-icons/fa'
+import {Button, ButtonGroup, Form, Input, Modal, Tooltip} from 'react-daisyui'
 import {useNavigate} from 'react-router-dom'
 import {HiOutlineFolderAdd} from 'react-icons/hi'
 import {whereMonitorNullVariables} from 'routes/CreateMonitor'
@@ -95,14 +95,14 @@ export default function AddCollection({buttonSize = 'md', compact = false, class
         <Modal.Body className='grid place-items-center'>
           <Form onSubmit={handleAddCollection}>
             <div className='flex gap-2 items-center'>
-              <input className='input input-bordered input-md' name='title'
+              <Input name='title'
                      value={title}
                      onChange={(e) => setTitle(e.target.value)}
                      placeholder='Collection Name'
               />
               <ButtonGroup className='gap-2'>
                 <Button className='bg-sky-blue' disabled={!title} size='md' type='submit'>
-                  {loading && <FaSpinner className='mx-1 animate-spin'/>}
+                  {loading && <Loader/>}
                   Save
                 </Button>
                 <Button className='bg-cadmium-orange' type='button' size='md'

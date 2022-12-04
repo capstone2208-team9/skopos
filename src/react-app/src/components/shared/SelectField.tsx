@@ -57,7 +57,7 @@ export default function SelectField({placeholder, label, field, options, meta, f
             }),
             control: (baseStyles) => ({
               ...baseStyles,
-              minHeight: '2.5rem',
+              minHeight: '3rem',
             })
           }}
         />

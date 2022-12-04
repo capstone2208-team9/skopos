@@ -125,7 +125,7 @@ export default function AssertionFieldArray(props: FieldProps) {
                     {!['is null', 'is not null'].includes(assertions[index].comparison) && (
                       <TextInput label='expected' name={`assertions[${index}].expected`}/>
                     )}
-                    <Button size='sm' className='bg-cedar-chest' type='button'
+                    <Button className='bg-cedar-chest' type='button'
                             onClick={() => isNew(form, index) ? setModalOpen(true) : arrayHelpers.remove(index)}
                     >
                       <span className='sr-only'>Delete</span>
