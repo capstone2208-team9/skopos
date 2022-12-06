@@ -77,6 +77,23 @@ export class EcsStack extends cdk.Stack {
       },
     })
 
+    const slackNotificationFunc = new lambda.Function(this, 'slack-notifications', {
+      runtime: lambda.Runtime.NODEJS_16_X,
+      functionName: 'slack-notifications',
+      memorySize: 1024,
+      timeout: cdk.Duration.seconds(5),
+      handler: 'index.slackNotifications',
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, './../../lambda-function')
+      ),
+      environment: {
+        REGION: cdk.Stack.of(this).region,
+        AVAILABILITY_ZONES: JSON.stringify(
+          cdk.Stack.of(this).availabilityZones
+        ),
+      },
+    })
+
     this.backendEc2Service = new ApplicationLoadBalancedEc2Service(
       this,
       'BackendEc2Service',
@@ -92,7 +109,7 @@ export class EcsStack extends cdk.Stack {
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/graphql-server:1.3'),
-          image: ContainerImage.fromRegistry('kat201/skopos-graphql:1.3'),
+          image: ContainerImage.fromRegistry('nykaelad/graphql-server:1.7'),
           containerPort: 3001,
           containerName: 'BackendContainer',
           enableLogging: true,
@@ -101,7 +118,8 @@ export class EcsStack extends cdk.Stack {
             PORT: '3001',
             LAMBDA_ARN: func.functionArn,
             AWS_REGION: Stack.of(this).region,
-            LAMBDA_NAME: func.functionName
+            LAMBDA_NAME: func.functionName,
+            SLACK_LAMBDA_ARN: slackNotificationFunc.functionArn
           },
         },
       }
@@ -156,7 +174,7 @@ export class EcsStack extends cdk.Stack {
         protocol: ApplicationProtocol.HTTP,
         taskImageOptions: {
           // image: ContainerImage.fromRegistry('nykaelad/collection-runner:1.0'),
-          image: ContainerImage.fromRegistry('kat201/skopos-collection-runner:1.3'),
+          image: ContainerImage.fromRegistry('nykaelad/collection-runner:1.11'),
           containerPort: 3003,
           containerName: 'CollectionRunnerContainer',
           enableLogging: true,

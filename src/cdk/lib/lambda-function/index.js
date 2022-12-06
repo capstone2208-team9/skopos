@@ -29,7 +29,7 @@ const postRequest = (body) => {
   });
 };
 
-exports.collectionRunner = async (event) => {
+export const collectionRunner = async (event) => {
   try {
     const response = await postRequest(event);
 
@@ -43,4 +43,22 @@ exports.collectionRunner = async (event) => {
       body: `${err.message}`,
     };
   }
+};
+
+export const slackNotifications = async (event) => {
+  const webhookUrl = event.Records[0].Sns.MessageAttributes.webhookUrl.Value
+  const collectionTitle = event.Records[0].Sns.MessageAttributes.collectionTitle.Value
+try {
+  const response = await postRequest(webhookUrl, collectionTitle);
+
+  return {
+    status: response.status,
+  };
+} catch (err) {
+  console.log("catch block", err);
+  return {
+    status: 400,
+    body: `${err.message}`,
+  };
+}
 };

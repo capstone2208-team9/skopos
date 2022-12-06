@@ -33,7 +33,6 @@
     "@types/chalk": "^2.2.0",
     "@types/clear": "^0.1.2",
     "@types/fs-extra": "^9.0.13",
-    "@types/node": "^16.11.66",
     "@types/prismjs": "^1.26.0",
     "@types/react": "^18.0.25",
     "@types/react-beautiful-dnd": "^13.1.2",
@@ -76,6 +75,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
+    "@types/node": "^18.11.11",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
